@@ -1,11 +1,11 @@
-import WhLayout from 'src/shared/layouts/WhLayout.tsx'
 import Home from 'src/features/Home.tsx'
+import BGSlayout from 'src/shared/layouts/BGSlayout.tsx'
 
 const HomePage = () => {
     return (
-        <WhLayout>
+        <BGSlayout>
             <Home />
-        </WhLayout>
+        </BGSlayout>
     )
 }
 
