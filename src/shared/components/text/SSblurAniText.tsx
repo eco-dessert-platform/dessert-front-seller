@@ -106,12 +106,14 @@ const BlurText: React.FC<BlurTextProps> = ({
                     toSnapshots,
                 )
 
-                const spanTransition: Transition = {
+                const spanTransition: Transition & {
+                    ease: Transition['ease']
+                } = {
                     duration: totalDuration,
                     times,
                     delay: (index * delay) / 1000,
+                    ease: easing,
                 }
-                ;(spanTransition as any).ease = easing
 
                 return (
                     <motion.span

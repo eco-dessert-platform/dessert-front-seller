@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { BoxIcon, CreditCardIcon } from 'lucide-react'
+import { BoxIcon, ChevronDown, CreditCardIcon } from 'lucide-react'
 import { shallowEqual, useSelector } from 'react-redux'
 import { RootState } from 'src/app/store/redux/reduxStore.tsx'
 import {
@@ -16,27 +16,49 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '../lib/shadcn/components/ui/sidebar'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../lib/shadcn/components/ui/collapsible'
-import { ChevronDown } from 'lucide-react'
-import { Button } from 'src/shared/lib/shadcn/components/ui/button.tsx'
-import { useNavigate } from "react-router";
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from 'src/shared/lib/shadcn/components/ui/collapsible'
+import { useNavigate } from 'react-router'
 
 const menu = [
     {
         group: '주문 관리',
         items: [
             { title: '주문내역', href: '/orders', icon: BoxIcon },
-            { title: '완료 주문 내역', href: '/orders/completed', icon: BoxIcon },
+            {
+                title: '완료 주문 내역',
+                href: '/orders/completed',
+                icon: BoxIcon,
+            },
         ],
     },
     {
         group: '정산 관리',
         items: [
             { title: '정산내역', href: '/settle', icon: CreditCardIcon },
-            { title: '충전금 현황', href: '/settle/credits', icon: CreditCardIcon },
-            { title: '지급보류내역', href: '/settle/withheld', icon: CreditCardIcon },
-            { title: '부가세신고내역', href: '/settle/vat-reports', icon: CreditCardIcon },
-            { title: '세금계산서조회', href: '/settle/tax-invoices', icon: CreditCardIcon },
+            {
+                title: '충전금 현황',
+                href: '/settle/credits',
+                icon: CreditCardIcon,
+            },
+            {
+                title: '지급보류내역',
+                href: '/settle/withheld',
+                icon: CreditCardIcon,
+            },
+            {
+                title: '부가세신고내역',
+                href: '/settle/vat-reports',
+                icon: CreditCardIcon,
+            },
+            {
+                title: '세금계산서조회',
+                href: '/settle/tax-invoices',
+                icon: CreditCardIcon,
+            },
         ],
     },
 ]
@@ -58,7 +80,11 @@ export default function BGSside() {
             </SidebarHeader>
             <SidebarContent>
                 {menu.map((section) => (
-                    <Collapsible key={section.group} defaultOpen className="group/collapsible">
+                    <Collapsible
+                        key={section.group}
+                        defaultOpen
+                        className="group/collapsible"
+                    >
                         <SidebarGroup>
                             <SidebarGroupLabel asChild>
                                 <CollapsibleTrigger>
@@ -72,14 +98,20 @@ export default function BGSside() {
                                         {section.items.map((item) => (
                                             <SidebarMenuItem key={item.title}>
                                                 <SidebarMenuButton
-                                                    isActive={ item.href ===  pathname}
-                                                    asChild>
+                                                    isActive={
+                                                        item.href === pathname
+                                                    }
+                                                    asChild
+                                                >
                                                     <div
-                                                        onClick={() => {navigate(item.href)}}
-
+                                                        onClick={() => {
+                                                            navigate(item.href)
+                                                        }}
                                                     >
                                                         <item.icon />
-                                                        <span>{item.title}</span>
+                                                        <span>
+                                                            {item.title}
+                                                        </span>
                                                     </div>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>
@@ -92,7 +124,7 @@ export default function BGSside() {
                 ))}
             </SidebarContent>
             <SidebarFooter>
-                <div className="p-4 text-sm text-muted-foreground">
+                <div className="text-muted-foreground p-4 text-sm">
                     © 2025 회사명
                 </div>
             </SidebarFooter>

@@ -18,7 +18,7 @@ import {
 } from 'src/shared/lib/shadcn/components/ui/tabs'
 import SSdarkmodeSwitch from 'src/shared/components/theme/SSdarkmodeSwitch.tsx'
 import ColorPicker from 'src/shared/components/theme/SScolorPicker.tsx'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import {
     applyThemeVariables,
     handleReset,

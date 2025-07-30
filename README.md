@@ -95,12 +95,14 @@ src/
 ---
 
 ## 1. Project Overview
+
 - A boilerplate project based on React + TypeScript.
 - Designed for fast development, scalability, and maintainability.
 
 ---
 
 ## 2. Tech Stack
+
 - **React 19**
 - **TypeScript 5**
 - **Redux Toolkit** (state management)
@@ -134,12 +136,14 @@ yarn lint          # Run ESLint
 ```
 
 ### Storybook
+
 ```bash
 yarn storybook         # Start Storybook
 yarn build-storybook   # Build Storybook static site
 ```
 
 ### Testing
+
 ```bash
 yarn test        # Run unit tests (Vitest)
 yarn test:run    # Run all tests in CI mode
@@ -156,17 +160,18 @@ yarn cypress     # (if configured) Run Cypress E2E tests
 - Async operations are handled with createAsyncThunk or redux-saga (if needed).
 
 ### Example
+
 ```ts
 // src/app/store/redux/reduxStore.tsx
-import { configureStore } from '@reduxjs/toolkit';
-import sampleReducer from 'src/features/sample/sampleReducer';
+import { configureStore } from '@reduxjs/toolkit'
+import sampleReducer from 'src/features/sample/sampleReducer'
 
 export const store = configureStore({
-  reducer: {
-    sample: sampleReducer,
-    // ...other reducers
-  },
-});
+    reducer: {
+        sample: sampleReducer,
+        // ...other reducers
+    },
+})
 ```
 
 ---
@@ -184,38 +189,48 @@ export const store = configureStore({
 ## 6. Action Naming Convention
 
 - **Basic Rule**
-  - Use verb+target format: `get~~`, `edit~~`, `del~~`, `create~~`, etc.
-  - If state change is needed, append `Status` at the end
+    - Use verb+target format: `get~~`, `edit~~`, `del~~`, `create~~`, etc.
+    - If state change is needed, append `Status` at the end
 - **Local Reducer**
-  - Action names should NOT end with `Fail` or `Success` (due to auto-generation/recognition issues)
-  - If needed, use a `todo` prefix or similar for improvement
+    - Action names should NOT end with `Fail` or `Success` (due to auto-generation/recognition issues)
+    - If needed, use a `todo` prefix or similar for improvement
 
 ---
 
 ## 7. Reducer Usage (Sync/Async)
 
 ### Synchronous Reducer
+
 - Managed as a regular slice reducer
 - Example:
-  ```ts
-  reducers: {
-    setValue: (state, action) => { state.value = action.payload; }
-  }
-  ```
+    ```ts
+    reducers: {
+        setValue: (state, action) => {
+            state.value = action.payload
+        }
+    }
+    ```
 
 ### Asynchronous Reducer
+
 - Use `createAsyncThunk` for async actions
 - Or use **redux-saga** for more complex side effects
 - Handle pending/fulfilled/rejected in extraReducers
 - Example:
-  ```ts
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchData.pending, (state) => { state.loading = true; })
-      .addCase(fetchData.fulfilled, (state, action) => { state.data = action.payload; })
-      .addCase(fetchData.rejected, (state) => { state.error = true; });
-  }
-  ```
+    ```ts
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchData.pending, (state) => {
+                state.loading = true
+            })
+            .addCase(fetchData.fulfilled, (state, action) => {
+                state.data = action.payload
+            })
+            .addCase(fetchData.rejected, (state) => {
+                state.error = true
+            })
+    }
+    ```
 
 ---
 
@@ -238,14 +253,14 @@ export const store = configureStore({
 ## 10. Code Style (Prettier) Usage
 
 - Format all code:
-  ```bash
-  yarn exec prettier . --write
-  ```
+    ```bash
+    yarn exec prettier . --write
+    ```
 - **Auto-formatting settings**
-  - WebStorm:
-    File | Settings | Languages & Frameworks | JavaScript | Prettier  
-    jetbrains://WebStorm/settings?name=Languages+%26+Frameworks--JavaScript--Prettier  
-    Enable auto-format or format on save
+    - WebStorm:
+      File | Settings | Languages & Frameworks | JavaScript | Prettier  
+      jetbrains://WebStorm/settings?name=Languages+%26+Frameworks--JavaScript--Prettier  
+      Enable auto-format or format on save
 - **TODO**: Apply Prettier automatically on commit (e.g., with husky)
 - **TailwindCSS** is auto-sorted with prettier-plugin-tailwindcss
 
@@ -262,6 +277,7 @@ export const store = configureStore({
 ---
 
 ### Contact & Contribution
+
 - Feel free to ask questions, report bugs, or contribute to this project!
 
 ---

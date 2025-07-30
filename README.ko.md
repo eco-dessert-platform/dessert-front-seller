@@ -1,36 +1,34 @@
 ---
-
 # 📚 ss-react-boilerplate-ts 사용설명서
 
 ## 🛠️ Stack
 
 <div align="center">
-  <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=HTML5&logoColor=white" />
-  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" />
-  <img src="https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=white" />
-  <img src="https://img.shields.io/badge/Redux-764ABC?style=flat&logo=Redux&logoColor=white" />
-  <img src="https://img.shields.io/badge/Redux Toolkit-EF4444?style=flat&logo=redux&logoColor=white" />
-  <img src="https://img.shields.io/badge/Redux Saga-999999?style=flat&logo=redux-saga&logoColor=white" />
-  <img src="https://img.shields.io/badge/React Router-CA4245?style=flat&logo=react-router&logoColor=white" />
-  <img src="https://img.shields.io/badge/shadcn/ui-000000?style=flat&logo=shadcnui&logoColor=white" />
+<img src="https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=HTML5&logoColor=white" />
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" />
+<img src="https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=white" />
+<img src="https://img.shields.io/badge/Redux-764ABC?style=flat&logo=Redux&logoColor=white" />
+<img src="https://img.shields.io/badge/Redux Toolkit-EF4444?style=flat&logo=redux&logoColor=white" />
+<img src="https://img.shields.io/badge/Redux Saga-999999?style=flat&logo=redux-saga&logoColor=white" />
+<img src="https://img.shields.io/badge/React Router-CA4245?style=flat&logo=react-router&logoColor=white" />
+<img src="https://img.shields.io/badge/shadcn/ui-000000?style=flat&logo=shadcnui&logoColor=white" />
 </div>
 <div align="center">
-  <img src="https://img.shields.io/badge/Tailwind CSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white" />
-  <img src="https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white" />
-  <img src="https://img.shields.io/badge/Storybook-FF4785?style=flat&logo=storybook&logoColor=white" />
-  <img src="https://img.shields.io/badge/Cypress-17202C?style=flat&logo=cypress&logoColor=white" />
-  <img src="https://img.shields.io/badge/Vitest-6E9F18?style=flat&logo=vitest&logoColor=white" />
-  <img src="https://img.shields.io/badge/Playwright-2EAD33?style=flat&logo=playwright&logoColor=white" />
+<img src="https://img.shields.io/badge/Tailwind CSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white" />
+<img src="https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white" />
+<img src="https://img.shields.io/badge/Storybook-FF4785?style=flat&logo=storybook&logoColor=white" />
+<img src="https://img.shields.io/badge/Cypress-17202C?style=flat&logo=cypress&logoColor=white" />
+<img src="https://img.shields.io/badge/Vitest-6E9F18?style=flat&logo=vitest&logoColor=white" />
+<img src="https://img.shields.io/badge/Playwright-2EAD33?style=flat&logo=playwright&logoColor=white" />
 </div>
 <div align="center">
-  <img src="https://img.shields.io/badge/Prettier-F7B93E?style=flat&logo=prettier&logoColor=white" />
-  <img src="https://img.shields.io/badge/ESLint-4B32C3?style=flat&logo=eslint&logoColor=white" />
-  <img src="https://img.shields.io/badge/i18next-26A69A?style=flat&logo=i18next&logoColor=white" />
-  <img src="https://img.shields.io/badge/Framer Motion-EF008C?style=flat&logo=framer&logoColor=white" />
-  <img src="https://img.shields.io/badge/Lucide React-000000?style=flat&logo=lucide&logoColor=white" />
-  <img src="https://img.shields.io/badge/Yarn4-2C8EBB?style=flat&logo=yarn&logoColor=white" />
+<img src="https://img.shields.io/badge/Prettier-F7B93E?style=flat&logo=prettier&logoColor=white" />
+<img src="https://img.shields.io/badge/ESLint-4B32C3?style=flat&logo=eslint&logoColor=white" />
+<img src="https://img.shields.io/badge/i18next-26A69A?style=flat&logo=i18next&logoColor=white" />
+<img src="https://img.shields.io/badge/Framer Motion-EF008C?style=flat&logo=framer&logoColor=white" />
+<img src="https://img.shields.io/badge/Lucide React-000000?style=flat&logo=lucide&logoColor=white" />
+<img src="https://img.shields.io/badge/Yarn4-2C8EBB?style=flat&logo=yarn&logoColor=white" />
 </div>
-
 ---
 
 ## 📑 목차
@@ -93,12 +91,14 @@ src/
 ---
 
 ## 1. 프로젝트 개요
+
 - React + TypeScript 기반의 보일러플레이트 프로젝트입니다.
 - 빠른 개발, 확장성, 유지보수를 고려한 구조로 설계되었습니다.
 
 ---
 
 ## 2. 주요 기술 스택
+
 - **React 19**
 - **TypeScript 5**
 - **Redux Toolkit** (상태관리)
@@ -132,12 +132,14 @@ yarn lint          # ESLint 실행
 ```
 
 ### Storybook
+
 ```bash
 yarn storybook         # 스토리북 실행
 yarn build-storybook   # 스토리북 정적 사이트 빌드
 ```
 
 ### 테스트
+
 ```bash
 yarn test        # 단위 테스트(Vitest)
 yarn test:run    # 전체 테스트 CI 모드 실행
@@ -168,20 +170,22 @@ yarn cypress     # (설정 시) Cypress E2E 테스트 실행
 ## 6. 액션 명명 규칙
 
 - **기본 규칙**
-  - `get~~`, `edit~~`, `del~~`, `create~~` 등 동사+대상 형태
-  - 상태 변화가 필요한 경우 `Status`를 뒤에 붙임
+    - `get~~`, `edit~~`, `del~~`, `create~~` 등 동사+대상 형태
+    - 상태 변화가 필요한 경우 `Status`를 뒤에 붙임
 - **로컬 리듀서**
-  - 액션명이 `Fail`, `Success`로 끝나면 안 됨 (자동 생성/인식 문제)
-  - 개선 필요시 `todo` prefix 등 활용 권장
+    - 액션명이 `Fail`, `Success`로 끝나면 안 됨 (자동 생성/인식 문제)
+    - 개선 필요시 `todo` prefix 등 활용 권장
 
 ---
 
 ## 7. 리듀서 사용법 (동기/비동기)
 
 ### 동기 리듀서
+
 - 일반적인 slice reducer로 관리
 
 ### 비동기 리듀서
+
 - 비동기 액션은 `createAsyncThunk`로 생성하거나,
 - 복잡한 사이드이펙트는 **redux-saga**로 처리할 수 있음
 - extraReducers에서 pending/fulfilled/rejected 처리
@@ -206,15 +210,15 @@ yarn cypress     # (설정 시) Cypress E2E 테스트 실행
 
 ## 10. 코드 스타일(Prettier) 적용법
 
-- 전체 코드 포맷팅:  
-  ```bash
-  yarn exec prettier . --write
-  ```
-- **자동 정렬 설정**  
-  - WebStorm:  
-    파일 | 설정 | 언어 및 프레임워크 | JavaScript | Prettier  
-    jetbrains://WebStorm/settings?name=%EC%96%B8%EC%96%B4+%EB%B0%8F+%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC--JavaScript--Prettier  
-    에서 자동 활성화 또는 저장 시 적용 활성화
+- 전체 코드 포맷팅:
+    ```bash
+    yarn exec prettier . --write
+    ```
+- **자동 정렬 설정**
+    - WebStorm:  
+      파일 | 설정 | 언어 및 프레임워크 | JavaScript | Prettier  
+      jetbrains://WebStorm/settings?name=%EC%96%B8%EC%96%B4+%EB%B0%8F+%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC--JavaScript--Prettier  
+      에서 자동 활성화 또는 저장 시 적용 활성화
 - **TODO**: 커밋 시 자동 적용 (ex. husky 등 도입 필요)
 - **TailwindCSS**는 prettier-plugin-tailwindcss로 자동 정렬
 
@@ -231,8 +235,9 @@ yarn cypress     # (설정 시) Cypress E2E 테스트 실행
 ---
 
 ### 문의 및 기여
+
 - 이 프로젝트에 대한 문의, 버그 제보, 기여는 언제든 환영합니다!
 
 ---
 
-필요한 부분이 더 있거나, 각 항목별로 예시 코드/자세한 설명이 더 필요하면 말씀해 주세요! 
+필요한 부분이 더 있거나, 각 항목별로 예시 코드/자세한 설명이 더 필요하면 말씀해 주세요!

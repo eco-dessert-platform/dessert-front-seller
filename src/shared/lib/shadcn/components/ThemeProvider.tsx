@@ -1,5 +1,5 @@
 // src/shared/providers/ThemeProvider.tsx
-import { useState, useLayoutEffect, ReactNode, useEffect } from 'react'
+import { ReactNode, useLayoutEffect, useState } from 'react'
 import { applyThemeVariables } from 'src/shared/utils/themeUtils'
 import {
     STORAGE_KEY,
