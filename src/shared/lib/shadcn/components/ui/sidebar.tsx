@@ -3,25 +3,25 @@ import { Slot } from '@radix-ui/react-slot'
 import { cva, VariantProps } from 'class-variance-authority'
 import { PanelLeftIcon } from 'lucide-react'
 
-import { useIsMobile } from 'src/shared/lib/shadcn/hooks/use-mobile.ts'
-import { cn } from 'src/shared/lib/shadcn/lib/utils.ts'
-import { Button } from 'src/shared/lib/shadcn/components/ui/button.tsx'
-import { Input } from 'src/shared/lib/shadcn/components/ui/input.tsx'
-import { Separator } from 'src/shared/lib/shadcn/components/ui/separator.tsx'
+import { useIsMobile } from 'src/shared/lib/shadcn/hooks/use-mobile'
+import { cn } from 'src/shared/lib/shadcn/lib/utils'
+import { Button } from 'src/shared/lib/shadcn/components/ui/button'
+import { Input } from 'src/shared/lib/shadcn/components/ui/input'
+import { Separator } from 'src/shared/lib/shadcn/components/ui/separator'
 import {
     Sheet,
     SheetContent,
     SheetDescription,
     SheetHeader,
     SheetTitle,
-} from 'src/shared/lib/shadcn/components/ui/sheet.tsx'
-import { Skeleton } from 'src/shared/lib/shadcn/components/ui/skeleton.tsx'
+} from 'src/shared/lib/shadcn/components/ui/sheet'
+import { Skeleton } from 'src/shared/lib/shadcn/components/ui/skeleton'
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from 'src/shared/lib/shadcn/components/ui/tooltip.tsx'
+} from 'src/shared/lib/shadcn/components/ui/tooltip'
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state'
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7

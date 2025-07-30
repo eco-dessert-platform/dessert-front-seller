@@ -4,6 +4,7 @@ import BGSlayout from 'src/shared/layouts/BGSlayout.tsx'
 const HomePage = () => {
     return (
         <BGSlayout>
+            sdf
             <Home />
         </BGSlayout>
     )

@@ -864,7 +864,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-collapsible@npm:1.1.11":
+"@radix-ui/react-collapsible@npm:1.1.11, @radix-ui/react-collapsible@npm:^1.1.11":
   version: 1.1.11
   resolution: "@radix-ui/react-collapsible@npm:1.1.11"
   dependencies:
@@ -7114,6 +7114,7 @@ __metadata:
     "@chromatic-com/storybook": "npm:^3"
     "@eslint/js": "npm:^9.21.0"
     "@radix-ui/react-accordion": "npm:^1.2.11"
+    "@radix-ui/react-collapsible": "npm:^1.1.11"
     "@radix-ui/react-dialog": "npm:^1.1.14"
     "@radix-ui/react-label": "npm:^2.1.7"
     "@radix-ui/react-scroll-area": "npm:^1.2.3"
