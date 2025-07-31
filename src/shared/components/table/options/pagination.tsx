@@ -9,7 +9,12 @@ import {
 } from 'src/shared/lib/shadcn/components/ui/pagination.tsx'
 import { Table } from '@tanstack/react-table'
 
-export const renderPagination = <TData,>(table: Table<TData>, showPageNumbers: boolean, maxVisiblePages: number, align: 'left' | 'center' | 'right') => {
+export const renderPagination = <TData,>(
+    table: Table<TData>,
+    showPageNumbers: boolean,
+    maxVisiblePages: number,
+    align: 'left' | 'center' | 'right',
+) => {
     const generatePageNumbers = () => {
         if (!showPageNumbers) return []
 
@@ -43,8 +48,8 @@ export const renderPagination = <TData,>(table: Table<TData>, showPageNumbers: b
         align === 'center'
             ? 'justify-center'
             : align === 'left'
-                ? 'justify-start'
-                : 'justify-end'
+              ? 'justify-start'
+              : 'justify-end'
 
     const currentPage = table.getState().pagination.pageIndex + 1
     const totalPages = table.getPageCount()
@@ -57,7 +62,11 @@ export const renderPagination = <TData,>(table: Table<TData>, showPageNumbers: b
                     <PaginationItem>
                         <PaginationPrevious
                             onClick={() => table.previousPage()}
-                            className={!table.getCanPreviousPage() ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                            className={
+                                !table.getCanPreviousPage()
+                                    ? 'pointer-events-none opacity-50'
+                                    : 'cursor-pointer'
+                            }
                         />
                     </PaginationItem>
 
@@ -67,7 +76,9 @@ export const renderPagination = <TData,>(table: Table<TData>, showPageNumbers: b
                                 <>
                                     <PaginationItem>
                                         <PaginationLink
-                                            onClick={() => table.setPageIndex(0)}
+                                            onClick={() =>
+                                                table.setPageIndex(0)
+                                            }
                                             isActive={currentPage === 1}
                                             className="cursor-pointer"
                                         >
@@ -85,7 +96,9 @@ export const renderPagination = <TData,>(table: Table<TData>, showPageNumbers: b
                             {pageNumbers.map((pageNum) => (
                                 <PaginationItem key={pageNum}>
                                     <PaginationLink
-                                        onClick={() => table.setPageIndex(pageNum - 1)}
+                                        onClick={() =>
+                                            table.setPageIndex(pageNum - 1)
+                                        }
                                         isActive={currentPage === pageNum}
                                         className="cursor-pointer"
                                     >
@@ -94,17 +107,25 @@ export const renderPagination = <TData,>(table: Table<TData>, showPageNumbers: b
                                 </PaginationItem>
                             ))}
 
-                            {pageNumbers[pageNumbers.length - 1] < totalPages && (
+                            {pageNumbers[pageNumbers.length - 1] <
+                                totalPages && (
                                 <>
-                                    {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
+                                    {pageNumbers[pageNumbers.length - 1] <
+                                        totalPages - 1 && (
                                         <PaginationItem>
                                             <PaginationEllipsis />
                                         </PaginationItem>
                                     )}
                                     <PaginationItem>
                                         <PaginationLink
-                                            onClick={() => table.setPageIndex(totalPages - 1)}
-                                            isActive={currentPage === totalPages}
+                                            onClick={() =>
+                                                table.setPageIndex(
+                                                    totalPages - 1,
+                                                )
+                                            }
+                                            isActive={
+                                                currentPage === totalPages
+                                            }
                                             className="cursor-pointer"
                                         >
                                             {totalPages}
@@ -118,7 +139,11 @@ export const renderPagination = <TData,>(table: Table<TData>, showPageNumbers: b
                     <PaginationItem>
                         <PaginationNext
                             onClick={() => table.nextPage()}
-                            className={!table.getCanNextPage() ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                            className={
+                                !table.getCanNextPage()
+                                    ? 'pointer-events-none opacity-50'
+                                    : 'cursor-pointer'
+                            }
                         />
                     </PaginationItem>
                 </PaginationContent>

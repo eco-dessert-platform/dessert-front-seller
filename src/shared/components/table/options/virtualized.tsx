@@ -1,11 +1,24 @@
 import { flexRender, Row, Table as TanstackTable } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'src/shared/lib/shadcn/components/ui/table.tsx'
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from 'src/shared/lib/shadcn/components/ui/table.tsx'
 import { ScrollArea } from 'src/shared/lib/shadcn/components/ui/scroll-area.tsx'
 import { useEffect, useRef, useState } from 'react'
 import { VirtualizationOptions } from './types.ts'
 
-export const VirtualizedTable = <TData,>({ table, virtualization }: { table: TanstackTable<TData>, virtualization: VirtualizationOptions }) => {
+export const VirtualizedTable = <TData,>({
+    table,
+    virtualization,
+}: {
+    table: TanstackTable<TData>
+    virtualization: VirtualizationOptions
+}) => {
     const {
         rowHeight = 52,
         containerHeight = 400,
@@ -19,7 +32,9 @@ export const VirtualizedTable = <TData,>({ table, virtualization }: { table: Tan
 
     useEffect(() => {
         if (parentRef.current) {
-            const viewport = parentRef.current.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement
+            const viewport = parentRef.current.querySelector(
+                '[data-radix-scroll-area-viewport]',
+            ) as HTMLElement
             setScrollElement(viewport)
         }
     }, [])
@@ -40,10 +55,16 @@ export const VirtualizedTable = <TData,>({ table, virtualization }: { table: Tan
                 style={{ height: containerHeight }}
                 className="w-full"
             >
-                <div style={{ height: virtualizer.getTotalSize() + rowHeight, width: '100%', position: 'relative' }}>
+                <div
+                    style={{
+                        height: virtualizer.getTotalSize() + rowHeight,
+                        width: '100%',
+                        position: 'relative',
+                    }}
+                >
                     {/* 고정 헤더 */}
-                    <div className="sticky top-0 z-10 bg-background border-b">
-                        <Table className="table-fixed w-full">
+                    <div className="bg-background sticky top-0 z-10 border-b">
+                        <Table className="w-full table-fixed">
                             <TableHeader>
                                 {table.getHeaderGroups().map((headerGroup) => (
                                     <TableRow key={headerGroup.id}>
@@ -52,16 +73,20 @@ export const VirtualizedTable = <TData,>({ table, virtualization }: { table: Tan
                                                 key={header.id}
                                                 className="truncate"
                                                 style={{
-                                                    width: header.getSize() !== 150 ? `${header.getSize()}px` : `${100 / headerGroup.headers.length}%`,
-                                                    height: rowHeight
+                                                    width:
+                                                        header.getSize() !== 150
+                                                            ? `${header.getSize()}px`
+                                                            : `${100 / headerGroup.headers.length}%`,
+                                                    height: rowHeight,
                                                 }}
                                             >
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(
-                                                        header.column.columnDef.header,
-                                                        header.getContext(),
-                                                    )}
+                                                          header.column
+                                                              .columnDef.header,
+                                                          header.getContext(),
+                                                      )}
                                             </TableHead>
                                         ))}
                                     </TableRow>
@@ -87,26 +112,36 @@ export const VirtualizedTable = <TData,>({ table, virtualization }: { table: Tan
                                     transform: `translateY(${virtualRow.start}px)`,
                                 }}
                             >
-                                <Table className="table-fixed w-full">
+                                <Table className="w-full table-fixed">
                                     <TableBody>
                                         <TableRow
-                                            data-state={row.getIsSelected() && 'selected'}
+                                            data-state={
+                                                row.getIsSelected() &&
+                                                'selected'
+                                            }
                                             style={{ height: rowHeight }}
                                         >
-                                            {row.getVisibleCells().map((cell) => (
-                                                <TableCell
-                                                    key={cell.id}
-                                                    className="truncate"
-                                                    style={{
-                                                        width: cell.column.getSize() !== 150 ? `${cell.column.getSize()}px` : `${100 / row.getVisibleCells().length}%`
-                                                    }}
-                                                >
-                                                    {flexRender(
-                                                        cell.column.columnDef.cell,
-                                                        cell.getContext(),
-                                                    )}
-                                                </TableCell>
-                                            ))}
+                                            {row
+                                                .getVisibleCells()
+                                                .map((cell) => (
+                                                    <TableCell
+                                                        key={cell.id}
+                                                        className="truncate"
+                                                        style={{
+                                                            width:
+                                                                cell.column.getSize() !==
+                                                                150
+                                                                    ? `${cell.column.getSize()}px`
+                                                                    : `${100 / row.getVisibleCells().length}%`,
+                                                        }}
+                                                    >
+                                                        {flexRender(
+                                                            cell.column
+                                                                .columnDef.cell,
+                                                            cell.getContext(),
+                                                        )}
+                                                    </TableCell>
+                                                ))}
                                         </TableRow>
                                     </TableBody>
                                 </Table>

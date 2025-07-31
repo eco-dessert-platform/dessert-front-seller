@@ -3,6 +3,8 @@ import {
     getCoreRowModel,
     getPaginationRowModel,
     useReactTable,
+    SortingState,
+    getSortedRowModel,
 } from '@tanstack/react-table'
 import {
     Table,
@@ -15,8 +17,14 @@ import {
 import { DataTableProps } from './options/types.ts'
 import { renderPagination } from './options/pagination.tsx'
 import { VirtualizedTable } from './options/virtualized.tsx'
+import React from 'react'
 
-export function SSdataTable<TData, TValue>({ columns, data, pagination = {}, virtualization = {} }: DataTableProps<TData, TValue>) {
+export function SSdataTable<TData, TValue>({
+    columns,
+    data,
+    pagination = {},
+    virtualization = {},
+}: DataTableProps<TData, TValue>) {
     const {
         enabled: paginationEnabled = false,
         pageSize = 10,
@@ -27,6 +35,8 @@ export function SSdataTable<TData, TValue>({ columns, data, pagination = {}, vir
     } = pagination
 
     const { enabled: virtualEnabled = false } = virtualization
+
+    const [sorting, setSorting] = React.useState<SortingState>([])
 
     const table = useReactTable({
         data,
@@ -39,16 +49,29 @@ export function SSdataTable<TData, TValue>({ columns, data, pagination = {}, vir
                 pageIndex: 0,
             },
         },
+        onSortingChange: setSorting,
+        getSortedRowModel: getSortedRowModel(),
+        state: {
+            sorting,
+        },
+
     })
 
-    const paginationComponent = paginationEnabled ? renderPagination(table, showPageNumbers, maxVisiblePages, align) : null
+    const paginationComponent = paginationEnabled
+        ? renderPagination(table, showPageNumbers, maxVisiblePages, align)
+        : null
 
     if (virtualEnabled) {
         return (
             <div>
-                {(position === 'top' || position === 'both') && paginationComponent}
-                <VirtualizedTable table={table} virtualization={virtualization} />
-                {(position === 'bottom' || position === 'both') && paginationComponent}
+                {(position === 'top' || position === 'both') &&
+                    paginationComponent}
+                <VirtualizedTable
+                    table={table}
+                    virtualization={virtualization}
+                />
+                {(position === 'bottom' || position === 'both') &&
+                    paginationComponent}
             </div>
         )
     }
@@ -57,7 +80,7 @@ export function SSdataTable<TData, TValue>({ columns, data, pagination = {}, vir
         <div>
             {(position === 'top' || position === 'both') && paginationComponent}
             <div className="overflow-hidden rounded-md border">
-                <Table className="table-fixed w-full">
+                <Table className="w-full table-fixed">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
@@ -66,15 +89,19 @@ export function SSdataTable<TData, TValue>({ columns, data, pagination = {}, vir
                                         key={header.id}
                                         className="truncate"
                                         style={{
-                                            width: header.getSize() !== 150 ? `${header.getSize()}px` : `${100 / headerGroup.headers.length}%`
+                                            width:
+                                                header.getSize() !== 150
+                                                    ? `${header.getSize()}px`
+                                                    : `${100 / headerGroup.headers.length}%`,
                                         }}
                                     >
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext(),
-                                            )}
+                                                  header.column.columnDef
+                                                      .header,
+                                                  header.getContext(),
+                                              )}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -85,7 +112,9 @@ export function SSdataTable<TData, TValue>({ columns, data, pagination = {}, vir
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
-                                    data-state={row.getIsSelected() && 'selected'}
+                                    data-state={
+                                        row.getIsSelected() && 'selected'
+                                    }
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell
@@ -113,7 +142,8 @@ export function SSdataTable<TData, TValue>({ columns, data, pagination = {}, vir
                     </TableBody>
                 </Table>
             </div>
-            {(position === 'bottom' || position === 'both') && paginationComponent}
+            {(position === 'bottom' || position === 'both') &&
+                paginationComponent}
         </div>
     )
 }
