@@ -54,6 +54,25 @@ export interface VirtualizationOptions {
     overscan?: number
 }
 
+export interface SearchOptions {
+    /**
+     * 검색을 적용할 컬럼의 키 배열입니다.
+     */
+    columns?: string[]
+    /**
+     * 검색창의 위치를 지정합니다. (기본값: 'top')
+     */
+    position?: 'top' | 'bottom' | 'both'
+    /**
+     * 검색창의 정렬 방향을 지정합니다. (기본값: 'left')
+     */
+    align?: 'left' | 'center' | 'right'
+    /**
+     * 검색창에 표시될 플레이스홀더 텍스트입니다.
+     */
+    placeholder?: string
+}
+
 /**
  * SSdataTable 컴포넌트의 props를 정의합니다.
  * @template TData - 테이블에 표시될 데이터의 타입입니다.
@@ -77,6 +96,10 @@ export interface DataTableProps<TData, TValue> {
      * 가상화 관련 옵션입니다.
      */
     virtualization?: VirtualizationOptions
+    /**
+     * 검색 관련 옵션입니다.
+     */
+    search?: SearchOptions
 }
 
 /**
