@@ -72,7 +72,7 @@ const makeAsyncRequestState = <T, U>(
 const getErrorMessage = (
     status: number,
     fallbackMessage: string,
-    responseData?: any,
+    responseData?: unknown,
 ): string => {
     const messages: Record<number, string> = {
         400: '잘못된 요청입니다.',
@@ -82,8 +82,16 @@ const getErrorMessage = (
         500: '서버 오류가 발생했습니다.',
         503: '서버가 현재 사용할 수 없습니다.',
     }
-    return messages[status] || responseData?.message || fallbackMessage
+
+    let errorMessage = messages[status] || fallbackMessage
+
+    if (typeof responseData === 'object' && responseData !== null && 'message' in responseData) {
+        errorMessage = (responseData as { message: string }).message || errorMessage
+    }
+
+    return errorMessage
 }
+
 
 const createRequestSaga = <PayloadType, ResponseType>(
     prefix: string,
