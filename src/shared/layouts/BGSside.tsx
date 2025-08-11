@@ -75,8 +75,23 @@ export default function BGSside() {
 
     return (
         <Sidebar>
-            <SidebarHeader>
-                <h2 className="p-4 text-lg font-bold">관리자 메뉴</h2>
+            <SidebarHeader
+
+            >
+                <h2
+
+                    className="cursor-pointer p-4 text-lg font-bold">
+                    <span
+                        onClick={() => {
+                            navigate('/')
+                        }}
+
+
+                    >
+                관리자 메뉴
+                    </span>
+
+                    </h2>
             </SidebarHeader>
             <SidebarContent>
                 {menu.map((section) => (

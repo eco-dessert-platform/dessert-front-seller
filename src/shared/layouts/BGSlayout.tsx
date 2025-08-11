@@ -12,6 +12,7 @@ const BgSlayout = ({ children }: { children: React.ReactNode }) => {
             <main>
                 <SidebarTrigger />
                 {children}
+            {/*   todo  타이틀 처리 */}
             </main>
         </SidebarProvider>
     )
