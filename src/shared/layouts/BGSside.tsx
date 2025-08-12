@@ -15,6 +15,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarTrigger,
 } from '../lib/shadcn/components/ui/sidebar'
 import {
     Collapsible,
@@ -74,24 +75,23 @@ export default function BGSside() {
     const navigate = useNavigate()
 
     return (
-        <Sidebar>
-            <SidebarHeader
-
-            >
-                <h2
-
-                    className="cursor-pointer p-4 text-lg font-bold">
-                    <span
-                        onClick={() => {
-                            navigate('/')
-                        }}
-
-
+        <Sidebar collapsible="icon">
+            <SidebarHeader className="flex items-center justify-center p-4">
+                {/* 펼쳐진 상태 */}
+                <div className="w-full flex justify-between group-data-[state=collapsed]:hidden">
+                    <h2
+                        className="cursor-pointer text-lg font-bold"
+                        onClick={() => navigate('/')}
                     >
-                관리자 메뉴
-                    </span>
-
+                        관리자 메뉴
                     </h2>
+                    <SidebarTrigger />
+                </div>
+
+                {/* 접힌 상태 */}
+                <div className="hidden group-data-[state=collapsed]:block">
+                    <SidebarTrigger />
+                </div>
             </SidebarHeader>
             <SidebarContent>
                 {menu.map((section) => (
@@ -104,7 +104,8 @@ export default function BGSside() {
                             <SidebarGroupLabel asChild>
                                 <CollapsibleTrigger>
                                     {section.group}
-                                    <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                                    <ChevronDown
+                                        className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
                                 </CollapsibleTrigger>
                             </SidebarGroupLabel>
                             <CollapsibleContent>
@@ -117,6 +118,7 @@ export default function BGSside() {
                                                         item.href === pathname
                                                     }
                                                     asChild
+                                                    tooltip={item.title}
                                                 >
                                                     <div
                                                         onClick={() => {
