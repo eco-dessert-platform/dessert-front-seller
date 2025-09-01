@@ -1,11 +1,13 @@
 import {
     flexRender,
     getCoreRowModel,
-    getPaginationRowModel,
-    useReactTable,
-    SortingState,
-    getSortedRowModel,
     getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    Row,
+    RowData,
+    SortingState,
+    useReactTable,
 } from '@tanstack/react-table'
 import {
     Table,
@@ -20,6 +22,12 @@ import { renderPagination } from './options/pagination.tsx'
 import { VirtualizedTable } from './options/virtualized.tsx'
 import React from 'react'
 import { Input } from 'src/shared/lib/shadcn/components/ui/input.tsx'
+
+declare module '@tanstack/react-table' {
+    interface ColumnMeta<TData extends RowData, TValue> {
+        merge?: boolean
+    }
+}
 
 export function SSdataTable<TData, TValue>({
                                                columns,
@@ -70,24 +78,25 @@ export function SSdataTable<TData, TValue>({
         },
     })
 
-    const searchComponent = searchColumns.length > 0 ? (
-        <div
-            className={`flex items-center py-4 ${
-                {
-                    left: 'justify-start',
-                    center: 'justify-center',
-                    right: 'justify-end',
-                }[searchAlign]
-            }`}
-        >
-            <Input
-                placeholder={placeholder}
-                value={globalFilter ?? ''}
-                onChange={(event) => setGlobalFilter(event.target.value)}
-                className="max-w-sm"
-            />
-        </div>
-    ) : null
+    const searchComponent =
+        searchColumns.length > 0 ? (
+            <div
+                className={`flex items-center py-4 ${
+                    {
+                        left: 'justify-start',
+                        center: 'justify-center',
+                        right: 'justify-end',
+                    }[searchAlign]
+                }`}
+            >
+                <Input
+                    placeholder={placeholder}
+                    value={globalFilter ?? ''}
+                    onChange={(event) => setGlobalFilter(event.target.value)}
+                    className="max-w-sm"
+                />
+            </div>
+        ) : null
 
     const paginationComponent = paginationEnabled
         ? renderPagination(table, showPageNumbers, maxVisiblePages, align)
@@ -96,18 +105,55 @@ export function SSdataTable<TData, TValue>({
     if (virtualEnabled) {
         return (
             <div>
-                {(searchPosition === 'top' || searchPosition === 'both') && searchComponent}
-                {(position === 'top' || position === 'both') && paginationComponent}
-                <VirtualizedTable table={table} virtualization={virtualization} />
-                {(position === 'bottom' || position === 'both') && paginationComponent}
-                {(searchPosition === 'bottom' || searchPosition === 'both') && searchComponent}
+                {(searchPosition === 'top' || searchPosition === 'both') &&
+                    searchComponent}
+                {(position === 'top' || position === 'both') &&
+                    paginationComponent}
+                <VirtualizedTable
+                    table={table}
+                    virtualization={virtualization}
+                />
+                {(position === 'bottom' || position === 'both') &&
+                    paginationComponent}
+                {(searchPosition === 'bottom' || searchPosition === 'both') &&
+                    searchComponent}
             </div>
         )
     }
 
+
+    function getRowSpans(
+        rows: Row<TData>[],
+        columnId: string
+    ): Record<string, number> {
+        const spans: Record<string, number> = {};
+        let prevValue: unknown = null;
+        let startRowId: string | null = null;
+        let count = 0;
+
+        rows.forEach((row) => {
+            const value = row.getValue(columnId);
+
+            if (value === prevValue) {
+                count++;
+                spans[startRowId!] = count; // 첫 행에 누적 rowSpan
+                spans[row.id] = 0; // 병합된 나머지는 숨김
+            } else {
+                prevValue = value;
+                startRowId = row.id;
+                count = 1;
+                spans[row.id] = 1;
+            }
+        });
+
+        return spans;
+    }
+
+
     return (
         <div>
-            {(searchPosition === 'top' || searchPosition === 'both') && searchComponent}
+            {(searchPosition === 'top' || searchPosition === 'both') &&
+                searchComponent}
             {(position === 'top' || position === 'both') && paginationComponent}
             <div className="overflow-hidden rounded-md border">
                 <Table className="w-full table-fixed">
@@ -128,7 +174,8 @@ export function SSdataTable<TData, TValue>({
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
-                                                header.column.columnDef.header,
+                                                header.column.columnDef
+                                                    .header,
                                                 header.getContext(),
                                             )}
                                     </TableHead>
@@ -137,37 +184,38 @@ export function SSdataTable<TData, TValue>({
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows.length ? (
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={row.getIsSelected() && 'selected'}
-                                >
-                                    {row.getVisibleCells().map((cell) => (
+                        {table.getRowModel().rows.map((row) => (
+                            <TableRow key={row.id}>
+                                {row.getVisibleCells().map((cell) => {
+                                    const colDef = cell.column.columnDef;
+                                    const mergeEnabled = colDef.meta?.merge;
+
+                                    if (mergeEnabled) {
+                                        const spans = getRowSpans(table.getRowModel().rows, cell.column.id);
+                                        const span = spans[row.id];
+                                        if (span === 0) return null;
+                                        return (
+                                            <TableCell key={cell.id} rowSpan={span} className="truncate">
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </TableCell>
+                                        );
+                                    }
+
+                                    return (
                                         <TableCell key={cell.id} className="truncate">
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className="h-24 text-center"
-                                >
-                                    No results.
-                                </TableCell>
+                                    );
+                                })}
                             </TableRow>
-                        )}
+                        ))}
                     </TableBody>
                 </Table>
             </div>
-            {(position === 'bottom' || position === 'both') && paginationComponent}
-            {(searchPosition === 'bottom' || searchPosition === 'both') && searchComponent}
+            {(position === 'bottom' || position === 'both') &&
+                paginationComponent}
+            {(searchPosition === 'bottom' || searchPosition === 'both') &&
+                searchComponent}
         </div>
     )
 }
