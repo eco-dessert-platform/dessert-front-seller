@@ -52,13 +52,13 @@ const BGRside = () => {
                 <Accordion type="multiple" >
                     {menu.map((section) => (
                         <AccordionItem value={section.group} key={section.group}>
-                            <AccordionTrigger className="w-[208px] h-[53px] no-underline hover:no-underline px-[8px]">
+                            <AccordionTrigger className="w-[208px] text-gray-800 text-bold text-18 h-[53px] no-underline hover:no-underline px-[8px]">
                                 {section.group}
                             </AccordionTrigger>
                             <AccordionContent>
                                 {section.items.map((item) => (
                                     <div className="w-[208px] h-[63px] px-[8px] py-[4px] " key={item.title}>
-                                        <Button variant="ghost" className="  px-[12px]  w-full  h-full text-left justify-start" onClick={() => navigate(item.href)}>
+                                        <Button variant="ghost" className=" text-18 text-gray-800 px-[12px]  w-full  h-full text-left justify-start" onClick={() => navigate(item.href)}>
                                             {item.title}
                                         </Button>
                                     </div>
