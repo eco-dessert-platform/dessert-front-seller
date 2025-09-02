@@ -26,7 +26,7 @@ const ColorPicker = ({
 
     const dispatch = useDispatch()
 
-    const debouncedUpdate = useMemo(
+    const debouncedUpdate: ((key: string, value: string) => void) & { cancel: () => void } = useMemo(
         () =>
             debounce((key: string, value: string) => {
                 dispatch(themeAction.setColor({ key, value }))
