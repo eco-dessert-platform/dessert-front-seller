@@ -26,7 +26,7 @@ function App() {
     }, [])
 
     return (
-        <ThemeProvider>
+        <ThemeProvider defaultTheme={'light'}>
             <RouterProvider router={router} />
             <ToastContainer
                 position="top-right"

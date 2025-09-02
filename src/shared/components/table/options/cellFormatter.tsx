@@ -1,10 +1,8 @@
-import { ArrowUpDown } from 'lucide-react'
 import React from 'react'
 import {
     CellFormatOptions,
     Region,
 } from 'src/shared/components/table/options/types.ts'
-import { Button } from 'src/shared/lib/shadcn/components/ui/button.tsx'
 
 const regionFormatMap: Record<Region, { locale: string; currency: string }> = {
     kr: { locale: 'ko-KR', currency: 'KRW' },
@@ -70,6 +68,8 @@ export const createCellFormatter = <T extends object>(
             right: 'text-right',
         }[align]
 
-        return <div className={`${alignClass} font-medium`}>{displayValue}   </div>
+        return (
+            <div className={`${alignClass} font-medium`}>{displayValue} </div>
+        )
     },
 })

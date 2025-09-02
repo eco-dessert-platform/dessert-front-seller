@@ -16,12 +16,7 @@ export const createHeaderFormatter = <T extends object>(
     options: HeaderFormatOptions<T>,
 ): Partial<ColumnDef<T>> => ({
     header: ({ column }) => {
-        const {
-            label,
-            align = 'left',
-            sort = false,
-            customHeader,
-        } = options
+        const { label, align = 'left', sort = false, customHeader } = options
 
         // 사용자 정의 렌더링 함수가 있으면 그것을 사용
         if (customHeader) {
@@ -37,7 +32,7 @@ export const createHeaderFormatter = <T extends object>(
         // 정렬이 활성화된 경우
         if (sort) {
             return (
-                <div className={`flex items-center w-full ${alignClass}`}>
+                <div className={`flex w-full items-center ${alignClass}`}>
                     {label}
                     <Button
                         variant="ghost"
@@ -46,13 +41,19 @@ export const createHeaderFormatter = <T extends object>(
                         }
                         className={'p-0 hover:bg-transparent'}
                     >
-                        <ArrowUpDown className=" h-4 w-4" />
+                        <ArrowUpDown className="h-4 w-4" />
                     </Button>
                 </div>
             )
         }
 
         // 기본 헤더
-        return <div className={`w-full ${{left: 'text-left', center: 'text-center', right: 'text-right'}[align]}`}>{label}</div>
+        return (
+            <div
+                className={`w-full ${{ left: 'text-left', center: 'text-center', right: 'text-right' }[align]}`}
+            >
+                {label}
+            </div>
+        )
     },
 })

@@ -16,12 +16,12 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarTrigger,
-} from '../lib/shadcn/components/ui/sidebar'
+} from '../lib/shadcn/components/ui/sidebar.tsx'
 import {
     Collapsible,
     CollapsibleContent,
     CollapsibleTrigger,
-} from 'src/shared/lib/shadcn/components/ui/collapsible'
+} from 'src/shared/lib/shadcn/components/ui/collapsible.tsx'
 import { useNavigate } from 'react-router'
 
 const menu = [
@@ -64,7 +64,7 @@ const menu = [
     },
 ]
 
-export default function BGSside() {
+export default function ShadcnSide() {
     const { pathname } = useSelector(
         (state: RootState) => ({
             pathname: state.routerReducer.location.path,
@@ -78,7 +78,7 @@ export default function BGSside() {
         <Sidebar collapsible="icon">
             <SidebarHeader className="flex items-center justify-center p-4">
                 {/* 펼쳐진 상태 */}
-                <div className="w-full flex justify-between group-data-[state=collapsed]:hidden">
+                <div className="flex w-full justify-between group-data-[state=collapsed]:hidden">
                     <h2
                         className="cursor-pointer text-lg font-bold"
                         onClick={() => navigate('/')}
@@ -104,8 +104,7 @@ export default function BGSside() {
                             <SidebarGroupLabel asChild>
                                 <CollapsibleTrigger>
                                     {section.group}
-                                    <ChevronDown
-                                        className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                                    <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
                                 </CollapsibleTrigger>
                             </SidebarGroupLabel>
                             <CollapsibleContent>

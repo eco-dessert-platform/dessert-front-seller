@@ -85,13 +85,17 @@ const getErrorMessage = (
 
     let errorMessage = messages[status] || fallbackMessage
 
-    if (typeof responseData === 'object' && responseData !== null && 'message' in responseData) {
-        errorMessage = (responseData as { message: string }).message || errorMessage
+    if (
+        typeof responseData === 'object' &&
+        responseData !== null &&
+        'message' in responseData
+    ) {
+        errorMessage =
+            (responseData as { message: string }).message || errorMessage
     }
 
     return errorMessage
 }
-
 
 const createRequestSaga = <PayloadType, ResponseType>(
     prefix: string,

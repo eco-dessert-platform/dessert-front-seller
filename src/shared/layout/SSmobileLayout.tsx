@@ -1,4 +1,4 @@
-import React ,{useEffect}from 'react'
+import React, { useEffect } from 'react'
 import { ScrollArea } from 'src/shared/lib/shadcn/components/ui/scroll-area.tsx'
 
 interface SSmobileProps {
@@ -16,11 +16,15 @@ interface SSmobileProps {
 const HEADER_HEIGHT = 57
 const FOOTER_HEIGHT = 68
 
-const SSmobileLayout: React.FC<SSmobileProps> = ({ header, footer, children }) => {
+const SSmobileLayout: React.FC<SSmobileProps> = ({
+    header,
+    footer,
+    children,
+}) => {
     const height = header ? HEADER_HEIGHT + FOOTER_HEIGHT : FOOTER_HEIGHT //todo  > 높이 자동으로 계산하게 변경 필요
 
     useEffect(() => {
-        const preventGesture = (e:TouchEvent) => {
+        const preventGesture = (e: TouchEvent) => {
             // 좌우 스와이프(터치 이동)일 때만 막기
             if (e.touches && e.touches.length === 1) {
                 e.preventDefault()
@@ -58,4 +62,3 @@ const SSmobileLayout: React.FC<SSmobileProps> = ({ header, footer, children }) =
 }
 
 export default SSmobileLayout
-

@@ -1,15 +1,11 @@
-import { createBrowserRouter, RouteObject, Outlet } from 'react-router'
+import { createBrowserRouter, Outlet, RouteObject } from 'react-router'
 import HomePage from 'src/pages/HomePage'
 import React from 'react'
 import NotFoundPage from 'src/pages/extra/NotFoundPage.tsx'
-import BGSlayout from 'src/shared/layouts/BGSlayout.tsx'
 
-const MODULES = import.meta.glob(
-    ['src/pages/url/**/*.tsx'],
-    {
-        eager: true,
-    },
-) as Record<string, { default: React.FC }>
+const MODULES = import.meta.glob(['src/pages/url/**/*.tsx'], {
+    eager: true,
+}) as Record<string, { default: React.FC }>
 
 const generateRoutes = (
     modules: Record<string, { default: React.FC }>,
@@ -39,27 +35,18 @@ const generateRoutes = (
 }
 
 const router = createBrowserRouter([
-
     {
         path: '/',
-        element: (
-            <BGSlayout>
-                <Outlet />
-            </BGSlayout>
-        ),
+        element: <Outlet />,
         errorElement: <NotFoundPage />,
         children: [
             {
                 index: true,
                 element: <HomePage />,
-
             },
             ...generateRoutes(MODULES),
-
         ],
     },
-
-
 ])
 
 export default router
