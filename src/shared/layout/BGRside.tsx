@@ -57,8 +57,8 @@ const BGRside = () => {
                             </AccordionTrigger>
                             <AccordionContent>
                                 {section.items.map((item) => (
-                                    <div className="w-[208px] h-[63px]" key={item.title}>
-                                        <Button variant="ghost" className="    w-full bg-red-500/10 h-full text-left justify-start" onClick={() => navigate(item.href)}>
+                                    <div className="w-[208px] h-[63px] px-[8px] py-[4px] " key={item.title}>
+                                        <Button variant="ghost" className="  px-[12px]  w-full  h-full text-left justify-start" onClick={() => navigate(item.href)}>
                                             {item.title}
                                         </Button>
                                     </div>
