@@ -1,9 +1,9 @@
 import React from 'react';
-import BGRheader from 'src/shared/layout/BGRheader.tsx'
+import BGRheader from 'src/shared/layout/BgrHeader.tsx'
 import { ScrollArea } from 'src/shared/lib/shadcn/components/ui/scroll-area.tsx'
 import BGRside from 'src/shared/layout/BGRside.tsx'
 
-const BGRlayout = ({ children }: { children: React.ReactNode }) => {
+const BgrLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <div className={'bg-background flex h-screen w-screen flex-col'}>
             <BGRheader />
@@ -12,7 +12,8 @@ const BGRlayout = ({ children }: { children: React.ReactNode }) => {
                 <BGRside />
 
                 <main className={'h-full w-[calc(100vw-240px)] bg-gray-50'}>
-                    <ScrollArea className={`h-full w-full`}>
+                    <ScrollArea className={`h-full w-full py-[40px] px-[90px]`}>
+
                         {children}
                     </ScrollArea>
                 </main>
@@ -21,4 +22,4 @@ const BGRlayout = ({ children }: { children: React.ReactNode }) => {
     )
 }
 
-export default BGRlayout
+export default BgrLayout

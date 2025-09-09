@@ -2,6 +2,7 @@ import { createBrowserRouter, Outlet, RouteObject } from 'react-router'
 import HomePage from 'src/pages/HomePage'
 import React from 'react'
 import NotFoundPage from 'src/pages/extra/NotFoundPage.tsx'
+import BgrLayout from 'src/shared/layout/BgrLayout.tsx'
 
 const MODULES = import.meta.glob(['src/pages/url/**/*.tsx'], {
     eager: true,
@@ -37,7 +38,7 @@ const generateRoutes = (
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <Outlet />,
+        element:       <BgrLayout><Outlet /></BgrLayout>,
         errorElement: <NotFoundPage />,
         children: [
             {
