@@ -1,5 +1,10 @@
-import { createSlice, Slice, SliceCaseReducers } from '@reduxjs/toolkit'
-import { AxiosResponse } from 'axios'
+import {
+    ActionReducerMapBuilder,
+    createSlice,
+    Slice,
+    SliceCaseReducers,
+} from '@reduxjs/toolkit'
+import { AxiosResponse, isAxiosError } from 'axios'
 import { call, put, takeLatest } from 'redux-saga/effects'
 import { AnyAction, SagaIterator } from 'redux-saga'
 
@@ -108,6 +113,7 @@ const createRequestSaga = <PayloadType, ResponseType>(
                 api,
                 action.payload,
             )
+
             const { status, data } = response
 
             if (status >= 400) {
@@ -129,13 +135,33 @@ const createRequestSaga = <PayloadType, ResponseType>(
                 type: `${prefix}/${reducerName}Success`,
                 payload: data,
             })
-        } catch (error) {
+        } catch (error: unknown) {
+            const fallbackMessage =
+                '서버에 문제가 있습니다. 관리자에게 문의하세요'
+            const errorMessage = extractErrorMessage(error, fallbackMessage)
+
             yield put({
                 type: `${prefix}/${reducerName}Fail`,
-                payload: '서버에 문제가 있습니다. 관리자에게 문의하세요',
+                payload: errorMessage,
             })
         }
     }
+}
+
+function extractErrorMessage(error: unknown, fallback: string): string {
+    if (isAxiosError(error) && error.response) {
+        return getErrorMessage(
+            error.response.status,
+            fallback,
+            error.response.data,
+        )
+    }
+
+    if (error instanceof Error) {
+        return error.message
+    }
+
+    return fallback
 }
 
 export function reduxMaker<
@@ -182,6 +208,36 @@ export function reduxMaker<
             },
             ...localReducers,
             ...asyncReducers,
+        },
+        extraReducers: (builder) => {
+            asyncRequests.forEach((request) => {
+                const { action, state: stateKey } = request
+
+                builder
+                    .addCase(
+                        `${prefix}/${action}Success`,
+                        (state, action: AnyAction) => {
+                            return {
+                                ...state,
+                                [stateKey]: reducerUtils.success(
+                                    action.payload,
+                                ),
+                            }
+                        },
+                    )
+                    .addCase(
+                        `${prefix}/${action}Fail`,
+                        (state, action: AnyAction) => {
+                            return {
+                                ...state,
+                                [stateKey]: reducerUtils.error(
+                                    state[stateKey]?.data,
+                                    action.payload,
+                                ),
+                            }
+                        },
+                    )
+            })
         },
     }) as Slice
 
