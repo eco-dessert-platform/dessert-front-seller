@@ -38,7 +38,11 @@ const generateRoutes = (
 const router = createBrowserRouter([
     {
         path: '/',
-        element:       <BgrLayout><Outlet /></BgrLayout>,
+        element: (
+            <BgrLayout>
+                <Outlet />
+            </BgrLayout>
+        ),
         errorElement: <NotFoundPage />,
         children: [
             {

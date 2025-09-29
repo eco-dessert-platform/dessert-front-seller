@@ -4,9 +4,7 @@ const BgrHeader = () => {
             className={
                 'border-border flex h-[80px] w-full items-center border-b'
             }
-        >
-
-        </header>
+        ></header>
     )
 }
 

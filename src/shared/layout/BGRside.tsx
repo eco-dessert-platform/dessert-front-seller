@@ -1,9 +1,9 @@
 import { ScrollArea } from 'src/shared/lib/shadcn/components/ui/scroll-area.tsx'
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
 } from 'src/shared/lib/shadcn/components/ui/accordion'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
 import { useNavigate } from 'react-router'
@@ -48,17 +48,27 @@ const BGRside = () => {
 
     return (
         <nav className={'border-border h-full w-[240px] border-r'}>
-            <ScrollArea className={`h-full w-full py-[24px] px-[16px]`}>
-                <Accordion type="multiple" >
+            <ScrollArea className={`h-full w-full px-[16px] py-[24px]`}>
+                <Accordion type="multiple">
                     {menu.map((section) => (
-                        <AccordionItem value={section.group} key={section.group}>
-                            <AccordionTrigger className="w-[208px] text-gray-800 text-bold text-18 h-[53px] no-underline hover:no-underline px-[8px]">
+                        <AccordionItem
+                            value={section.group}
+                            key={section.group}
+                        >
+                            <AccordionTrigger className="text-bold text-18 h-[53px] w-[208px] px-[8px] text-gray-800 no-underline hover:no-underline">
                                 {section.group}
                             </AccordionTrigger>
                             <AccordionContent>
                                 {section.items.map((item) => (
-                                    <div className="w-[208px] h-[63px] px-[8px] py-[4px] " key={item.title}>
-                                        <Button variant="ghost" className=" text-18 text-gray-800 px-[12px]  w-full  h-full text-left justify-start" onClick={() => navigate(item.href)}>
+                                    <div
+                                        className="h-[63px] w-[208px] px-[8px] py-[4px]"
+                                        key={item.title}
+                                    >
+                                        <Button
+                                            variant="ghost"
+                                            className="text-18 h-full w-full justify-start px-[12px] text-left text-gray-800"
+                                            onClick={() => navigate(item.href)}
+                                        >
                                             {item.title}
                                         </Button>
                                     </div>

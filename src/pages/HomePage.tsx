@@ -1,9 +1,7 @@
 import Home from 'src/features/Home.tsx'
 
 const HomePage = () => {
-    return (
-            <Home />
-    )
+    return <Home />
 }
 
 export default HomePage
