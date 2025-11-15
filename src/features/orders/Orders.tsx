@@ -25,6 +25,16 @@ type TabCategory = 'ALL' |
 'REFUND' |
 'CHANGE';
 
+type DeliveryStatus = 'PREPARING_PRODUCT' | 'SHIPPING' | 'COLLECTING' | 'COLLECTED' | 'DELIVERED';
+
+const DELIVERY_STATUS_MAP: Record<DeliveryStatus, string> = {
+    PREPARING_PRODUCT: '-',
+    SHIPPING: '상품배송',
+    COLLECTING: '수거중',
+    COLLECTED: '수거완료',
+    DELIVERED: '배송완료'
+};
+
 const TABS: Array<{ key: TabCategory, title: string }> = [
     { key: 'ALL', title: '전체' },
     { key: 'PAID', title: '결제완료' }, // unknown key
@@ -38,20 +48,100 @@ const TABS: Array<{ key: TabCategory, title: string }> = [
 
 type Table = {
     recipientName: string;
+    productName: string;
+    itemQuantity: number;
+    itemPrice: number;
     itemName: string;
     orderStatus: string; // enum
     orderNumber?: string;
     paymentAt: string;
     totalPaid: string;
     deliveryStatus: string; // enum
-    courierCompany: string;
-    trackingNumber: string;
+    courierCompany: string | null;
+    trackingNumber: string | null;
 }
 
 // ALL, PAYMENT_COMPLETED, PREPARING_ORDER, SHIPPED, DELIVERED
 // PAID와 PAYMENT_COMPLETED의 차이
 
 const columnHelper = createColumnHelper<Table>();
+
+// 날짜 포맷 함수 (YYYY.MM.DD)
+const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}.${month}.${day}`;
+};
+
+const MOCK_ORDERS = [
+    {
+        deliveryStatus: 'PREPARING_PRODUCT',
+        courierCompany: 'CJ 대한통운',
+        trackingNumber: '1234567890',
+        orderNumber: 'ORDER-20240921-00001',
+        paymentAt: '2025-11-08T11:54:18.375192088',
+        totalPaid: 200000,
+        recipientName: '홍길동',
+        orderItems: [
+            {
+                "boardTitle": "예제 1",
+                "itemName": "예제 2",
+                "quantity": 2,
+                "unitPrice": 50000,
+                "totalPrice": 100000,
+                "orderStatus": 'PAID',
+            },
+            {
+                "boardTitle": "쿠키 1",
+                "itemName": "쿠키 2",
+                "quantity": 1,
+                "unitPrice": 50000,
+                "totalPrice": 100000,
+                "orderStatus": 'PAID',
+            },
+        ],
+    },
+    {
+        deliveryStatus: 'SHIPPING',
+        courierCompany: '우체국 택배',
+        trackingNumber: '0987654321',
+        totalPaid: 100000,
+        orderNumber: 'ORDER-20240921-00002',
+        paymentAt: '2025-11-08T10:54:18.377200473',
+        recipientName: '김철수',
+        orderItems: [
+            {
+                "boardTitle": "식빵",
+                "itemName": "식빵",
+                "quantity": 2,
+                "unitPrice": 50000,
+                "totalPrice": 100000,
+                "orderStatus": 'PAID',
+            },
+        ],
+    },
+    {
+        deliveryStatus: 'PREPARING_PRODUCT',
+        courierCompany: null,
+        trackingNumber: null,
+        totalPaid: 150000,
+        orderNumber: 'ORDER-20240921-00003',
+        paymentAt: '2025-11-09T14:30:22.123456789',
+        recipientName: '이영희',
+        orderItems: [
+            {
+                "boardTitle": "케이크",
+                "itemName": "초코케이크",
+                "quantity": 1,
+                "unitPrice": 150000,
+                "totalPrice": 150000,
+                "orderStatus": 'PAID',
+            },
+        ],
+    },
+];
 
 const Orders = () => {
     const [activeTab, setActiveTab] = useState<TabCategory>('ALL');
@@ -120,64 +210,16 @@ const Orders = () => {
                         }
                     }
                 });
-                console.log('Selected items after order toggle:', Array.from(newItemSet));
+
                 return newItemSet;
             });
 
-            console.log('Selected orders:', Array.from(newSet));
             return newSet;
         });
     };
 
     const [response] = useState({
-        content: [
-            {
-                deliveryStatus: 'PREPARING_PRODUCT',
-                courierCompany: 'CJ 대한통운',
-                trackingNumber: '1234567890',
-                orderNumber: 'ORDER-20240921-00001',
-                paymentAt: '2025-11-08T11:54:18.375192088',
-                totalPaid: 200000,
-                recipientName: '홍길동',
-                orderItems: [
-                    {
-                        "boardTitle": "예제 1",
-                        "itemName": "예제 2",
-                        "quantity": 2,
-                        "unitPrice": 50000,
-                        "totalPrice": 100000,
-                        "orderStatus": 'PAID',
-                    },
-                    {
-                        "boardTitle": "쿠키 1",
-                        "itemName": "쿠키 2",
-                        "quantity": 1,
-                        "unitPrice": 50000,
-                        "totalPrice": 100000,
-                        "orderStatus": 'PAID',
-                    },
-                ],
-            },
-            {
-                deliveryStatus: 'SHIPPING',
-                courierCompany: '우체국 택배',
-                trackingNumber: '0987654321',
-                totalPaid: 100000,
-                orderNumber: 'ORDER-20240921-00002',
-                paymentAt: '2025-11-08T10:54:18.377200473',
-                recipientName: '김철수',
-                orderItems: [
-                    {
-                        "boardTitle": "식빵",
-                        "itemName": "식빵",
-                        "quantity": 2,
-                        "unitPrice": 50000,
-                        "totalPrice": 100000,
-                        "orderStatus": 'PAID',
-                    },
-                ],
-            },
-        ],
+        content: MOCK_ORDERS,
         page: 0,
         size: 10,
         totalPages: 48,
@@ -203,7 +245,10 @@ const Orders = () => {
     const tableData: Table[] = response.content.flatMap(order =>
         order.orderItems.map(item => ({
             recipientName: order.recipientName,
+            productName: item.boardTitle,
             itemName: item.itemName,
+            itemQuantity: item.quantity,
+            itemPrice: item.totalPrice,
             orderStatus: item.orderStatus,
             orderNumber: order.orderNumber,
             paymentAt: order.paymentAt,
@@ -339,7 +384,11 @@ const Orders = () => {
 
                 return (
                     <div className={isOrderSelected || isItemSelected ? 'bg-gray-100' : ''}>
-                        {row.original.itemName}
+                        <p className='text-14 text-gray-900'>{row.original.productName}</p>
+                        <div className='flex items-center gap-2'>
+                            <p className='text-12 text-gray-500'>{row.original.itemName} / {row.original.itemQuantity}개</p>
+                            <p className='text-12 text-gray-800 font-bold'>{row.original.itemPrice.toLocaleString()}원</p>
+                        </div>
                     </div>
                 );
             }
@@ -367,7 +416,7 @@ const Orders = () => {
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
-                        {row.original.paymentAt}
+                        {formatDate(row.original.paymentAt)}
                     </div>
                 );
             },
@@ -392,10 +441,12 @@ const Orders = () => {
             cell: ({ row }) => {
                 const orderNumber = row.original.orderNumber;
                 const isOrderSelected = orderNumber ? selectedOrders.has(orderNumber) : false;
+                const deliveryStatus = row.original.deliveryStatus;
+                const isValidDeliveryStatus = deliveryStatus in DELIVERY_STATUS_MAP;
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
-                        {row.original.deliveryStatus}
+                        {isValidDeliveryStatus ? DELIVERY_STATUS_MAP[deliveryStatus as DeliveryStatus] : deliveryStatus}
                     </div>
                 );
             },
@@ -409,7 +460,7 @@ const Orders = () => {
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
-                        {row.original.courierCompany}
+                        {row.original.courierCompany || '-'}
                     </div>
                 );
             },
@@ -420,10 +471,20 @@ const Orders = () => {
             cell: ({ row }) => {
                 const orderNumber = row.original.orderNumber;
                 const isOrderSelected = orderNumber ? selectedOrders.has(orderNumber) : false;
+                const trackingNumber = row.original.trackingNumber;
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
-                        {row.original.trackingNumber}
+                        {trackingNumber ? (
+                            <div className="flex flex-col gap-1">
+                                <span>{trackingNumber}</span>
+                                <button className="w-[56px] h-[30px] text-12 text-gray-800 border border-gray-200 rounded-lg">
+                                    수정
+                                </button>
+                            </div>
+                        ) : (
+                            <span>-</span>
+                        )}
                     </div>
                 );
             },
@@ -562,12 +623,5 @@ const Orders = () => {
         </>
     )
 }
-
-                                        // {/* 운송장 번호가 있는 경우 : 번호 + 수정 버튼
-                                        //  * 없는 경우 - ,
-                                        //  * 입력 가능한 상태? = 입력 버튼
-                                        //  */}
-// {/* TODO :: 결제수단 응답에 없음 */}
-// {/* TODO :: 총 주문금액 응답에 없음 */}
 
 export default Orders
