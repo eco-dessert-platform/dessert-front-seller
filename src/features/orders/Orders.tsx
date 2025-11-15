@@ -14,6 +14,7 @@ import { Table } from 'src/shared/lib/shadcn/components/ui/table'
 import { useState } from 'react'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
 import { createColumnHelper } from '@tanstack/react-table'
+import OrderStatusLabel from './OrderStatusLabel'
 
 type TabCategory = 'ALL' |
 'PAID' |
@@ -353,7 +354,7 @@ const Orders = () => {
 
                 return (
                     <div className={isOrderSelected || isItemSelected ? 'bg-gray-100' : ''}>
-                        {row.original.orderStatus}
+                        <OrderStatusLabel type={row.original.orderStatus} text={row.original.orderStatus} />
                     </div>
                 );
             }
@@ -380,7 +381,7 @@ const Orders = () => {
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
-                        {row.original.totalPaid}
+                        {Number(row.original.totalPaid).toLocaleString()}
                     </div>
                 );
             },
