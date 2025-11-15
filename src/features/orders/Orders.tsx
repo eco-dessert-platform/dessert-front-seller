@@ -610,11 +610,13 @@ const Orders = () => {
                                 </p>
                             </div>
                         </div>
-                        {/* TODO :: 페이지네이션 컴포넌트 못 씀. 직접 구현 필요 */}
-                        <div>{`<< < ${response.page} > >>`}</div>
                     </div>
                     
-                    <SSdataTable columns={columns} data={tableData} />
+                    <SSdataTable columns={columns} data={tableData} pagination={{
+                        enabled: true,
+                        position: 'top',
+                        pageSize: 100,
+                    }} />
                     {/* TODO :: empty UI */}
 
                     {/* TODO :: checkbox에 대한 MESSAGE UI */}
