@@ -1,4 +1,5 @@
 import CheckOff_icon from 'src/assets/icons/icn-check-off.svg?react'
+import React from 'react'
 
 interface TermsCheckboxProps {
     label: string
@@ -59,7 +60,7 @@ export const TermsAllAgree = ({ checked, onChange }: TermsAllAgreeProps) => {
                     onClick={() => onChange(!checked)}
                     className="cursor-pointer"
                 >
-                    <CheckOff />
+                    <CheckOff_icon />
                 </div>
                 <p className="text-title-16-m text-gray-900">전체 동의</p>
             </div>
