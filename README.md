@@ -162,7 +162,7 @@ yarn cypress     # (if configured) Run Cypress E2E tests
 ### Example
 
 ```ts
-// src/app/store/redux/reduxStore.tsx
+// src/global/store/redux/reduxStore.tsx
 import { configureStore } from '@reduxjs/toolkit'
 import sampleReducer from 'src/features/sample/sampleReducer'
 

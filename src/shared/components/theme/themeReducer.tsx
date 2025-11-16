@@ -1,4 +1,4 @@
-import { reduxMaker } from 'src/app/store/redux/reduxUtils.ts'
+import { reduxMaker } from 'src/global/store/redux/reduxUtils.ts'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { colorGroups } from 'src/shared/components/theme/colorConstants.tsx'
 

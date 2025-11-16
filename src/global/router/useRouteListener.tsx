@@ -1,6 +1,6 @@
 import { useLayoutEffect, useState } from 'react'
-import { useAppDispatch } from 'src/app/store/redux/reduxHooks.tsx'
-import { routerAction } from 'src/app/router/routerReducer.tsx'
+import { useAppDispatch } from 'src/global/store/redux/reduxHooks.tsx'
+import { routerAction } from 'src/global/router/routerReducer.tsx'
 
 const useRouteListener = () => {
     const dispatch = useAppDispatch()

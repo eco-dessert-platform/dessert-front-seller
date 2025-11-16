@@ -1,6 +1,6 @@
 import { RouterProvider } from 'react-router'
-import router from 'src/app/router/router.tsx'
-import useRouteListener from 'src/app/router/useRouteListener.tsx'
+import router from 'src/global/router/router.tsx'
+import useRouteListener from 'src/global/router/useRouteListener.tsx'
 import { Bounce, ToastContainer } from 'react-toastify'
 import { ThemeProvider } from 'src/shared/lib/shadcn/components/ThemeProvider.tsx'
 import { useEffect } from 'react'

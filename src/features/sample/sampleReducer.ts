@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { AsyncRequest, reduxMaker } from 'src/app/store/redux/reduxUtils.ts'
+import { AsyncRequest, reduxMaker } from 'src/global/store/redux/reduxUtils.ts'
 import { PayloadAction } from '@reduxjs/toolkit'
 
 const prefix = 'sample'
