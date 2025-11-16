@@ -4,9 +4,10 @@ import React, { ReactNode } from 'react'
 
 interface WhLayoutProps {
     children?: ReactNode
+    title?: string
 }
 
-const WhLayout = ({ children }: WhLayoutProps) => {
+const WhLayout = ({ children, title }: WhLayoutProps) => {
     return (
         <div>
             <WhHeader />
@@ -16,3 +17,4 @@ const WhLayout = ({ children }: WhLayoutProps) => {
 }
 
 export default WhLayout
+

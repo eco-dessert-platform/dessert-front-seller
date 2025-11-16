@@ -1,7 +1,9 @@
+
+
 import axios from 'axios'
 
 export const client = axios.create({
-    baseURL: '',
+    baseURL: 'https://dummyjson.com',
 
     // import.meta.env.VITE_API_HOST,
     // xsrfCookieName: 'csrftoken',
