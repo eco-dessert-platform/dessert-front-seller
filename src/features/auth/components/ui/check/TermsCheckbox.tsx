@@ -14,7 +14,6 @@ export const TermsCheckbox = ({
     required = false,
     checked,
 
-
     onChange,
     content,
 }: TermsCheckboxProps) => {
