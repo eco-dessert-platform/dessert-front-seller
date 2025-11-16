@@ -6,7 +6,7 @@ import BgrHeader from 'src/shared/layout/BgrHeader'
 import ButtonGoogle_icon from 'src/assets/icons/button/bbangle-google-button.svg?react'
 import ButtonKakao_icon from 'src/assets/icons/button/bbangle-kakao-button.svg?react'
 import AuthCard from 'src/features/auth/components/layout/AuthCard'
-import { AUTH_MESSAGES } from 'src/features/auth/constants/authMessages'
+import { AUTH_MESSAGES } from 'src/features/auth/locales/authMessages'
 
 const LoginPage = () => {
     return (

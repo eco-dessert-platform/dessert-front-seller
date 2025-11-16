@@ -1,15 +1,7 @@
 import { ReactNode } from 'react'
+import { TermsData } from 'src/features/auth/type/terms.ts'
 
-export interface TermsSection {
-    title: string
-    content: ReactNode
-}
 
-export interface TermsData {
-    label: string
-    required: boolean
-    sections: TermsSection[]
-}
 
 export const TERMS_OF_SERVICE: TermsData = {
     label: '이용약관',

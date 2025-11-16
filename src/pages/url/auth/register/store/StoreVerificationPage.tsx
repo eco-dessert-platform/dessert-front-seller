@@ -20,7 +20,7 @@ import FormInputWithButton from 'src/shared/components/inputs/FormInputWithButto
 import {
     PRIVACY_POLICY,
     TERMS_OF_SERVICE,
-} from 'src/features/auth/constants/termsMockData'
+} from 'src/features/auth/data/termsMockData.tsx'
 import BgrActionButtons from 'src/shared/components/button/BgrActionButtons'
 import BgrHeader from 'src/shared/layout/BgrHeader'
 
