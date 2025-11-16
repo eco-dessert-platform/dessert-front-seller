@@ -3668,14 +3668,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.8.4":
-  version: 1.10.0
-  resolution: "axios@npm:1.10.0"
+"axios@npm:1.12.0":
+  version: 1.12.0
+  resolution: "axios@npm:1.12.0"
   dependencies:
     follow-redirects: "npm:^1.15.6"
-    form-data: "npm:^4.0.0"
+    form-data: "npm:^4.0.4"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/2239cb269cc789eac22f5d1aabd58e1a83f8f364c92c2caa97b6f5cbb4ab2903d2e557d9dc670b5813e9bcdebfb149e783fb8ab3e45098635cd2f559b06bd5d8
+  checksum: 10c0/44a1e4cfb69a2d59aa12bbc441a336e5c18e87c02b904c509fd33607d94e8cb8cc221c17e9d53f67841a4efe13abf1aa1497c85df390cdb8681ee723998d11b0
   languageName: node
   linkType: hard
 
@@ -5030,7 +5030,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.0, form-data@npm:~4.0.0":
+"form-data@npm:^4.0.4":
+  version: 4.0.4
+  resolution: "form-data@npm:4.0.4"
+  dependencies:
+    asynckit: "npm:^0.4.0"
+    combined-stream: "npm:^1.0.8"
+    es-set-tostringtag: "npm:^2.1.0"
+    hasown: "npm:^2.0.2"
+    mime-types: "npm:^2.1.12"
+  checksum: 10c0/373525a9a034b9d57073e55eab79e501a714ffac02e7a9b01be1c820780652b16e4101819785e1e18f8d98f0aee866cc654d660a435c378e16a72f2e7cac9695
+  languageName: node
+  linkType: hard
+
+"form-data@npm:~4.0.0":
   version: 4.0.3
   resolution: "form-data@npm:4.0.3"
   dependencies:
@@ -6709,27 +6722,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.53.0":
-  version: 1.53.0
-  resolution: "playwright-core@npm:1.53.0"
+"playwright-core@npm:1.55.1":
+  version: 1.55.1
+  resolution: "playwright-core@npm:1.55.1"
   bin:
     playwright-core: cli.js
-  checksum: 10c0/fda0cf76115b15b1ca5cbc69e14185904e5c85e9e7cddb0a48121e69d681c638ac497e8a103985976cae260aa02e9c03ea27d6cd0b5f3d3ca914d4c7fd96f930
+  checksum: 10c0/39837a8c1232ec27486eac8c3fcacc0b090acc64310f7f9004b06715370fc426f944e3610fe8c29f17cd3d68280ed72c75f660c02aa5b5cf0eb34bab0031308f
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.51.1":
-  version: 1.53.0
-  resolution: "playwright@npm:1.53.0"
+"playwright@npm:1.55.1":
+  version: 1.55.1
+  resolution: "playwright@npm:1.55.1"
   dependencies:
     fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.53.0"
+    playwright-core: "npm:1.55.1"
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: 10c0/8d995114808b92f2005bd12ff5e494cdc3fa2d484f4d85a3e54be1fb99e88ae3e34b24792d83bb987462c73e553a0fa37a2a70264afbf67894b51c1498cf5a11
+  checksum: 10c0/b84a97b0d764403df512f5bbb10c7343974e151a28202cc06f90883a13e8a45f4491a0597f0ae5fb03a026746cbc0d200f0f32195bfaa381aee5ca5770626771
   languageName: node
   linkType: hard
 
@@ -7655,7 +7668,7 @@ __metadata:
     "@vitejs/plugin-react-swc": "npm:^3.8.0"
     "@vitest/browser": "npm:3.2.3"
     "@vitest/coverage-v8": "npm:3.2.3"
-    axios: "npm:^1.8.4"
+    axios: "npm:1.12.0"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
     culori: "npm:^4.0.1"
@@ -7669,7 +7682,7 @@ __metadata:
     i18next: "npm:^24.2.3"
     i18next-browser-languagedetector: "npm:^8.0.4"
     lucide-react: "npm:^0.516.0"
-    playwright: "npm:^1.51.1"
+    playwright: "npm:1.55.1"
     prettier: "npm:3.5.3"
     prettier-plugin-tailwindcss: "npm:^0.6.13"
     react: "npm:^19.1.0"

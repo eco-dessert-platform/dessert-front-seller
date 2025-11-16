@@ -1,4 +1,4 @@
-import CheckOff from 'src/assets/icons/icn-check-off.svg?react'
+import CheckOff_icon from 'src/assets/icons/icn-check-off.svg?react'
 
 interface TermsCheckboxProps {
     label: string
@@ -12,6 +12,8 @@ export const TermsCheckbox = ({
     label,
     required = false,
     checked,
+
+
     onChange,
     content,
 }: TermsCheckboxProps) => {
@@ -22,7 +24,7 @@ export const TermsCheckbox = ({
                     onClick={() => onChange(!checked)}
                     className="cursor-pointer"
                 >
-                    <CheckOff />
+                    <CheckOff_icon />
                 </div>
                 <div className="flex items-center gap-0.5">
                     <p className="text-title-16-m text-gray-900">{label}</p>
