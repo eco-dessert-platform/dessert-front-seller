@@ -1,6 +1,6 @@
-import RequiredLabel from 'src/shared/components/text/RequiredLabel'
-import { Button } from 'src/shared/lib/shadcn/components/ui/button'
-import { Input } from 'src/shared/lib/shadcn/components/ui/input'
+import RequiredLabel from 'src/shared/components/text/RequiredLabel.tsx'
+import { Button } from 'src/shared/lib/shadcn/components/ui/button.tsx'
+import { Input } from 'src/shared/lib/shadcn/components/ui/input.tsx'
 
 interface AddressInputProps {
     postalCode?: string
