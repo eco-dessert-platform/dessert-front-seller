@@ -1,29 +1,18 @@
+import { useEffect, useState } from 'react'
+import { createColumnHelper } from '@tanstack/react-table'
+
 import {
     BgrTabs,
     BgrTabsList,
     BgrTabsTrigger,
 } from 'src/shared/components/tab/BGRtab.tsx'
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from 'src/shared/lib/shadcn/components/ui/dropdown-menu'
-import { ChevronDown, RotateCw, Search } from 'lucide-react'
 import { Table } from 'src/shared/lib/shadcn/components/ui/table'
-import { useState } from 'react'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
-import { createColumnHelper } from '@tanstack/react-table'
 import OrderStatusLabel from './OrderStatusLabel'
+import OrderFilter from './OrderFilter'
+import { format, sub } from 'date-fns'
 
-type TabCategory = 'ALL' |
-'PAID' |
-'CHECKED' |
-'SHIPPED' |
-'DELIVERED' |
-'PAYMENT_COMPLETED' |
-'REFUND' |
-'CHANGE';
+type TabCategory = 'ALL' | 'PAID' | 'CHECKED' | 'SHIPPED' | 'DELIVERED' | 'PAYMENT_COMPLETED' | 'REFUND' | 'CHANGE';
 
 type DeliveryStatus = 'PREPARING_PRODUCT' | 'SHIPPING' | 'COLLECTING' | 'COLLECTED' | 'DELIVERED';
 
@@ -65,15 +54,6 @@ type Table = {
 // PAID와 PAYMENT_COMPLETED의 차이
 
 const columnHelper = createColumnHelper<Table>();
-
-// 날짜 포맷 함수 (YYYY.MM.DD)
-const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}.${month}.${day}`;
-};
 
 const MOCK_ORDERS = [
     {
@@ -143,10 +123,25 @@ const MOCK_ORDERS = [
     },
 ];
 
+interface OrderSearchFilter {
+    orderStatus: string; // TODO :: enum type
+    startDate: Date;
+    endDate: Date;
+    searchType: string; // TODO :: enum type
+    keyword: string;
+}
+
 const Orders = () => {
     const [activeTab, setActiveTab] = useState<TabCategory>('ALL');
     const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
     const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+    const [orderFilter, setOrderFilter] = useState<OrderSearchFilter>({
+        orderStatus: 'ALL',
+        startDate: sub(new Date(), { weeks: 1 }),
+        endDate: new Date(),
+        searchType: 'ORDER_NUMBER',
+        keyword: ''
+    });
 
     // 
     const buttons: Record<TabCategory, React.ReactNode[]> = {
@@ -416,7 +411,7 @@ const Orders = () => {
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
-                        {formatDate(row.original.paymentAt)}
+                        {format(row.original.paymentAt, 'yyyy.MM.dd')}
                     </div>
                 );
             },
@@ -492,6 +487,20 @@ const Orders = () => {
         }),
     ];
 
+    const handleResetFilter = () => {
+        setOrderFilter({
+            orderStatus: 'ALL',
+            startDate: sub(new Date(), { weeks: 1 }),
+            endDate: new Date(),
+            searchType: 'ORDER_NUMBER',
+            keyword: ''
+        });
+    }
+
+    useEffect(() => {
+        handleResetFilter();
+    }, [activeTab]);
+
     return (
         <>
             <BgrTabs value={activeTab} onValueChange={(changedTab) => {
@@ -509,82 +518,37 @@ const Orders = () => {
             </BgrTabs>
             <div className="flex flex-col gap-2.5 pt-5">
                 {/* top 20px | input section */}
-                <div className="flex w-full flex-col gap-2.5 rounded-lg border border-gray-300 bg-white px-6 py-4">
-                    <button className="ml-auto flex cursor-pointer items-center gap-0.5">
-                        <p className="text-12">초기화</p>
-                        {/* padding 간격이 없어 16으로 일단 설정 */}
-                        <RotateCw size={16} />
-                    </button>
-                    <div className="flex items-center gap-2">
-                        {/* right 16px */}
-                        <div className="flex grow flex-col items-stretch gap-1.5">
-                            <p className="text-12 font-normal">조회기간</p>
-                            <input
-                                type="date"
-                                className="rounded-lg border border-gray-300 py-2 pr-2 pl-3"
-                            />
-                        </div>
-                        <div className="flex grow flex-col items-stretch gap-1.5">
-                            <p className="text-12 font-normal">배송상태</p>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger className="flex items-center rounded-lg border border-gray-300 py-2 pr-2 pl-3">
-                                    배송상태
-                                    <ChevronDown size={20} />
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    {/* 기본 값 */}
-                                    <DropdownMenuItem>전체</DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        결제완료
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        상품준비
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        상품발송
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        배송완료
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                        <div className="flex grow flex-col items-stretch gap-1.5">
-                            <p className="text-12 font-normal">상세조건</p>
-                            <div className="flex grow items-center gap-2">
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger className="flex items-center rounded-lg border border-gray-300 py-2 pr-2 pl-3">
-                                        기본값
-                                        <ChevronDown size={20} />
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        {/* 기본값  */}
-                                        <DropdownMenuItem>
-                                            주문번호
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            수취인명
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            상품명
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            송장번호
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                                <div className="flex grow items-center gap-1.5 rounded-lg border border-gray-300 py-2 pr-2 pl-3">
-                                    <input
-                                        type="text"
-                                        placeholder="1~50자로 입력해주세요."
-                                        className="grow"
-                                    />
-                                    <Search size={20} />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <OrderFilter 
+                    filterValue={orderFilter}
+                    onChangeDate={({ startDate, endDate }) => {
+                        setOrderFilter((prev) => ({
+                            ...prev,
+                            startDate,
+                            endDate
+                        }))
+                    }}
+                    onChangeSearchType={(nextSearchType) => {
+                        setOrderFilter((prev) => ({
+                            ...prev,
+                            searchType: nextSearchType,
+                        }));
+                    }}
+                    onChangeOrderStatus={(nextOrderStatus) => {
+                        setOrderFilter((prev) => ({
+                            ...prev,
+                            orderStatus: nextOrderStatus
+                        }));
+                    }}
+                    onChangeKeyword={(nextKeyword) => {
+                        setOrderFilter((prev) => ({
+                            ...prev,
+                            keyword: nextKeyword
+                        }))
+                    }}
+                    // TODO :: API 요청 함수 할당 필요
+                    onSearch={() => {}}
+                    onReset={handleResetFilter}
+                />
                 {/* top 10px | result section */}
                 <div className="w-full rounded-lg border border-gray-300 bg-white">
                     <div className="flex items-center justify-between px-6 pt-4 pb-3">
