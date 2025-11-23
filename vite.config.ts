@@ -3,10 +3,11 @@ import path, { resolve } from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig, Plugin } from 'vite'
 import fs, { copyFileSync } from 'fs'
+import svgr from 'vite-plugin-svgr'
 
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [react(), tailwindcss(), fontPreloadPlugin(), copyRobotsTxt()],
+    plugins: [react(), tailwindcss(), svgr(), fontPreloadPlugin(), copyRobotsTxt()],
 
     // 포트지정
     server: {

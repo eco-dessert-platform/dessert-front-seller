@@ -1,7 +1,5 @@
 import { X } from 'lucide-react'
-import React from 'react'
 
-// Overlay 컴포넌트
 interface OverlayProps {
     onClose: () => void
     children: React.ReactNode
@@ -10,10 +8,7 @@ interface OverlayProps {
 const Overlay: React.FC<OverlayProps> = ({ onClose, children }) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-5 py-4">
-            <div
-                className="fixed inset-0 bg-black/50"
-                onClick={onClose}
-            />
+            <div className="fixed inset-0 bg-black/50" onClick={onClose} />
             {children}
         </div>
     )
@@ -29,7 +24,7 @@ export interface DialogProps {
     description?: string
     children?: React.ReactNode
     /**
-     * 확인
+     * @default 확인
      */
     confirmText?: string
     /**
@@ -67,19 +62,23 @@ export const Dialog: React.FC<DialogProps> = ({
     if (type === 'alert') {
         return (
             <Overlay onClose={() => onOpenChange(false)}>
-                <div className="relative bg-white rounded-lg shadow-lg max-w-md w-full px-5 py-4">
-                    <div className='flex flex-col gap-3'>
-                        {title && <h2 className="text-2xl font-medium text-gray-800">{title}</h2>}
+                <div className="relative w-full max-w-md rounded-lg bg-white px-5 py-4 shadow-lg">
+                    <div className="flex flex-col gap-3">
+                        {title && (
+                            <h2 className="text-2xl font-medium text-gray-800">
+                                {title}
+                            </h2>
+                        )}
                         {description && (
                             <p className="text-16 text-gray-700">
                                 {description}
                             </p>
                         )}
                     </div>
-                    <div className="flex justify-end items-center pt-6">
+                    <div className="flex items-center justify-end pt-6">
                         <button
                             onClick={handleConfirm}
-                            className="w-[90px] h-[42px] text-white bg-gray-900 rounded-lg disabled:bg-gray-300"
+                            className="h-[42px] w-[90px] rounded-lg bg-gray-900 text-white disabled:bg-gray-300"
                         >
                             {confirmText}
                         </button>
@@ -89,29 +88,32 @@ export const Dialog: React.FC<DialogProps> = ({
         )
     }
 
-    // Confirm 타입: 확인/취소 버튼이 있는 확인 다이얼로그
     if (type === 'confirm') {
         return (
             <Overlay onClose={() => onOpenChange(false)}>
-                <div className="relative bg-white rounded-lg shadow-lg max-w-md w-full px-5 py-4">
-                    <div className='flex flex-col gap-3'>
-                        {title && <h2 className="text-2xl font-medium text-gray-800">{title}</h2>}
+                <div className="relative w-full max-w-md rounded-lg bg-white px-5 py-4 shadow-lg">
+                    <div className="flex flex-col gap-3">
+                        {title && (
+                            <h2 className="text-2xl font-medium text-gray-800">
+                                {title}
+                            </h2>
+                        )}
                         {description && (
                             <p className="text-16 text-gray-700">
                                 {description}
                             </p>
                         )}
                     </div>
-                    <div className="flex gap-2 justify-end items-center pt-6">
+                    <div className="flex items-center justify-end gap-2 pt-6">
                         <button
                             onClick={handleCancel}
-                            className="w-[90px] h-[42px] border border-gray-200 text-gray-800 rounded-lg bg-white"
+                            className="h-[42px] w-[90px] rounded-lg border border-gray-200 bg-white text-gray-800"
                         >
                             {cancelText}
                         </button>
                         <button
                             onClick={handleConfirm}
-                            className="w-[90px] h-[42px] text-white bg-gray-900 rounded-lg disabled:bg-gray-300"
+                            className="h-[42px] w-[90px] rounded-lg bg-gray-900 text-white disabled:bg-gray-300"
                         >
                             {confirmText}
                         </button>
@@ -121,19 +123,23 @@ export const Dialog: React.FC<DialogProps> = ({
         )
     }
 
-    // Popup 타입: 커스텀 콘텐츠를 표시하는 팝업
     return (
         <Overlay onClose={() => onOpenChange(false)}>
-            <div className="relative bg-white rounded-lg shadow-lg px-5 py-4 max-h-[90vh] overflow-y-auto w-full max-w-2xl">
+            <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white px-5 py-4 shadow-lg">
                 {title && (
-                    <div className="flex items-center mb-4">
-                        <h2 className="flex-grow text-2xl font-medium text-gray-800">{title}</h2>
-                        <button onClick={() => onOpenChange(false)}>
+                    <div className="mb-4 flex items-center">
+                        <h2 className="flex-grow text-2xl font-medium text-gray-800">
+                            {title}
+                        </h2>
+                        <button
+                            onClick={() => onOpenChange(false)}
+                            className="cursor-pointer"
+                        >
                             <X size={30} />
                         </button>
                     </div>
                 )}
-                <div className='overflow-auto'>{children}</div>
+                <div className="overflow-auto">{children}</div>
             </div>
         </Overlay>
     )
