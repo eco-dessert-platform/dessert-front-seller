@@ -16,6 +16,7 @@ const Overlay: React.FC<OverlayProps> = ({ onClose, children }) => {
 
 export type DialogType = 'confirm' | 'alert' | 'popup'
 
+// TODO :: DialogType에 따라 props가 추론 되도록 discriminated union타입으로 추론되도록 분기 처리 필요
 export interface DialogProps {
     type: DialogType
     open: boolean
@@ -125,21 +126,19 @@ export const Dialog: React.FC<DialogProps> = ({
 
     return (
         <Overlay onClose={() => onOpenChange(false)}>
-            <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white px-5 py-4 shadow-lg">
-                {title && (
-                    <div className="mb-4 flex items-center">
-                        <h2 className="flex-grow text-2xl font-medium text-gray-800">
-                            {title}
-                        </h2>
-                        <button
-                            onClick={() => onOpenChange(false)}
-                            className="cursor-pointer"
-                        >
-                            <X size={30} />
-                        </button>
-                    </div>
-                )}
-                <div className="overflow-auto">{children}</div>
+            <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-y-auto rounded-lg bg-white shadow-lg">
+                <div className="mb-4 flex items-center px-5 pt-4">
+                    <h2 className="grow text-2xl font-medium text-gray-800">
+                        {title}
+                    </h2>
+                    <button
+                        onClick={() => onOpenChange(false)}
+                        className="cursor-pointer"
+                    >
+                        <X size={30} />
+                    </button>
+                </div>
+                <div className="grow overflow-auto px-5 pb-4">{children}</div>
             </div>
         </Overlay>
     )
