@@ -1,5 +1,5 @@
-import RequiredLabel from 'src/shared/components/text/RequiredLabel.tsx'
 import { Input } from 'src/shared/lib/shadcn/components/ui/input.tsx'
+import BgrLabel from '../label/BgrLabel'
 
 interface EmailInputProps {
     label?: string
@@ -23,14 +23,7 @@ const EmailInput = ({
     return (
         <>
             <div className="flex flex-1/2 flex-col items-start gap-1">
-                {label &&
-                    (required ? (
-                        <RequiredLabel>{label}</RequiredLabel>
-                    ) : (
-                        <label className="text-body-12-r text-gray-800">
-                            {label}
-                        </label>
-                    ))}
+                <BgrLabel label={label} required={required} />
                 <Input
                     className="text-title-16-r flex flex-1 items-center gap-1.5 rounded-[10px] border border-gray-300 bg-white px-3 py-2 text-gray-800 placeholder:text-gray-400"
                     placeholder="이메일 주소를 입력해주세요"

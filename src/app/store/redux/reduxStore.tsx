@@ -4,15 +4,20 @@ import { all } from 'redux-saga/effects'
 import { routerSaga, routerSlice } from 'src/app/router/routerReducer.tsx'
 import { sampleSaga, sampleSlice } from 'src/features/sample/sampleReducer.ts'
 import { themeSlice } from 'src/shared/components/theme/themeReducer.tsx'
+import {
+    storeSaga,
+    storeSlice,
+} from 'src/pages/url/auth/register/store/storeReducer'
 
 const reducers = {
     routerReducer: routerSlice.reducer,
     sampleReducer: sampleSlice.reducer,
     themeReducer: themeSlice.reducer,
+    storeReducer: storeSlice.reducer,
 }
 
 export function* rootSaga() {
-    yield all([sampleSaga(), routerSaga()])
+    yield all([sampleSaga(), routerSaga(), storeSaga()])
 }
 
 const sagaMiddleware = createSagaMiddleware()

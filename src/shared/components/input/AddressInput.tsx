@@ -1,6 +1,6 @@
-import RequiredLabel from 'src/shared/components/text/RequiredLabel.tsx'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button.tsx'
 import { Input } from 'src/shared/lib/shadcn/components/ui/input.tsx'
+import BgrLabel from '../label/BgrLabel'
 
 interface AddressInputProps {
     postalCode?: string
@@ -24,7 +24,7 @@ const AddressInput = ({
             <div className="flex items-start gap-4 self-stretch px-5 py-2.5">
                 {/* 우편번호 + 주소 */}
                 <div className="flex w-[310px] flex-col items-start gap-1">
-                    <RequiredLabel>우편번호</RequiredLabel>
+                    <BgrLabel label="우편번호" required />
                     <div className="flex items-start gap-4 self-stretch">
                         <Input
                             className="text-title-16-r flex flex-1/2 items-center gap-1.5 rounded-[10px] border border-gray-300 bg-gray-100 px-3 py-2 text-gray-400 placeholder:text-gray-400"
@@ -46,7 +46,7 @@ const AddressInput = ({
                 </div>
 
                 <div className="flex flex-1/2 flex-col items-start gap-1">
-                    <RequiredLabel>출고지 주소</RequiredLabel>
+                    <BgrLabel label="출고지 주소" required />
                     <div className="flex items-start gap-4 self-stretch">
                         <Input
                             className="text-title-16-r flex flex-1/2 items-center gap-1.5 rounded-[10px] border border-gray-300 bg-gray-100 px-3 py-2 text-gray-400 placeholder:text-gray-400"
@@ -62,7 +62,7 @@ const AddressInput = ({
             {/* 상세 주소 */}
             <div className="flex flex-col items-start gap-4 self-stretch px-5 py-2.5">
                 <div className="flex flex-col items-start gap-1 self-stretch">
-                    <RequiredLabel>출고지 상세 주소</RequiredLabel>
+                    <BgrLabel label="출고지 상세 주소" required />
                     <Input
                         className="text-title-16-r flex flex-1/2 items-center gap-1.5 rounded-[10px] border border-gray-300 bg-gray-100 px-3 py-2 text-gray-400 placeholder:text-gray-400"
                         placeholder="상세주소를 입력해주세요(동/호수 포함)"

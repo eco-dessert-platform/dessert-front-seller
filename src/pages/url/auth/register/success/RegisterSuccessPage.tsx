@@ -4,7 +4,7 @@ import AuthContentWrapper from 'src/features/auth/components/layout/AuthContentW
 import AuthPageContainer from 'src/features/auth/components/layout/AuthPageContainer'
 import { AuthProcessStep } from 'src/features/auth/components/layout/AuthProcessStep'
 import { AUTH_MESSAGES } from 'src/features/auth/locales/authMessages'
-import BgrPrimaryButton from 'src/shared/components/button/BgrPrimaryButton'
+import BgrButton from 'src/shared/components/button/BgrButton'
 import BgrHeader from 'src/shared/layout/BgrHeader'
 
 const RegisterSuccessPage = () => {
@@ -27,14 +27,13 @@ const RegisterSuccessPage = () => {
                             </p>
                         </div>
 
-                        <BgrPrimaryButton
+                        <BgrButton
+                            title="첫화면으로"
                             onClick={() => console.log('첫화면으로')}
                             variant="secondary"
                             size="lg"
                             className="w-[408px]"
-                        >
-                            첫화면으로 이동
-                        </BgrPrimaryButton>
+                        />
                     </div>
                 </AuthCard>
             </AuthContentWrapper>
