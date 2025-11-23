@@ -15,6 +15,7 @@ interface BgrButtonProps {
     leftIcon?: React.ReactNode
     rightIcon?: React.ReactNode
     className?: string
+    
 }
 
 const BgrButton = ({
