@@ -40,17 +40,17 @@ export default function Test() {
                     <BgrButton
                         size="sm"
                         title="secondary sm"
-                        variant="secondary"
+                        variant="secondary-filled"
                     />
                     <BgrButton
                         size="md"
                         title="secondary md"
-                        variant="secondary"
+                        variant="secondary-filled"
                     />
                     <BgrButton
                         size="lg"
                         title="secondary lg"
-                        variant="secondary"
+                        variant="secondary-filled"
                     />
                 </div>
                 <div className="flex flex-col items-center gap-4">
@@ -113,19 +113,19 @@ export default function Test() {
                     <BgrButton
                         size="sm"
                         title="secondary sm"
-                        variant="secondary"
+                        variant="secondary-filled"
                         roundedFull
                     />
                     <BgrButton
                         size="md"
                         title="secondary md"
-                        variant="secondary"
+                        variant="secondary-filled"
                         roundedFull
                     />
                     <BgrButton
                         size="lg"
                         title="secondary lg"
-                        variant="secondary"
+                        variant="secondary-filled"
                         roundedFull
                     />
                 </div>

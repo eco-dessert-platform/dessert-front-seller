@@ -30,7 +30,7 @@ const RegisterSuccessPage = () => {
                         <BgrButton
                             title="첫화면으로"
                             onClick={() => console.log('첫화면으로')}
-                            variant="secondary"
+                            variant="secondary-filled"
                             size="lg"
                             className="w-[408px]"
                         />

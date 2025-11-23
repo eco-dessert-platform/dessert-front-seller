@@ -26,7 +26,7 @@ const BgrActionButtons = ({
                     <BgrButton
                         title={backLabel}
                         onClick={onBack}
-                        variant="secondary"
+                        variant="secondary-filled"
                         size="lg"
                     />
                 )}
