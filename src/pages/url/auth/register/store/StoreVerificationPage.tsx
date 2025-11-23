@@ -13,18 +13,26 @@ import {
     TermsCheckbox,
     TermsContentSection,
 } from 'src/features/auth/components/ui/check/TermsCheckbox'
-import AddressInput from 'src/shared/components/inputs/AddressInput'
-import EmailInput from 'src/shared/components/inputs/EmailInput'
-import FormInput from 'src/shared/components/inputs/FormInput'
-import FormInputWithButton from 'src/shared/components/inputs/FormInputWithButton'
+import AddressInput from 'src/shared/components/input/AddressInput'
+import EmailInput from 'src/shared/components/input/EmailInput'
+import BgrInput from 'src/shared/components/input/BgrInput'
+
 import {
     PRIVACY_POLICY,
     TERMS_OF_SERVICE,
 } from 'src/features/auth/data/termsMockData.tsx'
 import BgrActionButtons from 'src/shared/components/button/BgrActionButtons'
 import BgrHeader from 'src/shared/layout/BgrHeader'
+import { useState } from 'react'
+import SearchStoreDialog from './components/SearchStoreDialog'
+import BgrInputField from 'src/shared/inputField/BgrInputField'
 
 const StoreVerificationPage = () => {
+    const [isSearchStoreDialogOpen, setIsSearchStoreDialogOpen] =
+        useState(false)
+    const handleSearchStore = () => {
+        setIsSearchStoreDialogOpen(true)
+    }
     return (
         <AuthPageContainer>
             <BgrHeader borderBottom={false} />
@@ -35,13 +43,17 @@ const StoreVerificationPage = () => {
                 <Section>
                     <SectionHeader title="스토어 정보 등록" />
                     <SectionContent>
-                        <FormInputWithButton
+                        <BgrInputField
                             label="스토어명"
                             required
                             placeholder="스토어를 검색해주세요"
                             buttonText="검색"
-                            onButtonClick={() => console.log('검색')}
-                            disabled
+                            onButtonClick={handleSearchStore}
+                        />
+                        <SearchStoreDialog
+                            open={isSearchStoreDialogOpen}
+                            onOpenChange={setIsSearchStoreDialogOpen}
+                            handleSearch={handleSearchStore}
                         />
                     </SectionContent>
 
@@ -50,7 +62,7 @@ const StoreVerificationPage = () => {
                         {/* 프로필 */}
                         <div className="flex h-[398px] flex-col items-start gap-2 px-5 py-2.5">
                             <ProfileUpload />
-                            <FormInput
+                            <BgrInput
                                 label="한줄소개"
                                 placeholder="스토어 소개를 작성해주세요"
                                 className="w-[220px]"
@@ -62,7 +74,7 @@ const StoreVerificationPage = () => {
                             {/* 연락처 */}
                             <div className="flex items-start gap-4 self-stretch px-5">
                                 <FormColumn>
-                                    <FormInput
+                                    <BgrInput
                                         label="연락처"
                                         required
                                         placeholder="하이픈(-) 없이 입력해주세요"
@@ -71,7 +83,7 @@ const StoreVerificationPage = () => {
                                 </FormColumn>
 
                                 <FormColumn>
-                                    <FormInput
+                                    <BgrInput
                                         label="추가 연락처"
                                         placeholder="하이픈(-) 없이 입력해주세요"
                                     />

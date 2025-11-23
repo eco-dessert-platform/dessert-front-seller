@@ -3,6 +3,7 @@ import HomePage from 'src/pages/HomePage'
 import React from 'react'
 import NotFoundPage from 'src/pages/extra/NotFoundPage.tsx'
 import BgrLayout from 'src/shared/layout/BgrLayout.tsx'
+import Test from 'src/pages/test'
 
 const MODULES = import.meta.glob(['src/pages/url/**/*.tsx'], {
     eager: true,
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
             ...route,
             path: route.path?.replace('/auth/', ''),
         })),
+    },
+    {
+        path: '/test',
+        element: <Test />,
     },
 ])
 

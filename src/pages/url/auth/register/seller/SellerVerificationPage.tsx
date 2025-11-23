@@ -8,11 +8,11 @@ import {
 import { AuthProcessStep } from 'src/features/auth/components/layout/AuthProcessStep'
 import FormColumn from 'src/features/auth/components/layout/FormColumn'
 import FormRow from 'src/features/auth/components/layout/FormRow'
-import FileUploadInput from 'src/shared/components/inputs/FileUploadInput'
-import FormInput from 'src/shared/components/inputs/FormInput'
-import FormInputWithButton from 'src/shared/components/inputs/FormInputWithButton'
+import FileUploadInput from 'src/shared/components/input/FileUploadInput'
+import BgrInput from 'src/shared/components/input/BgrInput'
 import BgrActionButtons from 'src/shared/components/button/BgrActionButtons'
 import BgrHeader from 'src/shared/layout/BgrHeader'
+import BgrInputField from 'src/shared/inputField/BgrInputField'
 
 const SellerVerificationPage = () => {
     return (
@@ -62,7 +62,7 @@ const SellerVerificationPage = () => {
 
                         <FormRow>
                             <FormColumn>
-                                <FormInput
+                                <BgrInput
                                     label="은행명"
                                     placeholder="은행명"
                                     disabled
@@ -70,7 +70,7 @@ const SellerVerificationPage = () => {
                             </FormColumn>
 
                             <FormColumn>
-                                <FormInputWithButton
+                                <BgrInputField
                                     label="계좌번호"
                                     placeholder="계좌번호"
                                     buttonText="계좌인증"

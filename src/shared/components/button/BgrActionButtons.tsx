@@ -1,4 +1,4 @@
-import BgrPrimaryButton from './BgrPrimaryButton'
+import BgrButton from './BgrButton'
 
 interface BgrActionButtonsProps {
     onBack?: () => void
@@ -23,23 +23,25 @@ const BgrActionButtons = ({
         <footer className="flex max-w-[1920px] min-w-[1440px] flex-col items-center gap-2.5 self-stretch bg-white">
             <div className="flex items-end justify-end gap-3 self-stretch p-6">
                 {showBack && onBack && (
-                    <BgrPrimaryButton
+                    <BgrButton
+                        title={backLabel}
                         onClick={onBack}
                         variant="secondary"
                         size="lg"
-                    >
-                        {backLabel}
-                    </BgrPrimaryButton>
+                    />
                 )}
                 {showNext && onNext && (
-                    <BgrPrimaryButton
+                    <BgrButton
+                        title={nextLabel}
                         onClick={onNext}
-                        variant={nextDisabled ? 'gray' : 'primary'}
+                        variant={
+                            nextDisabled
+                                ? 'secondary-outlined'
+                                : 'primary-filled'
+                        }
                         size="lg"
                         disabled={nextDisabled}
-                    >
-                        {nextLabel}
-                    </BgrPrimaryButton>
+                    />
                 )}
             </div>
         </footer>
