@@ -5,9 +5,9 @@ export const getProduct = (id: number) => {
 }
 
 export const getProducts = ({
-                                limit,
-                                skip,
-                            }: {
+    limit,
+    skip,
+}: {
     limit: number
     skip: number
 }) => {

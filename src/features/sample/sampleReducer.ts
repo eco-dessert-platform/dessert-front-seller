@@ -13,18 +13,12 @@ const asyncRequests = [
         api: getProduct,
     },
 
-
-
-
     {
         action: 'getProducts',
         state: 'products',
         initialState: null,
         api: getProducts,
     },
-
-
-
 ] as const
 
 const localState = {

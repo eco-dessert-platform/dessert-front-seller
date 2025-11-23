@@ -1,9 +1,9 @@
 import {
     Card,
-        CardContent,
-        CardDescription,
-        CardHeader,
-        CardTitle,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from 'src/shared/lib/shadcn/components/ui/card'
 import { Star } from 'lucide-react'
 import { Button } from 'src/stories/Button.tsx'
@@ -14,7 +14,6 @@ import { Product } from 'src/features/sample/sampleType.ts'
 
 const SampleId = ({ product }: { product: Product }) => {
     const navigate = useNavigate()
-
 
     if (product === null) {
         return (
@@ -34,10 +33,7 @@ const SampleId = ({ product }: { product: Product }) => {
     return (
         <div className="mx-auto grid max-w-6xl gap-10 py-10 md:grid-cols-2">
             <div className="flex flex-col items-center space-y-4">
-                <Button
-                    onClick={() => navigate(-1)}
-                    label={'<'}></Button>
-
+                <Button onClick={() => navigate(-1)} label={'<'}></Button>
 
                 <img
                     src={product.images[0]}
