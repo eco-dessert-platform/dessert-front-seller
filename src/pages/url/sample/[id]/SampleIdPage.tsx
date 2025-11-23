@@ -9,7 +9,7 @@ const SampleIdPage = () => {
             <Button
                 title={'페이지 이동'}
                 onClick={() => {
-                    navigate("/sample")
+                    navigate('/sample')
                 }}
             >
                 이전

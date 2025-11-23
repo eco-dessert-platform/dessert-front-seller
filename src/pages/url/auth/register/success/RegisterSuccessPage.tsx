@@ -3,7 +3,7 @@ import AuthCard from 'src/features/auth/components/layout/AuthCard'
 import AuthContentWrapper from 'src/features/auth/components/layout/AuthContentWrapper'
 import AuthPageContainer from 'src/features/auth/components/layout/AuthPageContainer'
 import { AuthProcessStep } from 'src/features/auth/components/layout/AuthProcessStep'
-import { AUTH_MESSAGES } from 'src/features/auth/constants/authMessages'
+import { AUTH_MESSAGES } from 'src/features/auth/locales/authMessages'
 import BgrPrimaryButton from 'src/shared/components/button/BgrPrimaryButton'
 import BgrHeader from 'src/shared/layout/BgrHeader'
 

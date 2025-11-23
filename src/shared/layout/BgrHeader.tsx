@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import BGRHeaderLogo from 'src/assets/logo/BGR-header-logo.svg?react'
+import BGRHeader_logo from 'src/assets/logo/BGR-header-logo.svg?react'
 
 interface Props {
     borderBottom?: boolean
@@ -14,7 +14,7 @@ const BgrHeader = ({ borderBottom = true }: Props) => {
             )}
         >
             <div className="flex flex-1 items-start gap-[38px]">
-                <BGRHeaderLogo className="flex items-center justify-center gap-[9px]" />
+                <BGRHeader_logo className="flex items-center justify-center gap-[9px]" />
             </div>
         </header>
     )

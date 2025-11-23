@@ -13,14 +13,14 @@ import {
     TermsCheckbox,
     TermsContentSection,
 } from 'src/features/auth/components/ui/check/TermsCheckbox'
-import AddressInput from 'src/features/auth/components/ui/inputs/AddressInput'
-import EmailInput from 'src/features/auth/components/ui/inputs/EmailInput'
-import FormInput from 'src/features/auth/components/ui/inputs/FormInput'
-import FormInputWithButton from 'src/features/auth/components/ui/inputs/FormInputWithButton'
+import AddressInput from 'src/shared/components/inputs/AddressInput'
+import EmailInput from 'src/shared/components/inputs/EmailInput'
+import FormInput from 'src/shared/components/inputs/FormInput'
+import FormInputWithButton from 'src/shared/components/inputs/FormInputWithButton'
 import {
     PRIVACY_POLICY,
     TERMS_OF_SERVICE,
-} from 'src/features/auth/constants/termsMockData'
+} from 'src/features/auth/data/termsMockData.tsx'
 import BgrActionButtons from 'src/shared/components/button/BgrActionButtons'
 import BgrHeader from 'src/shared/layout/BgrHeader'
 

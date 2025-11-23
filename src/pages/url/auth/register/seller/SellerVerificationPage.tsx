@@ -8,9 +8,9 @@ import {
 import { AuthProcessStep } from 'src/features/auth/components/layout/AuthProcessStep'
 import FormColumn from 'src/features/auth/components/layout/FormColumn'
 import FormRow from 'src/features/auth/components/layout/FormRow'
-import FileUploadInput from 'src/features/auth/components/ui/inputs/FileUploadInput'
-import FormInput from 'src/features/auth/components/ui/inputs/FormInput'
-import FormInputWithButton from 'src/features/auth/components/ui/inputs/FormInputWithButton'
+import FileUploadInput from 'src/shared/components/inputs/FileUploadInput'
+import FormInput from 'src/shared/components/inputs/FormInput'
+import FormInputWithButton from 'src/shared/components/inputs/FormInputWithButton'
 import BgrActionButtons from 'src/shared/components/button/BgrActionButtons'
 import BgrHeader from 'src/shared/layout/BgrHeader'
 

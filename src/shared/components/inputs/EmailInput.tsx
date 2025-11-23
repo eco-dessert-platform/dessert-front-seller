@@ -1,5 +1,5 @@
-import RequiredLabel from 'src/shared/components/text/RequiredLabel'
-import { Input } from 'src/shared/lib/shadcn/components/ui/input'
+import RequiredLabel from 'src/shared/components/text/RequiredLabel.tsx'
+import { Input } from 'src/shared/lib/shadcn/components/ui/input.tsx'
 
 interface EmailInputProps {
     label?: string

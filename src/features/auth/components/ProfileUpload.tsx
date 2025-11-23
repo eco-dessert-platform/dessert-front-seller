@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import Camera from 'src/assets/icons/profile-camera-icon.svg?react'
+import Camera_icon from 'src/assets/icons/profile-camera-icon.svg?react'
 
 interface ProfileUploadProps {
     label?: string
@@ -48,7 +48,7 @@ export const ProfileUpload = ({
                         />
                     ) : (
                         <>
-                            <Camera />
+                            <Camera_icon />
                             <div className="flex items-center justify-center gap-1 self-stretch">
                                 <p className="text-body-12-r text-center text-gray-800">
                                     이미지를 업로드해주세요

@@ -1,5 +1,5 @@
-import { Button } from 'src/shared/lib/shadcn/components/ui/button'
-import { Input } from 'src/shared/lib/shadcn/components/ui/input'
+import { Button } from 'src/shared/lib/shadcn/components/ui/button.tsx'
+import { Input } from 'src/shared/lib/shadcn/components/ui/input.tsx'
 
 interface FileUploadInputProps {
     label?: string

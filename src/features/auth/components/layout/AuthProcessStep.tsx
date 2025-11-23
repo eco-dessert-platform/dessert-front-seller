@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import RightArrow from 'src/assets/icons/arrow/right-arrow.svg?react'
+import RightArrow_icon from 'src/assets/icons/arrow/right-arrow.svg?react'
 
 interface Step {
     label: string
@@ -34,7 +34,7 @@ export const AuthProcessStep = ({ currentStep }: AuthProcessStepProps) => {
                             {step.label}
                         </span>
                         {index < steps.length - 1 && (
-                            <RightArrow
+                            <RightArrow_icon
                                 stroke={step.active ? '#F04C28' : '#E0E0E0'}
                                 width={24}
                                 height={24}
