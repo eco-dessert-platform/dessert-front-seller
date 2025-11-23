@@ -148,6 +148,12 @@ interface OrderSearchFilter {
     keyword: string
 }
 
+const ButtonGroup = ({ children }: { children: React.ReactNode }) => (
+    <div className="divide-x divide-gray-200 overflow-hidden rounded-sm border border-gray-200">
+        {children}
+    </div>
+)
+
 const Orders = () => {
     const [activeTab, setActiveTab] = useState<TabCategory>('ALL')
     const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set())
@@ -159,85 +165,115 @@ const Orders = () => {
         searchType: 'ORDER_NUMBER',
         keyword: '',
     })
+    const [response] = useState({
+        content: MOCK_ORDERS,
+        page: 0,
+        size: 10,
+        totalPages: 48,
+        totalElements: 480,
+    })
 
-    const [modalType, setModalType] = useState<string | null>('orderDetail')
+    const [modalType, setModalType] = useState<string | null>(null)
 
-    const buttons: Record<TabCategory, React.ReactNode[]> = {
-        ALL: [],
-        PAID: [
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                발주확인
-            </button>,
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                주문취소
-            </button>,
-        ],
-        CHECKED: [
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                주문취소
-            </button>,
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                반품
-            </button>,
-        ],
-        SHIPPED: [
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                반품
-            </button>,
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                교환
-            </button>,
-        ],
-        DELIVERED: [
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                반품
-            </button>,
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                교환
-            </button>,
-        ],
-        PAYMENT_COMPLETED: [
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                취소승인
-            </button>,
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                취소거절
-            </button>,
-        ],
-        REFUND: [
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                반품승인
-            </button>,
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                반품거절
-            </button>,
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                반품완료
-            </button>,
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                반품반려
-            </button>,
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                반품보류
-            </button>,
-        ],
-        CHANGE: [
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                반품승인
-            </button>,
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                반품거절
-            </button>,
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                반품완료
-            </button>,
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                반품반려
-            </button>,
-            <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                반품보류
-            </button>,
-        ],
+    // TODO :: REFACTORING 필요, 복잡도 높음
+    const tableButtons: Record<TabCategory, React.ReactNode> = {
+        ALL: null,
+        PAID: (
+            <>
+                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                    발주확인
+                </button>
+                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                    주문취소
+                </button>
+            </>
+        ),
+        CHECKED: (
+            <>
+                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                    주문취소
+                </button>
+                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                    반품
+                </button>
+            </>
+        ),
+        SHIPPED: (
+            <>
+                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                    반품
+                </button>
+                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                    교환
+                </button>
+            </>
+        ),
+        DELIVERED: (
+            <>
+                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                    반품
+                </button>
+                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                    교환
+                </button>
+            </>
+        ),
+        PAYMENT_COMPLETED: (
+            <ButtonGroup>
+                <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
+                    취소승인
+                </button>
+                <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
+                    취소거절
+                </button>
+            </ButtonGroup>
+        ),
+        REFUND: (
+            <>
+                <ButtonGroup>
+                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
+                        반품승인
+                    </button>
+                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
+                        반품거절
+                    </button>
+                </ButtonGroup>
+                <ButtonGroup>
+                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
+                        반품완료
+                    </button>
+                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
+                        반품반려
+                    </button>
+                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
+                        반품보류
+                    </button>
+                </ButtonGroup>
+            </>
+        ),
+        CHANGE: (
+            <>
+                <ButtonGroup>
+                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
+                        반품승인
+                    </button>
+                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
+                        반품거절
+                    </button>
+                </ButtonGroup>
+                <ButtonGroup>
+                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
+                        반품완료
+                    </button>
+                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
+                        반품반려
+                    </button>
+                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
+                        반품보류
+                    </button>
+                </ButtonGroup>
+            </>
+        ),
     }
 
     const handleOrderCheckboxChange = (
@@ -254,7 +290,6 @@ const Orders = () => {
                 newSet.add(orderNumber)
             }
 
-            // 해당 주문의 모든 상품 row ID를 찾아서 선택/해제
             setSelectedItems((prevItems) => {
                 const newItemSet = new Set(prevItems)
                 tableData.forEach((row, index) => {
@@ -274,19 +309,6 @@ const Orders = () => {
         })
     }
 
-    const [response] = useState({
-        content: MOCK_ORDERS,
-        page: 0,
-        size: 10,
-        totalPages: 48,
-        totalElements: 480,
-    })
-
-    // 전체 주문 목록 추출
-    const allOrderNumbers = Array.from(
-        new Set(response.content.map((order) => order.orderNumber)),
-    )
-
     const handleAllOrdersToggle = () => {
         if (selectedOrders.size === allOrderNumbers.length) {
             setSelectedOrders(new Set())
@@ -294,6 +316,40 @@ const Orders = () => {
             setSelectedOrders(new Set(allOrderNumbers))
         }
     }
+
+    const handleResetFilter = () => {
+        setOrderFilter({
+            orderStatus: 'ALL',
+            startDate: sub(new Date(), { weeks: 1 }),
+            endDate: new Date(),
+            searchType: 'ORDER_NUMBER',
+            keyword: '',
+        })
+    }
+
+    const handleClickDetail = () => {
+        if (selectedOrders.size === 0) {
+            setModalType('noSelect')
+            return
+        }
+
+        // TODO :: 주문번호 넘겨야 함
+        setModalType('orderDetail')
+    }
+
+    const handleSearch = () => {
+        if (!orderFilter.keyword) {
+            setModalType('noKeyword')
+            return
+        }
+
+        // TODO :: API 요청 함수 할당 필요
+    }
+
+    // 전체 주문 목록 추출
+    const allOrderNumbers = Array.from(
+        new Set(response.content.map((order) => order.orderNumber)),
+    )
 
     // 데이터를 Table 타입에 맞게 변환
     const tableData: Table[] = response.content.flatMap((order) =>
@@ -434,6 +490,30 @@ const Orders = () => {
                             newSet.delete(rowId)
                         } else {
                             newSet.add(rowId)
+                        }
+
+                        if (orderNumber) {
+                            const orderItemIndices = tableData
+                                .map((item, index) =>
+                                    item.orderNumber === orderNumber
+                                        ? index.toString()
+                                        : null,
+                                )
+                                .filter((idx) => idx !== null) as string[]
+
+                            const allItemsSelected = orderItemIndices.every(
+                                (idx) => newSet.has(idx),
+                            )
+
+                            setSelectedOrders((prevOrders) => {
+                                const newOrderSet = new Set(prevOrders)
+                                if (allItemsSelected) {
+                                    newOrderSet.add(orderNumber)
+                                } else {
+                                    newOrderSet.delete(orderNumber)
+                                }
+                                return newOrderSet
+                            })
                         }
 
                         return newSet
@@ -616,36 +696,6 @@ const Orders = () => {
         }),
     ]
 
-    const handleResetFilter = () => {
-        setOrderFilter({
-            orderStatus: 'ALL',
-            startDate: sub(new Date(), { weeks: 1 }),
-            endDate: new Date(),
-            searchType: 'ORDER_NUMBER',
-            keyword: '',
-        })
-    }
-
-    const handleClickDetail = () => {
-        if (selectedOrders.size === 0) {
-            setModalType('noSelect')
-            return
-            // click된거 체킹해서 없다면 모달
-        }
-
-        // TODO :: 주문번호 넘겨야 함
-        setModalType('orderDetail')
-    }
-
-    const handleSearch = () => {
-        if (!orderFilter.keyword) {
-            setModalType('noKeyword')
-            return
-        }
-
-        // TODO :: API 요청 함수 할당 필요
-    }
-
     useEffect(() => {
         handleResetFilter()
     }, [activeTab])
@@ -669,7 +719,6 @@ const Orders = () => {
                 </BgrTabsList>
             </BgrTabs>
             <div className="flex flex-col gap-2.5 pt-5">
-                {/* top 20px | input section */}
                 <OrderFilter
                     filterValue={orderFilter}
                     onChangeDate={({ startDate, endDate }) => {
@@ -700,19 +749,16 @@ const Orders = () => {
                     onSearch={handleSearch}
                     onReset={handleResetFilter}
                 />
-                {/* top 10px | result section */}
                 <div className="w-full rounded-lg border border-gray-300 bg-white">
                     <div className="flex items-center justify-between px-6 pt-4 pb-3">
                         <div className="flex items-center gap-4">
-                            {/* button 모음 */}
                             <button
                                 className="text-primary-500 text-12 border-primary-500 cursor-pointer rounded-md border px-2.5 py-1.5"
                                 onClick={handleClickDetail}
                             >
                                 상세보기
                             </button>
-                            {/* 가변 버튼 영역 */}
-                            {buttons[activeTab].map((button) => button)}
+                            {tableButtons[activeTab]}
                             <div className="flex items-center gap-1">
                                 <p className="text-14 font-normal text-gray-700">
                                     선택
@@ -730,7 +776,17 @@ const Orders = () => {
                             </div>
                         </div>
                     </div>
-
+                    {selectedOrders.size > 0 && (
+                        <div className="px-6 py-2.5">
+                            <p className="text-14 rounded-md bg-[#FEF4F2] py-2.5 text-center text-gray-700">
+                                이 페이지에 있는 주문{' '}
+                                <span className="text-primary-500 font-medium">
+                                    {selectedOrders.size}개
+                                </span>
+                                가 모두 선택되었습니다.
+                            </p>
+                        </div>
+                    )}
                     <SSdataTable
                         columns={columns}
                         data={tableData}
@@ -745,7 +801,7 @@ const Orders = () => {
                     {/* TODO :: checkbox에 대한 MESSAGE UI */}
                 </div>
             </div>
-            {/* MODALS */}
+            {/* TODO :: 협의 후, 전역 모달로 분리 & REFACTORING */}
             {modalType && (
                 <Dialog
                     open={modalType === 'noSelect'}
