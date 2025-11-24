@@ -1,12 +1,20 @@
 import { createBrowserRouter, Outlet, RouteObject } from 'react-router'
 import HomePage from 'src/pages/HomePage'
 import React from 'react'
-import NotFoundPage from 'src/pages/extra/NotFoundPage.tsx'
-import BgrLayout from 'src/shared/layout/BgrLayout.tsx'
+import NotFoundPage from 'src/pages/extra/NotFoundPage'
+import BgrLayout from 'src/shared/layout/BgrLayout'
+import Test from 'src/pages/test'
 
 const MODULES = import.meta.glob(['src/pages/url/**/*.tsx'], {
     eager: true,
 }) as Record<string, { default: React.FC }>
+
+const NO_LAYOUT_PAGES = [
+    '/login',
+    '/register',
+    '/register/store',
+    '/register/success',
+]
 
 const generateRoutes = (
     modules: Record<string, { default: React.FC }>,
@@ -14,16 +22,13 @@ const generateRoutes = (
     const routes: RouteObject[] = []
 
     Object.entries(modules).forEach(([path, module]) => {
-        // 파일 경로에서 'src/pages/url/' 이후의 경로를 추출
         const relativePath = path.replace(/.*src\/pages\/url\//, '')
         const Component = module.default
 
-        // 파일명(index.tsx, [id].tsx 등)을 제외하고 폴더명만 추출
         const urlPath = relativePath
-            .replace(/\/[^/]*\.tsx$/, '') // 마지막 슬래시와 파일명 제거
-            .replace(/\[(.*?)]/g, ':$1') // 동적 라우팅 파라미터 처리
+            .replace(/\/[^/]*\.tsx$/, '')
+            .replace(/\[(.*?)]/g, ':$1')
 
-        // 동적 라우팅이 아닌 경우를 위해 기본 경로('/')를 처리
         const finalUrlPath = urlPath === '' ? '/' : `/${urlPath}`
 
         routes.push({
@@ -35,7 +40,25 @@ const generateRoutes = (
     return routes
 }
 
+const allRoutes = generateRoutes(MODULES)
+
+// 레이아웃 없는 페이지와 레이아웃 있는 페이지 분리
+const noLayoutRoutes = allRoutes.filter((route) =>
+    NO_LAYOUT_PAGES.includes(route.path || ''),
+)
+const layoutRoutes = allRoutes.filter(
+    (route) => !NO_LAYOUT_PAGES.includes(route.path || ''),
+)
+
 const router = createBrowserRouter([
+    // 레이아웃 없는 라우트 (로그인/회원가입)
+    {
+        path: '/',
+        element: <Outlet />,
+        errorElement: <NotFoundPage />,
+        children: noLayoutRoutes,
+    },
+    // 레이아웃 있는 라우트 (메인 페이지 등)
     {
         path: '/',
         element: (
@@ -49,8 +72,12 @@ const router = createBrowserRouter([
                 index: true,
                 element: <HomePage />,
             },
-            ...generateRoutes(MODULES),
+            ...layoutRoutes,
         ],
+    },
+    {
+        path: '/test',
+        element: <Test />,
     },
 ])
 

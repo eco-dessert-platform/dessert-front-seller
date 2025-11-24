@@ -1,34 +1,24 @@
-import axios from 'axios'
-import { AsyncRequest, reduxMaker } from 'src/app/store/redux/reduxUtils.ts'
+import { reduxMaker } from 'src/app/store/redux/reduxUtils.ts'
+
 import { PayloadAction } from '@reduxjs/toolkit'
+import { getProduct, getProducts } from 'src/features/sample/sampleAPI.tsx'
 
 const prefix = 'sample'
 
 const asyncRequests = [
     {
-        action: 'getPokemon',
-        state: 'pokemon',
-        initialState: {
-            name: 'pokemon',
-            id: 1,
-        },
-        api: () => axios.get('https://pokeapi.co/api/v2/pokemon/ditto'),
-    } as const satisfies AsyncRequest<{ name: string; id: number }, void>,
+        action: 'getProduct',
+        state: 'product',
+        initialState: null,
+        api: getProduct,
+    },
 
     {
-        action: 'getTest',
-        state: 'test',
-        initialState: [{ success: true, message: 'asd' }],
-        api: (
-            param = {
-                param1: 'string',
-                param2: 111,
-            },
-        ) => axios.post('https://test.com', param),
-    } as const satisfies AsyncRequest<
-        { success: boolean; message: string }[],
-        { param1: string; param2: number }
-    >,
+        action: 'getProducts',
+        state: 'products',
+        initialState: null,
+        api: getProducts,
+    },
 ] as const
 
 const localState = {

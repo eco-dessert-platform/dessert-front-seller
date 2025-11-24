@@ -7,7 +7,13 @@ import svgr from 'vite-plugin-svgr'
 
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [react(), tailwindcss(), svgr(), fontPreloadPlugin(), copyRobotsTxt()],
+    plugins: [
+        react(),
+        tailwindcss(),
+        fontPreloadPlugin(),
+        copyRobotsTxt(),
+        svgr(),
+    ],
 
     // 포트지정
     server: {

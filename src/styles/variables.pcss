@@ -4,27 +4,18 @@
 */
 
 @theme {
-    --color-primary-500: oklch(0.6435 0.2063 33.76);
+    --color-primary-50: #fef2f0;
+    --color-primary-100: #fde4e0;
+    --color-primary-200: #fbc9c1;
+    --color-primary-300: #f8a18f;
+    --color-primary-400: #f56f54;
+    --color-primary-500: #f04c28;
+    --color-primary-600: #d4371a;
+    --color-primary-700: #b12a15;
+    --color-primary-800: #8e2211;
+    --color-primary-900: #6b1a0d;
+
     --color-white: #fff;
-
-    /* Heading */
-    --text-heading-20-sb: 20px / 600;
-    --text-heading-20-r: 20px / 400;
-    --text-heading-18-sb: 18px / 600;
-    --text-heading-18-r: 18px / 400;
-    --text-heading-16-sb: 16px / 600;
-    --text-heading-16-r: 16px / 400;
-
-    /* Title */
-    --text-title-16-sb: 16px / 600;
-    --text-title-16-m: 16px / 500;
-    --text-title-16-r: 16px / 400;
-
-    /* Body */
-    --text-body-14-sb: 14px / 600;
-    --text-body-14-r: 14px / 400;
-    --text-body-12-sb: 12px / 600;
-    --text-body-12-r: 12px / 400;
 
     --color-gray-50: #fafafa;
     --color-gray-100: #f5f5f5;
@@ -56,6 +47,7 @@
     --text-16: 16px;
     --text-18: 18px;
     --text-20: 20px;
+    --text-24: 24px;
 
     --leading-120: '1.2';
     --leading-130: '1.3';
@@ -166,4 +158,166 @@
             transform: scale(1);
         }
     }
+}
+
+/* Heading 24 */
+@utility text-heading-24-m {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-heading-24-sb {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+/* Heading 20 */
+@utility text-heading-20-m {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-heading-20-sb {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+/* Heading 18 */
+@utility text-heading-18-m {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-heading-18-sb {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-heading-18-b {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+/* Title 16 */
+@utility text-title-16-r {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-title-16-m {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-title-16-sb {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-title-16-b {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+/* Title 14 */
+@utility text-title-14-r {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-title-14-m {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-title-14-sb {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-title-14-b {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+/* Body 12 */
+@utility text-body-12-r {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-body-12-m {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-body-12-sb {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-body-12-b {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-body-12-r-underline {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 160%;
+    letter-spacing: -2%;
+    text-decoration: underline;
+}
+
+/* Body 10 */
+@utility text-body-10-r {
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 160%;
+    letter-spacing: -2%;
+}
+
+@utility text-body-10-sb {
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 160%;
+    letter-spacing: -2%;
 }
