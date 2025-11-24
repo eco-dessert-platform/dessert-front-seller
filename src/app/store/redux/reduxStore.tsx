@@ -7,7 +7,7 @@ import { themeSlice } from 'src/shared/components/theme/themeReducer.tsx'
 import {
     storeSaga,
     storeSlice,
-} from 'src/pages/url/auth/register/store/storeReducer'
+} from 'src/pages/url/register/store/storeReducer'
 
 const reducers = {
     routerReducer: routerSlice.reducer,

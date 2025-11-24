@@ -1,13 +1,20 @@
 import { createBrowserRouter, Outlet, RouteObject } from 'react-router'
 import HomePage from 'src/pages/HomePage'
 import React from 'react'
-import NotFoundPage from 'src/pages/extra/NotFoundPage.tsx'
-import BgrLayout from 'src/shared/layout/BgrLayout.tsx'
+import NotFoundPage from 'src/pages/extra/NotFoundPage'
+import BgrLayout from 'src/shared/layout/BgrLayout'
 import Test from 'src/pages/test'
 
 const MODULES = import.meta.glob(['src/pages/url/**/*.tsx'], {
     eager: true,
 }) as Record<string, { default: React.FC }>
+
+const NO_LAYOUT_PAGES = [
+    '/login',
+    '/register',
+    '/register/store',
+    '/register/success',
+]
 
 const generateRoutes = (
     modules: Record<string, { default: React.FC }>,
@@ -35,12 +42,23 @@ const generateRoutes = (
 
 const allRoutes = generateRoutes(MODULES)
 
-const authRoutes = allRoutes.filter((route) => route.path?.startsWith('/auth'))
+// 레이아웃 없는 페이지와 레이아웃 있는 페이지 분리
+const noLayoutRoutes = allRoutes.filter((route) =>
+    NO_LAYOUT_PAGES.includes(route.path || ''),
+)
 const layoutRoutes = allRoutes.filter(
-    (route) => !route.path?.startsWith('/auth'),
+    (route) => !NO_LAYOUT_PAGES.includes(route.path || ''),
 )
 
 const router = createBrowserRouter([
+    // 레이아웃 없는 라우트 (로그인/회원가입)
+    {
+        path: '/',
+        element: <Outlet />,
+        errorElement: <NotFoundPage />,
+        children: noLayoutRoutes,
+    },
+    // 레이아웃 있는 라우트 (메인 페이지 등)
     {
         path: '/',
         element: (
@@ -56,14 +74,6 @@ const router = createBrowserRouter([
             },
             ...layoutRoutes,
         ],
-    },
-    {
-        path: '/auth',
-        element: <Outlet />,
-        children: authRoutes.map((route) => ({
-            ...route,
-            path: route.path?.replace('/auth/', ''),
-        })),
     },
     {
         path: '/test',
