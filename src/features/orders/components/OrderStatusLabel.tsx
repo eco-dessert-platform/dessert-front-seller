@@ -1,13 +1,4 @@
-import clsx from 'clsx'
-
-// TODO :: READY_PRODUCT, WITHDRAW, CONFIRMED, DECIDE -> 임의 값
-type OrderStatus =
-    | 'PAID'
-    | 'CHECKED'
-    | 'READY_PRODUCT'
-    | 'WITHDRAW'
-    | 'CONFIRMED'
-    | 'DECIDE'
+import clsx from "clsx";
 
 // TODO :: 타입 확정 후, index의 타입 OrderStatus로 변경
 const STYLE_BY_TYPE: Record<string, string> = {

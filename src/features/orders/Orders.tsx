@@ -7,31 +7,20 @@ import {
     BgrTabsList,
     BgrTabsTrigger,
 } from 'src/shared/components/tab/BGRtab.tsx'
-import { Table } from 'src/shared/lib/shadcn/components/ui/table'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
 import { Dialog } from 'src/shared/components/dialog/Dialog'
-import OrderStatusLabel from './OrderStatusLabel'
-import OrderFilter from './OrderFilter'
-import TrackingNumberModal from './TrackingNumberModal'
-import RejectModal from './RejectModal'
-import OrderDetailModal from './OrderDetailModal'
-
-type TabCategory =
-    | 'ALL'
-    | 'PAID'
-    | 'CHECKED'
-    | 'SHIPPED'
-    | 'DELIVERED'
-    | 'PAYMENT_COMPLETED'
-    | 'REFUND'
-    | 'CHANGE'
-
-type DeliveryStatus =
-    | 'PREPARING_PRODUCT'
-    | 'SHIPPING'
-    | 'COLLECTING'
-    | 'COLLECTED'
-    | 'DELIVERED'
+import OrderStatusLabel from './components/OrderStatusLabel'
+import OrderFilter from './components/OrderFilter'
+import TrackingNumberModal from './components/TrackingNumberModal'
+import RejectModal from './components/RejectModal'
+import OrderDetailModal from './components/OrderDetailModal'
+import { MOCK_ORDERS } from './data/ordersMockData'
+import type {
+    TabCategory,
+    OrderTableRow,
+    OrderSearchFilter,
+    DeliveryStatus,
+} from './type'
 
 const DELIVERY_STATUS_MAP: Record<DeliveryStatus, string> = {
     PREPARING_PRODUCT: '-',
@@ -53,100 +42,7 @@ const TABS: Array<{ key: TabCategory; title: string }> = [
     { key: 'CHANGE', title: '교환' }, // unknown key
 ]
 
-// TODO :: enum 확정 시 할당 및 주석 제거
-type Table = {
-    recipientName: string
-    productName: string
-    itemQuantity: number
-    itemPrice: number
-    itemName: string
-    orderStatus: string // enum
-    orderNumber?: string
-    paymentAt: string
-    totalPaid: string
-    deliveryStatus: string // enum
-    courierCompany: string | null
-    trackingNumber: string | null
-}
-
-const columnHelper = createColumnHelper<Table>()
-
-// TODO :: API 연동 후, 삭제 처리
-const MOCK_ORDERS = [
-    {
-        deliveryStatus: 'PREPARING_PRODUCT',
-        courierCompany: 'CJ 대한통운',
-        trackingNumber: '1234567890',
-        orderNumber: 'ORDER-20240921-00001',
-        paymentAt: '2025-11-08T11:54:18.375192088',
-        totalPaid: 200000,
-        recipientName: '홍길동',
-        orderItems: [
-            {
-                boardTitle: '예제 1',
-                itemName: '예제 2',
-                quantity: 2,
-                unitPrice: 50000,
-                totalPrice: 100000,
-                orderStatus: 'PAID',
-            },
-            {
-                boardTitle: '쿠키 1',
-                itemName: '쿠키 2',
-                quantity: 1,
-                unitPrice: 50000,
-                totalPrice: 100000,
-                orderStatus: 'PAID',
-            },
-        ],
-    },
-    {
-        deliveryStatus: 'SHIPPING',
-        courierCompany: '우체국 택배',
-        trackingNumber: '0987654321',
-        totalPaid: 100000,
-        orderNumber: 'ORDER-20240921-00002',
-        paymentAt: '2025-11-08T10:54:18.377200473',
-        recipientName: '김철수',
-        orderItems: [
-            {
-                boardTitle: '식빵',
-                itemName: '식빵',
-                quantity: 2,
-                unitPrice: 50000,
-                totalPrice: 100000,
-                orderStatus: 'PAID',
-            },
-        ],
-    },
-    {
-        deliveryStatus: 'PREPARING_PRODUCT',
-        courierCompany: null,
-        trackingNumber: null,
-        totalPaid: 150000,
-        orderNumber: 'ORDER-20240921-00003',
-        paymentAt: '2025-11-09T14:30:22.123456789',
-        recipientName: '이영희',
-        orderItems: [
-            {
-                boardTitle: '케이크',
-                itemName: '초코케이크',
-                quantity: 1,
-                unitPrice: 150000,
-                totalPrice: 150000,
-                orderStatus: 'PAID',
-            },
-        ],
-    },
-]
-
-interface OrderSearchFilter {
-    orderStatus: string // TODO :: enum type 할당 후, 주석 제거
-    startDate: Date
-    endDate: Date
-    searchType: string // TODO :: enum type 할당 후, 주석 제거
-    keyword: string
-}
+const columnHelper = createColumnHelper<OrderTableRow>()
 
 const ButtonGroup = ({ children }: { children: React.ReactNode }) => (
     <div className="divide-x divide-gray-200 overflow-hidden rounded-sm border border-gray-200">
@@ -277,7 +173,7 @@ const Orders = () => {
     }
 
     // 데이터를 Table 타입에 맞게 변환
-    const tableData: Table[] = response.content.flatMap((order) =>
+    const tableData: OrderTableRow[] = response.content.flatMap((order) =>
         order.orderItems.map((item) => ({
             recipientName: order.recipientName,
             productName: item.boardTitle,
@@ -296,7 +192,7 @@ const Orders = () => {
 
     const handleOrderCheckboxChange = (
         orderNumber: string,
-        tableData: Table[],
+        tableData: OrderTableRow[],
     ) => {
         setSelectedOrders((prev) => {
             const newSet = new Set(prev)
@@ -399,15 +295,15 @@ const Orders = () => {
                     />
                 )
             },
-            accessorFn: (row: Table) => row.orderNumber,
+            accessorFn: (row: OrderTableRow) => row.orderNumber,
             cell: ({
                 row,
                 table,
             }: {
-                row: { original: Table; id: string }
+                row: { original: OrderTableRow; id: string }
                 table: {
                     getRowModel: () => {
-                        rows: { id: string; original: Table }[]
+                        rows: { id: string; original: OrderTableRow }[]
                     }
                     toggleAllRowsSelected: (value: boolean) => void
                 }
