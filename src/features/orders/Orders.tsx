@@ -276,6 +276,24 @@ const Orders = () => {
         ),
     }
 
+    // 데이터를 Table 타입에 맞게 변환
+    const tableData: Table[] = response.content.flatMap((order) =>
+        order.orderItems.map((item) => ({
+            recipientName: order.recipientName,
+            productName: item.boardTitle,
+            itemName: item.itemName,
+            itemQuantity: item.quantity,
+            itemPrice: item.totalPrice,
+            orderStatus: item.orderStatus,
+            orderNumber: order.orderNumber,
+            paymentAt: order.paymentAt,
+            totalPaid: order.totalPaid.toString(),
+            deliveryStatus: order.deliveryStatus,
+            courierCompany: order.courierCompany,
+            trackingNumber: order.trackingNumber,
+        })),
+    )
+
     const handleOrderCheckboxChange = (
         orderNumber: string,
         tableData: Table[],
@@ -312,8 +330,12 @@ const Orders = () => {
     const handleAllOrdersToggle = () => {
         if (selectedOrders.size === allOrderNumbers.length) {
             setSelectedOrders(new Set())
+            setSelectedItems(new Set())
         } else {
             setSelectedOrders(new Set(allOrderNumbers))
+            setSelectedItems(
+                new Set(Array.from(tableData, (_, idx) => idx.toString())),
+            )
         }
     }
 
@@ -349,24 +371,6 @@ const Orders = () => {
     // 전체 주문 목록 추출
     const allOrderNumbers = Array.from(
         new Set(response.content.map((order) => order.orderNumber)),
-    )
-
-    // 데이터를 Table 타입에 맞게 변환
-    const tableData: Table[] = response.content.flatMap((order) =>
-        order.orderItems.map((item) => ({
-            recipientName: order.recipientName,
-            productName: item.boardTitle,
-            itemName: item.itemName,
-            itemQuantity: item.quantity,
-            itemPrice: item.totalPrice,
-            orderStatus: item.orderStatus,
-            orderNumber: order.orderNumber,
-            paymentAt: order.paymentAt,
-            totalPaid: order.totalPaid.toString(),
-            deliveryStatus: order.deliveryStatus,
-            courierCompany: order.courierCompany,
-            trackingNumber: order.trackingNumber,
-        })),
     )
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
