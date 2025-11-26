@@ -1,170 +1,215 @@
-# 상태관리 (Redux)
+# Redux 상태 관리
 
-이 프로젝트는 전역 상태 관리를 위해 **Redux Toolkit**과 **Redux Saga**를 사용합니다.
+> **이 프로젝트의 Redux 아키텍처를 소개합니다**
 
-## 설치된 Redux 관련 패키지
+이 프로젝트는 **Redux Toolkit + Redux Saga + 커스텀 reduxMaker 유틸리티**를 사용하여 전역 상태를 관리합니다.
 
-프로젝트에 이미 설치되어 있는 Redux 관련 패키지들:
+일반적인 Redux Toolkit 패턴이 아닌, **보일러플레이트를 대폭 줄인 독자적인 아키텍처**를 채택했습니다.
 
-- `@reduxjs/toolkit` (v2.6.1) - Redux 공식 툴킷
-- `react-redux` (v9.2.0) - React 바인딩
-- `redux` (v5.0.1) - Redux 코어
-- `redux-saga` (v1.3.0) - 비동기 처리를 위한 사이드 이펙트 라이브러리
-- `typesafe-actions` (v5.1.0) - TypeScript 안전성을 위한 액션 헬퍼
-- `@types/react-redux` (v7.1.34) - TypeScript 타입 정의
+## 🎯 핵심 특징
 
-## 프로젝트 Redux 구조
+- ✅ **`reduxMaker` 유틸리티로 Slice + Saga 자동 생성**
+- ✅ **로딩/에러 상태 자동 관리 - 수동 작성 불필요**
+- ✅ **일관된 코드 패턴으로 빠른 개발**
+- ✅ **타입 안전성 보장 (TypeScript)**
+- ✅ **명시적 메모리 관리 (initialize/initializeAll)**
 
-Redux 관련 파일들은 다음과 같이 구성되어 있습니다:
+## 📦 설치된 패키지
+
+```json
+{
+  "@reduxjs/toolkit": "^2.6.1",
+  "react-redux": "^9.2.0",
+  "redux": "^5.0.1",
+  "redux-saga": "^1.3.0"
+}
+```
+
+## 🏗️ 프로젝트 Redux 구조
 
 ```
 src/
-  app/
-    store/
-      redux/
-        ├── store.ts          # Redux 스토어 설정
-        ├── hooks.ts          # 타입이 지정된 useDispatch, useSelector
-        ├── rootReducer.ts    # 루트 리듀서 (combineReducers)
-        ├── rootSaga.ts       # 루트 사가
-        └── modules/          # 기능별 슬라이스/모듈
-            ├── user/
-            ├── auth/
-            └── ...
+├── app/store/redux/
+│   ├── reduxStore.tsx      # Store 설정 & rootSaga
+│   ├── reduxHooks.tsx      # useAppDispatch, useAppSelector
+│   └── reduxUtils.ts       # reduxMaker 유틸리티 (핵심!)
+└── features/
+    └── sample/
+        ├── sampleReducer.ts    # reduxMaker로 생성된 reducer
+        ├── sampleAPI.tsx       # API 함수들
+        └── Sample.tsx          # 컴포넌트
 ```
 
-## 기본 사용법
+## 🚀 빠른 시작
 
-### 1. 스토어 접근
+### 1. Reducer 생성하기
 
-`src/app/store/redux/hooks.ts`에서 제공하는 타입이 지정된 훅을 사용합니다:
+**일반 Redux Toolkit (❌ 사용 안 함):**
+```typescript
+// 100+ 줄의 보일러플레이트...
+const slice = createSlice({ ... })
+function* saga() { ... }
+// 로딩/에러 상태 수동 관리
+```
+
+**이 프로젝트 (✅ reduxMaker):**
+```typescript
+// features/myFeature/myFeatureReducer.ts
+import { reduxMaker } from 'src/app/store/redux/reduxUtils.ts'
+
+const prefix = 'myFeature'
+
+// 비동기 API 요청
+const asyncRequests = [{
+    action: 'getData',
+    state: 'data',
+    initialState: null,
+    api: () => axios.get('/api/data'),
+}] as const
+
+// 동기 상태
+const localState = { count: 0 }
+
+// 동기 리듀서
+const localReducers = {
+    increment: (state) => { state.count += 1 }
+}
+
+// 🎉 자동 생성!
+const module = reduxMaker(prefix, asyncRequests, localState, localReducers)
+export const { slice, actions, saga } = module
+```
+
+### 2. Store에 등록
 
 ```typescript
-import { useAppDispatch, useAppSelector } from '@/app/store/redux/hooks';
+// app/store/redux/reduxStore.tsx
+import { slice, saga } from 'src/features/myFeature/myFeatureReducer'
+
+const reducers = {
+    myFeatureReducer: slice.reducer,
+}
+
+export function* rootSaga() {
+    yield all([saga()])
+}
+```
+
+### 3. 컴포넌트에서 사용
+
+```typescript
+import { useAppDispatch, useAppSelector } from 'src/app/store/redux/reduxHooks'
+import { actions } from 'src/features/myFeature/myFeatureReducer'
 
 function MyComponent() {
-  // 타입 안전한 dispatch
-  const dispatch = useAppDispatch();
-  
-  // 타입 안전한 selector
-  const user = useAppSelector((state) => state.user);
-  
-  return <div>{user.name}</div>;
+    const dispatch = useAppDispatch()
+    const { data, loading, error } = useAppSelector(
+        state => state.myFeatureReducer.data
+    )
+    
+    useEffect(() => {
+        dispatch(actions.getData())
+        return () => {
+            dispatch(actions.initialize('data'))  // 메모리 정리
+        }
+    }, [])
+    
+    if (loading) return <Spinner />
+    if (error) return <ErrorMessage />
+    return <div>{JSON.stringify(data)}</div>
 }
 ```
 
-### 2. 슬라이스 생성 (동기 액션)
+## 📊 자동으로 생성되는 것들
 
-Redux Toolkit의 `createSlice`를 사용하여 슬라이스를 생성합니다:
-
+### 상태 구조
 ```typescript
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface UserState {
-  name: string;
-  email: string;
+{
+    myFeatureReducer: {
+        // 비동기 상태 (자동 생성)
+        data: {
+            data: ResponseType | null,
+            loading: boolean,
+            error: boolean,
+            errorMsg: string,
+        },
+        // 동기 상태
+        count: 0,
+    }
 }
-
-const initialState: UserState = {
-  name: '',
-  email: '',
-};
-
-const userSlice = createSlice({
-  name: 'user',
-  initialState,
-  reducers: {
-    setUser: (state, action: PayloadAction<UserState>) => {
-      state.name = action.payload.name;
-      state.email = action.payload.email;
-    },
-    clearUser: (state) => {
-      state.name = '';
-      state.email = '';
-    },
-  },
-});
-
-export const { setUser, clearUser } = userSlice.actions;
-export default userSlice.reducer;
 ```
 
-### 3. 비동기 처리
-
-#### 방법 1: createAsyncThunk 사용
-
-간단한 비동기 로직은 `createAsyncThunk`를 사용합니다:
-
+### 액션들
 ```typescript
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+// API 요청
+actions.getData()                   // API 호출
+actions.getData({ id: 123 })        // 파라미터와 함께
 
-export const fetchUser = createAsyncThunk(
-  'user/fetchUser',
-  async (userId: string) => {
-    const response = await fetch(`/api/users/${userId}`);
-    return response.json();
-  }
-);
+// 동기 액션
+actions.increment()                 // 상태 변경
 
-const userSlice = createSlice({
-  name: 'user',
-  initialState: {
-    data: null,
-    loading: false,
-    error: null,
-  },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchUser.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.data = action.payload;
-      })
-      .addCase(fetchUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      });
-  },
-});
+// 초기화 (자동 생성)
+actions.initialize('data')          // 특정 상태 초기화
+actions.initializeAll()             // 모든 비동기 상태 초기화
 ```
 
-#### 방법 2: Redux Saga 사용
+## 💡 주요 개념
 
-복잡한 비동기 로직이나 사이드 이펙트는 Redux Saga를 사용합니다:
+### 동기 vs 비동기
 
+**동기 상태 (localState):**
 ```typescript
-// userSaga.ts
-import { call, put, takeLatest } from 'redux-saga/effects';
-
-function* fetchUserSaga(action: { type: string; payload: string }) {
-  try {
-    const response = yield call(fetch, `/api/users/${action.payload}`);
-    const data = yield call([response, 'json']);
-    yield put({ type: 'user/fetchUserSuccess', payload: data });
-  } catch (error) {
-    yield put({ type: 'user/fetchUserFailure', payload: error.message });
-  }
-}
-
-export function* userSaga() {
-  yield takeLatest('user/fetchUserRequest', fetchUserSaga);
+const localState = { count: 0, isOpen: false }
+const localReducers = {
+    increment: (state) => { state.count += 1 }
 }
 ```
 
-## 모범 사례
+**비동기 상태 (asyncRequests):**
+```typescript
+const asyncRequests = [{
+    action: 'getData',
+    state: 'data',
+    api: () => axios.get('/api/data')
+}]
+// 자동 생성: data.loading, data.error, data.data
+```
 
-1. **타입 안전성**: 항상 `useAppDispatch`와 `useAppSelector` 훅을 사용하세요
-2. **슬라이스 분리**: 기능별로 슬라이스를 분리하여 관리하세요
-3. **비동기 처리 선택**:
-   - 간단한 API 호출 → `createAsyncThunk`
-   - 복잡한 로직, 여러 액션 조합 → `redux-saga`
-4. **불변성**: Redux Toolkit의 Immer를 활용하여 직접 상태를 수정하세요
+## ⚠️ 주의사항
 
-## 추가 리소스
+1. **메모리 정리 필수**
+   ```typescript
+   useEffect(() => {
+       dispatch(actions.getData())
+       return () => dispatch(actions.initialize('data'))
+   }, [])
+   ```
+
+2. **타입 안전한 훅 사용**
+   ```typescript
+   // ✅ 올바른 사용
+   import { useAppDispatch, useAppSelector } from 'src/app/store/redux/reduxHooks'
+   
+   // ❌ 사용하지 마세요
+   import { useDispatch, useSelector } from 'react-redux'
+   ```
+
+## 📚 상세 문서
+
+이 프로젝트의 Redux 아키텍처에 대한 완벽한 가이드:
+
+**👉 [Redux 상세 가이드 (redux/)](./redux/)**
+
+- [📖 Redux 개요 & 빠른 시작](./redux/README.md)
+- [🏗️ 아키텍처 구조](./redux/architecture.md) - reduxMaker 내부 동작
+- [❓ 왜 Redux Store를 사용하는가?](./redux/why-redux-store.md)
+- [⚡ 비동기 처리 & 미들웨어](./redux/async-middleware.md)
+- [📘 사용 가이드](./redux/usage-guide.md) - 실전 예시
+- [🚀 성능 최적화](./redux/performance-optimization.md)
+- [✨ Best Practices](./redux/best-practices.md)
+
+## 🔗 추가 리소스
 
 - [Redux Toolkit 공식 문서](https://redux-toolkit.js.org/)
 - [Redux Saga 공식 문서](https://redux-saga.js.org/)
-- [리듀서 사용법 가이드](./reducer-usage.md)
-
+- 실제 코드: `src/features/sample/sampleReducer.ts`

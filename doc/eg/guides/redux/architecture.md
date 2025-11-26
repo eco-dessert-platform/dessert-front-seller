@@ -37,15 +37,7 @@ src/
 │       └── redux/
 │           ├── reduxStore.tsx      # Store 설정 및 미들웨어 구성
 │           ├── reduxHooks.tsx      # 타입 안전한 커스텀 훅
-│           ├── reduxUtils.ts       # 비동기 처리 유틸리티
-│           └── docs/               # 문서
-│               ├── README.md
-│               ├── architecture.md (현재 문서)
-│               ├── why-redux-store.md
-│               ├── async-middleware.md
-│               ├── usage-guide.md
-│               ├── performance-optimization.md
-│               └── best-practices.md
+│           └── reduxUtils.ts       # 비동기 처리 유틸리티
 └── features/
     └── sample/
         ├── sampleReducer.ts        # Slice + Saga 정의
