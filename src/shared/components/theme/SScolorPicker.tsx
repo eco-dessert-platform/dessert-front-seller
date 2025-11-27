@@ -1,6 +1,5 @@
-import { ChangeEvent, useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { Label } from 'src/shared/lib/shadcn/components/ui/label.tsx'
-import { debounce } from 'src/shared/utils/debounce.tsx'
 import { hexToOklch, oklchToHex } from 'src/shared/utils/colorUtils.tsx'
 import { useDispatch } from 'react-redux'
 import { themeAction } from 'src/shared/components/theme/themeReducer.tsx'
@@ -25,24 +24,28 @@ const ColorPicker = ({
     }, [color])
 
     const dispatch = useDispatch()
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
-    const debouncedUpdate = useMemo(
-        () =>
-            debounce(
-                (key: string, value: string) => {
-                    dispatch(themeAction.setColor({ key, value }))
-                    onChange(value)
-                },
-                200,
-            ),
+    const debouncedUpdate = useCallback(
+        (key: string, value: string) => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current)
+            }
+            timeoutRef.current = setTimeout(() => {
+                dispatch(themeAction.setColor({ key, value }))
+                onChange(value)
+            }, 200)
+        },
         [dispatch, onChange],
     )
 
     useEffect(() => {
         return () => {
-            debouncedUpdate.cancel()
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current)
+            }
         }
-    }, [debouncedUpdate])
+    }, [])
 
     const handleColorChange = (e: ChangeEvent<HTMLInputElement>) => {
         const newColor = hexToOklch(e.target.value)
