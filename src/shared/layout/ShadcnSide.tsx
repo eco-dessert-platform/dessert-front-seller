@@ -3,7 +3,7 @@
 import React from 'react'
 import { BoxIcon, ChevronDown, CreditCardIcon } from 'lucide-react'
 import { shallowEqual, useSelector } from 'react-redux'
-import { RootState } from 'src/app/store/redux/reduxStore.tsx'
+import { RootState } from 'src/global/store/redux/reduxStore.tsx'
 import {
     Sidebar,
     SidebarContent,

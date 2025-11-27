@@ -33,7 +33,7 @@ import {
     AccordionTrigger,
 } from 'src/shared/lib/shadcn/components/ui/accordion.tsx'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import { RootState } from 'src/app/store/redux/reduxStore.tsx'
+import { RootState } from 'src/global/store/redux/reduxStore.tsx'
 import { themeAction } from 'src/shared/components/theme/themeReducer.tsx'
 import { colorGroups } from 'src/shared/components/theme/colorConstants.tsx'
 

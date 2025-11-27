@@ -1,4 +1,4 @@
-import { client } from 'src/app/api/client.tsx'
+import { client } from 'src/global/api/client.tsx'
 
 export const getProduct = (id: number) => {
     return client.get(`products/${id}`)

@@ -121,7 +121,7 @@
 이미 프로젝트에 테마 관리 기능이 구현되어 있습니다:
 
 ```typescript
-import { useAppDispatch } from 'src/app/store/redux/reduxHooks'
+import { useAppDispatch } from 'src/global/store/redux/reduxHooks'
 import { themeAction } from 'src/shared/components/theme/themeReducer'
 
 function ThemeToggle() {

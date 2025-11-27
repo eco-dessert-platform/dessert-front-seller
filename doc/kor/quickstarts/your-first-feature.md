@@ -36,7 +36,7 @@ cd counter
 
 ```typescript
 import { PayloadAction } from '@reduxjs/toolkit'
-import { reduxMaker } from 'src/app/store/redux/reduxUtils'
+import { reduxMaker } from 'src/global/store/redux/reduxUtils'
 
 // 기능 이름
 const prefix = 'counter'
@@ -106,7 +106,7 @@ export function* rootSaga() {
 `src/features/counter/Counter.tsx` 파일을 생성합니다:
 
 ```typescript
-import { useAppDispatch, useAppSelector } from 'src/app/store/redux/reduxHooks'
+import { useAppDispatch, useAppSelector } from 'src/global/store/redux/reduxHooks'
 import { counterAction } from './counterReducer'
 
 export const Counter = () => {

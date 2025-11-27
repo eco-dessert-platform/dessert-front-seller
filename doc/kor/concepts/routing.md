@@ -52,7 +52,7 @@ src/pages/
 
 **router.tsx의 동작**:
 ```typescript
-// src/app/router/router.tsx
+// src/global/router/router.tsx
 const modules = import.meta.glob('/src/pages/url/**/*.tsx')
 
 // 각 파일이 자동으로 라우트로 변환됨

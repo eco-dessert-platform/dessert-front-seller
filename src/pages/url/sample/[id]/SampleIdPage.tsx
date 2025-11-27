@@ -2,7 +2,7 @@ import WhLayout from 'src/shared/layout/WhLayout.tsx'
 import {
     useAppDispatch,
     useAppSelector,
-} from 'src/app/store/redux/reduxHooks.tsx'
+} from 'src/global/store/redux/reduxHooks.tsx'
 import { shallowEqual } from 'react-redux'
 import { useEffect } from 'react'
 import { sampleAction } from 'src/features/sample/sampleReducer.ts'

@@ -4,7 +4,7 @@ import {
     AppDispatch,
     AppStore,
     RootState,
-} from 'src/app/store/redux/reduxStore.tsx'
+} from 'src/global/store/redux/reduxStore.tsx'
 
 export const useAppDispatch: () => AppDispatch = useDispatch
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector

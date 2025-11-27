@@ -4,7 +4,7 @@ import {
     Theme,
     ThemeContext,
 } from 'src/shared/lib/shadcn/components/ThemeContext.tsx'
-import store from 'src/app/store/redux/reduxStore.tsx'
+import store from 'src/global/store/redux/reduxStore.tsx'
 import { themeAction } from 'src/shared/components/theme/themeReducer.tsx'
 
 const VARS_KEY = 'vite-ui-theme-vars'

@@ -15,7 +15,7 @@
 
 ```typescript
 // features/sample/sampleReducer.ts
-import { reduxMaker, AsyncRequest } from 'src/app/store/redux/reduxUtils.ts'
+import { reduxMaker, AsyncRequest } from 'src/global/store/redux/reduxUtils.ts'
 import { PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
 
@@ -100,7 +100,7 @@ export const {
 ### 6. Store에 등록하기
 
 ```typescript
-// app/store/redux/reduxStore.tsx
+// global/store/redux/reduxStore.tsx
 import { sampleSlice, sampleSaga } from 'src/features/sample/sampleReducer'
 
 const reducers = {
@@ -125,7 +125,7 @@ export function* rootSaga() {
 ```typescript
 // Sample.tsx
 import { useEffect } from 'react'
-import { useAppDispatch, useAppSelector } from 'src/app/store/redux/reduxHooks'
+import { useAppDispatch, useAppSelector } from 'src/global/store/redux/reduxHooks'
 import { sampleAction } from 'src/features/sample/sampleReducer'
 
 const Sample = () => {

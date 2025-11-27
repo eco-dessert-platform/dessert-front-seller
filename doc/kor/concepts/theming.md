@@ -230,7 +230,7 @@ body.preload {
 
 ```typescript
 // Redux에서 테마 변수 관리
-import { useAppDispatch } from 'src/app/store/redux/reduxHooks'
+import { useAppDispatch } from 'src/global/store/redux/reduxHooks'
 import { themeAction } from 'src/features/theme/themeReducer'
 
 function ThemeCustomizer() {

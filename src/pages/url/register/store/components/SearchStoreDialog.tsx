@@ -19,8 +19,8 @@ import {
 } from 'src/shared/lib/shadcn/components/ui/dialog'
 import { cn } from 'src/shared/lib/shadcn/lib/utils'
 import { DATA_LIST } from './mock'
-import { useAppDispatch, useAppSelector } from 'src/app/store/redux/reduxHooks'
-import { RootState } from 'src/app/store/redux/reduxStore'
+import { useAppDispatch, useAppSelector } from 'src/global/store/redux/reduxHooks'
+import { RootState } from 'src/global/store/redux/reduxStore'
 import { storeAction } from '../storeReducer'
 
 function SearchStoreDialog({

@@ -232,7 +232,7 @@ touch MyFeature.tsx myFeatureReducer.ts myFeatureAPI.tsx
 
 ```typescript
 // myFeatureReducer.ts
-import { reduxMaker } from 'src/app/store/redux/reduxUtils'
+import { reduxMaker } from 'src/global/store/redux/reduxUtils'
 
 const prefix = 'myFeature'
 const asyncRequests = [] as const
@@ -247,7 +247,7 @@ export const { slice, actions, saga } = module
 ### 3. Store에 등록
 
 ```typescript
-// app/store/redux/reduxStore.tsx
+// global/store/redux/reduxStore.tsx
 import { slice, saga } from 'src/features/myFeature/myFeatureReducer'
 
 const reducers = {
@@ -300,7 +300,7 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 // 2. 내부 절대 경로 (src/)
-import { reduxMaker } from 'src/app/store/redux/reduxUtils'
+import { reduxMaker } from 'src/global/store/redux/reduxUtils'
 import { Button } from 'src/shared/components/button/Button'
 
 // 3. 상대 경로

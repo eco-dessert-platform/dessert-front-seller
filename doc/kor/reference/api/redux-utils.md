@@ -244,7 +244,7 @@ const pokemon = useAppSelector(state => state.sampleReducer.pokemon)
 
 ```typescript
 // 1. Reducer 정의
-import { reduxMaker } from 'src/app/store/redux/reduxUtils'
+import { reduxMaker } from 'src/global/store/redux/reduxUtils'
 import { getUser } from './userAPI'
 
 const prefix = 'user'
@@ -285,7 +285,7 @@ export function* rootSaga() {
 }
 
 // 3. 컴포넌트에서 사용
-import { useAppDispatch, useAppSelector } from 'src/app/store/redux/reduxHooks'
+import { useAppDispatch, useAppSelector } from 'src/global/store/redux/reduxHooks'
 import { actions } from './userReducer'
 
 function UserProfile() {
