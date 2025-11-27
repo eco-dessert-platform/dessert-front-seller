@@ -1,6 +1,6 @@
 import BgrButton from 'src/shared/components/button/BgrButton'
 import BgrInput from 'src/shared/components/input/BgrInput'
-import BgrInputField from 'src/shared/inputField/BgrInputField'
+import BgrInputField from 'src/shared/components/inputField/BgrInputField'
 import {
     AlertDialog,
     AlertDialogContent,

@@ -12,7 +12,7 @@ import FileUploadInput from 'src/shared/components/input/FileUploadInput'
 import BgrInput from 'src/shared/components/input/BgrInput'
 import BgrActionButtons from 'src/shared/components/button/BgrActionButtons'
 import BgrHeader from 'src/shared/layout/BgrHeader'
-import BgrInputField from 'src/shared/inputField/BgrInputField'
+import BgrInputField from 'src/shared/components/inputField/BgrInputField'
 
 const SellerVerificationPage = () => {
     return (

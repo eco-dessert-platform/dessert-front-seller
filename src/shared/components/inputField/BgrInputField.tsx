@@ -1,6 +1,6 @@
-import BgrButton from '../components/button/BgrButton'
-import BgrInput from '../components/input/BgrInput'
-import BgrLabel from '../components/label/BgrLabel'
+import BgrButton from '../button/BgrButton.tsx'
+import BgrInput from '../input/BgrInput.tsx'
+import BgrLabel from '../label/BgrLabel.tsx'
 import { InputHTMLAttributes } from 'react'
 
 interface BgrInputFieldProps extends InputHTMLAttributes<HTMLInputElement> {

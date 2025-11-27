@@ -25,7 +25,7 @@ import BgrActionButtons from 'src/shared/components/button/BgrActionButtons'
 import BgrHeader from 'src/shared/layout/BgrHeader'
 import { useState } from 'react'
 import SearchStoreDialog from './components/SearchStoreDialog'
-import BgrInputField from 'src/shared/inputField/BgrInputField'
+import BgrInputField from 'src/shared/components/inputField/BgrInputField'
 
 const StoreVerificationPage = () => {
     const [isSearchStoreDialogOpen, setIsSearchStoreDialogOpen] =

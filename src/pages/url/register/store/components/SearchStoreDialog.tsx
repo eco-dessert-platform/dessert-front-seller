@@ -1,6 +1,6 @@
 import { ChevronRightIcon } from 'lucide-react'
 import { useState } from 'react'
-import BgrInputField from 'src/shared/inputField/BgrInputField'
+import BgrInputField from 'src/shared/components/inputField/BgrInputField'
 import {
     AlertDialog,
     AlertDialogFooter,
