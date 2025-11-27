@@ -1,7 +1,13 @@
-import clsx from "clsx";
+import clsx from 'clsx'
 
 // TODO :: READY_PRODUCT, WITHDRAW, CONFIRMED, DECIDE -> 임의 값
-type OrderStatus = "PAID" | "CHECKED" | "READY_PRODUCT" | "WITHDRAW" | "CONFIRMED" | "DECIDE";
+type OrderStatus =
+    | 'PAID'
+    | 'CHECKED'
+    | 'READY_PRODUCT'
+    | 'WITHDRAW'
+    | 'CONFIRMED'
+    | 'DECIDE'
 
 // TODO :: 타입 확정 후, index의 타입 OrderStatus로 변경
 const STYLE_BY_TYPE: Record<string, string> = {
@@ -20,15 +26,20 @@ const STYLE_BY_TYPE: Record<string, string> = {
     // 취소요청
     CANCEL_REQUEST: 'text-[#DE4525] bg-red-50 border-[#DE4525]',
     // 반품 요청
-    REFUND_REQUEST: 'text-gray-600 bg-gray-600 text-white'
-};
+    REFUND_REQUEST: 'text-gray-600 bg-gray-600 text-white',
+}
 
-const OrderStatusLabel = ({ type, text }: { type: string, text: string }) => {
+const OrderStatusLabel = ({ type, text }: { type: string; text: string }) => {
     return (
-        <div className={clsx('inline-block py-0.5 px-1 border text-center text-[10px] rounded-[4px]', type in STYLE_BY_TYPE && STYLE_BY_TYPE[type])}>
+        <div
+            className={clsx(
+                'inline-block rounded-[4px] border px-1 py-0.5 text-center text-[10px]',
+                type in STYLE_BY_TYPE && STYLE_BY_TYPE[type],
+            )}
+        >
             {text}
         </div>
-    );
-};
+    )
+}
 
-export default OrderStatusLabel;
+export default OrderStatusLabel

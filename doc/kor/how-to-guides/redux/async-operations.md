@@ -1,6 +1,7 @@
 # 비동기 처리 & 미들웨어
 
 ## 📋 목차
+
 1. [비동기 처리 관점](#비동기-처리-관점)
 2. [Redux Saga를 선택한 이유](#redux-saga를-선택한-이유)
 3. [Saga Effect의 강력한 기능들](#saga-effect의-강력한-기능들)
@@ -19,7 +20,7 @@ function* createRequestSaga(prefix, reducerName, api) {
         try {
             // call: API 호출을 동기적으로 대기
             const response = yield call(api, action.payload)
-            
+
             // put: 액션 디스패치
             yield put({
                 type: `${prefix}/${reducerName}Success`,
@@ -43,18 +44,19 @@ function* createRequestSaga(prefix, reducerName, api) {
 // Saga는 제너레이터 함수이므로 테스트가 쉬움
 test('should handle API success', () => {
     const gen = fetchApiData({ payload: {} })
-    
+
     // 첫 번째 yield 확인
     expect(gen.next().value).toEqual(call(api, {}))
-    
+
     // 두 번째 yield 확인
     expect(gen.next(response).value).toEqual(
-        put({ type: 'sample/getPokemonSuccess', payload: data })
+        put({ type: 'sample/getPokemonSuccess', payload: data }),
     )
 })
 ```
 
 **장점:**
+
 - 제너레이터는 단계별로 실행 제어 가능
 - 실제 API 호출 없이 테스트 가능
 - 각 단계의 출력을 검증 가능
@@ -85,6 +87,7 @@ function* searchSaga() {
 ```
 
 **사용 사례:**
+
 - 검색 자동완성
 - 실시간 필터링
 - 무한 스크롤
@@ -100,7 +103,7 @@ function* fetchMultipleData() {
         call(fetchPosts),
         call(fetchComments),
     ])
-    
+
     // 순차 처리 - user 정보가 필요한 경우
     const user = yield call(fetchUser)
     const userPosts = yield call(fetchUserPosts, user.id)
@@ -119,12 +122,14 @@ function* loadDashboard() {
             call(fetchUsers),
             call(fetchOrders),
         ])
-        
-        yield put(dashboardAction.loadSuccess({
-            analytics,
-            users,
-            orders,
-        }))
+
+        yield put(
+            dashboardAction.loadSuccess({
+                analytics,
+                users,
+                orders,
+            }),
+        )
     } catch (error) {
         yield put(dashboardAction.loadFail(error.message))
     }
@@ -138,21 +143,21 @@ function* loadDashboard() {
 function* processOrder() {
     // 1단계: 재고 확인
     const stock = yield call(checkStock, productId)
-    
+
     if (!stock.available) {
         yield put(orderAction.fail('재고가 부족합니다'))
         return
     }
-    
+
     // 2단계: 결제 처리
     const payment = yield call(processPayment, paymentInfo)
-    
+
     // 3단계: 주문 생성
     const order = yield call(createOrder, {
         productId,
         paymentId: payment.id,
     })
-    
+
     yield put(orderAction.success(order))
 }
 ```
@@ -162,13 +167,14 @@ function* processOrder() {
 ```typescript
 // 이전 데이터를 유지하면서 로딩
 loading: (prevData) => ({
-    data: prevData,  // 이전 데이터 표시 유지
+    data: prevData, // 이전 데이터 표시 유지
     loading: true,
     error: false,
 })
 ```
 
 **사용자 경험 향상:**
+
 - 새로고침 시 깜빡임 없이 이전 데이터 표시
 - 백그라운드에서 새 데이터 로딩
 - 로딩 완료 후 부드러운 전환
@@ -180,12 +186,12 @@ const ProductList = () => {
     const { data, loading } = useAppSelector(
         state => state.productReducer.products
     )
-    
+
     return (
         <div>
             {/* 이전 데이터를 표시하면서 로딩 인디케이터 */}
             {loading && <LoadingOverlay />}
-            
+
             {/* 데이터가 있으면 항상 표시 */}
             {data && data.map(product => (
                 <ProductCard key={product.id} product={product} />
@@ -207,17 +213,18 @@ const getErrorMessage = (status, fallback, responseData) => {
         500: '서버 오류가 발생했습니다.',
         503: '서버가 현재 사용할 수 없습니다.',
     }
-    
+
     // 서버에서 보낸 에러 메시지가 있으면 우선 사용
     if (responseData?.message) {
         return responseData.message
     }
-    
+
     return messages[status] || fallback
 }
 ```
 
 **계층적 에러 처리:**
+
 1. 서버 응답의 커스텀 메시지
 2. HTTP 상태 코드별 기본 메시지
 3. Fallback 메시지
@@ -281,18 +288,18 @@ export const complexFlow = () => async (dispatch, getState) => {
     // 1. 여러 API를 순차적으로 호출
     const user = await fetchUser()
     const posts = await fetchUserPosts(user.id)
-    
+
     // 2. 상태 확인
     const state = getState()
     if (state.cache.hasData) {
         return
     }
-    
+
     // 3. 조건부 로직
     if (posts.length > 0) {
         await fetchComments(posts[0].id)
     }
-    
+
     // 코드가 복잡해지고 테스트가 어려움
 }
 ```
@@ -305,18 +312,18 @@ function* complexFlow() {
     // 1. 여러 API를 순차적으로 호출
     const user = yield call(fetchUser)
     const posts = yield call(fetchUserPosts, user.id)
-    
+
     // 2. 상태 확인
     const state = yield select()
     if (state.cache.hasData) {
         return
     }
-    
+
     // 3. 조건부 로직
     if (posts.length > 0) {
         yield call(fetchComments, posts[0].id)
     }
-    
+
     // 제너레이터로 단계별 테스트 가능
 }
 ```
@@ -340,7 +347,7 @@ function* searchAutocompleteSaga() {
     yield takeLatest('search/input', function* (action) {
         // 300ms 대기
         yield delay(300)
-        
+
         // API 호출
         const results = yield call(searchAPI, action.payload)
         yield put(searchAction.setResults(results))
@@ -415,7 +422,7 @@ function* fetchWithTimeout() {
         response: call(fetchAPI),
         timeout: delay(5000),
     })
-    
+
     if (timeout) {
         yield put(action.timeout())
     } else {
@@ -449,16 +456,16 @@ function* rootSaga() {
     yield all([
         // 1. API 호출
         sampleSaga(),
-        
+
         // 2. 라우팅 감지
         routerSaga(),
-        
+
         // 3. 로컬 스토리지 동기화
         localStorageSaga(),
-        
+
         // 4. 분석 이벤트 전송
         analyticsSaga(),
-        
+
         // 5. 웹소켓 연결 관리
         websocketSaga(),
     ])
@@ -474,16 +481,16 @@ function* localStorageSaga() {
         yield call(
             [localStorage, localStorage.setItem],
             'theme',
-            action.payload
+            action.payload,
         )
     })
-    
+
     // 로그인 성공 시 토큰 저장
     yield takeEvery('auth/loginSuccess', function* (action) {
         yield call(
             [localStorage, localStorage.setItem],
             'token',
-            action.payload.token
+            action.payload.token,
         )
     })
 }
@@ -496,16 +503,16 @@ function* websocketSaga() {
     // 웹소켓 연결
     yield takeEvery('websocket/connect', function* () {
         const socket = yield call(createWebSocket)
-        
+
         // 메시지 리스닝
         const channel = yield call(createSocketChannel, socket)
-        
+
         while (true) {
             const message = yield take(channel)
             yield put(messageAction.receive(message))
         }
     })
-    
+
     // 웹소켓 연결 해제
     yield takeEvery('websocket/disconnect', function* () {
         yield call(closeWebSocket)
@@ -533,7 +540,7 @@ const store = configureStore({
     reducer: reducers,
     middleware: () => new Tuple(sagaMiddleware),
     // 필요시 추가 미들웨어 체인 가능
-    // middleware: (getDefaultMiddleware) => 
+    // middleware: (getDefaultMiddleware) =>
     //     getDefaultMiddleware().concat(logger, sagaMiddleware)
 })
 
@@ -587,6 +594,7 @@ const store = configureStore({
 ```
 
 **DevTools 기능:**
+
 - ✅ 모든 액션 흐름 시각화
 - ✅ Time-travel debugging
 - ✅ State diff 확인
@@ -605,7 +613,7 @@ function* pollDataSaga() {
         try {
             const data = yield call(fetchData)
             yield put(dataAction.success(data))
-            
+
             // 5초 대기
             yield delay(5000)
         } catch (error) {
@@ -629,11 +637,11 @@ function* watchPolling() {
 function* optimisticUpdateSaga(action) {
     // 1. 즉시 UI 업데이트
     yield put(todoAction.addOptimistic(action.payload))
-    
+
     try {
         // 2. API 호출
         const result = yield call(addTodoAPI, action.payload)
-        
+
         // 3. 서버 응답으로 교체
         yield put(todoAction.addSuccess(result))
     } catch (error) {
@@ -652,26 +660,26 @@ function* authFlowSaga() {
     yield takeEvery('auth/loginSuccess', function* (action) {
         // 1. 토큰 저장
         yield call(saveToken, action.payload.token)
-        
+
         // 2. 사용자 정보 가져오기
         yield put(userAction.fetchUser())
-        
+
         // 3. 메인 페이지로 이동
         yield call(navigate, '/dashboard')
     })
-    
+
     // 로그아웃 시
     yield takeEvery('auth/logout', function* () {
         // 1. 토큰 삭제
         yield call(removeToken)
-        
+
         // 2. 모든 상태 초기화
         yield put({ type: 'RESET_ALL' })
-        
+
         // 3. 로그인 페이지로 이동
         yield call(navigate, '/login')
     })
-    
+
     // 401 에러 시 자동 로그아웃
     yield takeEvery('*', function* (action) {
         if (action.payload?.status === 401) {
@@ -687,4 +695,3 @@ function* authFlowSaga() {
 
 **작성일**: 2024-11-20  
 **버전**: 1.0.0
-

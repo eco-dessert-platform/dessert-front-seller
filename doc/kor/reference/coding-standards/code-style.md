@@ -21,4 +21,3 @@ jetbrains://WebStorm/settings?name=%EC%96%B8%EC%96%B4+%EB%B0%8F+%ED%94%84%EB%A0%
 ## TailwindCSS
 
 - prettier-plugin-tailwindcss로 자동 정렬
-

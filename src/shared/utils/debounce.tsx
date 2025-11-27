@@ -1,8 +1,8 @@
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
     fn: T,
     delay: number,
 ): T & { cancel: () => void } {
-    let timeoutId: NodeJS.Timeout
+    let timeoutId: ReturnType<typeof setTimeout>
 
     const debounced = function (this: unknown, ...args: Parameters<T>) {
         clearTimeout(timeoutId)

@@ -5,36 +5,44 @@
 ## 📑 목차
 
 ### [프로젝트 구조 (FSD)](./project-structure.md)
+
 Feature-Sliced Design 패턴을 기반으로 한 프로젝트 폴더 구조를 이해합니다.
 
 **주요 내용**:
+
 - FSD 패턴 소개
 - 폴더 구조 상세 설명
 - 각 계층의 역할
 - 파일 배치 규칙
 
 ### [상태 관리](./state-management.md)
+
 Redux Toolkit + Redux Saga 기반의 상태 관리 아키텍처를 이해합니다.
 
 **주요 내용**:
+
 - 상태 관리 개요
 - reduxMaker 유틸리티
 - 비동기 처리 방식
 - Redux를 선택한 이유
 
 ### [라우팅](./routing.md)
+
 React Router v7 기반의 동적 라우팅 시스템을 이해합니다.
 
 **주요 내용**:
+
 - 파일 시스템 기반 라우팅
 - 동적 라우트 생성
 - 레이지 로딩
 - 라우트 구조 규칙
 
 ### [테마 시스템](./theming.md)
+
 TailwindCSS v4와 shadcn/ui 기반의 테마 시스템을 이해합니다.
 
 **주요 내용**:
+
 - CSS 아키텍처
 - 다크/라이트 모드
 - CSS 변수 시스템
@@ -60,4 +68,3 @@ TailwindCSS v4와 shadcn/ui 기반의 테마 시스템을 이해합니다.
 ---
 
 [← 메인 문서로 돌아가기](../README.md)
-

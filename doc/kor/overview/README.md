@@ -5,6 +5,7 @@ dessert-front-seller 프로젝트의 전반적인 개요와 아키텍처를 소�
 ## 📑 목차
 
 ### [프로젝트 소개](./what-is-this-project.md)
+
 이 프로젝트가 무엇인지, 어떤 목적으로 만들어졌는지 알아보세요.
 
 - 프로젝트 목적
@@ -12,6 +13,7 @@ dessert-front-seller 프로젝트의 전반적인 개요와 아키텍처를 소�
 - 프로젝트 철학
 
 ### [아키텍처 개요](./architecture.md)
+
 프로젝트의 전체 아키텍처와 설계 원칙을 이해합니다.
 
 - Feature-Sliced Design (FSD)
@@ -19,6 +21,7 @@ dessert-front-seller 프로젝트의 전반적인 개요와 아키텍처를 소�
 - 설계 원칙
 
 ### [기술 스택](./tech-stack.md)
+
 프로젝트에서 사용하는 기술 스택과 선택 이유를 알아봅니다.
 
 - 핵심 기술
@@ -33,4 +36,3 @@ dessert-front-seller 프로젝트의 전반적인 개요와 아키텍처를 소�
 ---
 
 [← 메인 문서로 돌아가기](../README.md)
-

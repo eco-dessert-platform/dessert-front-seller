@@ -16,10 +16,10 @@
 
 ```json
 {
-  "@reduxjs/toolkit": "^2.6.1",
-  "react-redux": "^9.2.0",
-  "redux": "^5.0.1",
-  "redux-saga": "^1.3.0"
+    "@reduxjs/toolkit": "^2.6.1",
+    "react-redux": "^9.2.0",
+    "redux": "^5.0.1",
+    "redux-saga": "^1.3.0"
 }
 ```
 
@@ -58,6 +58,7 @@ Component
 ### 1. reduxMaker 유틸리티
 
 **전통적인 Redux Toolkit**:
+
 ```typescript
 // ❌ 100+ 줄의 보일러플레이트
 const slice = createSlice({ ... })
@@ -66,6 +67,7 @@ const saga = function* () { ... }
 ```
 
 **reduxMaker 사용**:
+
 ```typescript
 // ✅ 간결한 정의
 const asyncRequests = [
@@ -74,7 +76,7 @@ const asyncRequests = [
         state: 'data',
         initialState: null,
         api: () => axios.get('/api/data'),
-    }
+    },
 ]
 const module = reduxMaker(prefix, asyncRequests, localState, localReducers)
 // Slice + Saga + 로딩/에러 상태 모두 자동 생성!
@@ -98,6 +100,7 @@ reduxMaker는 모든 비동기 요청에 대해 다음 구조를 자동 생성�
 ### 3. 동기 vs 비동기 Reducer
 
 **동기 Reducer (localState & localReducers)**:
+
 ```typescript
 const localState = {
     count: 0,
@@ -112,13 +115,14 @@ const localReducers = {
 ```
 
 **비동기 Reducer (asyncRequests)**:
+
 ```typescript
 const asyncRequests = [
     {
         action: 'getData',
         state: 'data',
         api: () => axios.get('/api/data'),
-    }
+    },
 ]
 // 자동 생성: data.loading, data.error, data.data
 ```
@@ -129,18 +133,19 @@ const asyncRequests = [
 
 **Redux Thunk와 비교**:
 
-| 기능 | Redux Thunk | Redux Saga |
-|------|-------------|------------|
-| **비동기 처리** | async/await | 제너레이터 |
-| **취소** | 수동 구현 필요 | takeLatest 제공 |
-| **디바운스** | 수동 구현 | debounce 제공 |
-| **병렬 처리** | Promise.all | all() 제공 |
-| **테스트** | 어려움 | 쉬움 |
-| **복잡한 플로우** | 어려움 | 쉬움 |
+| 기능              | Redux Thunk    | Redux Saga      |
+| ----------------- | -------------- | --------------- |
+| **비동기 처리**   | async/await    | 제너레이터      |
+| **취소**          | 수동 구현 필요 | takeLatest 제공 |
+| **디바운스**      | 수동 구현      | debounce 제공   |
+| **병렬 처리**     | Promise.all    | all() 제공      |
+| **테스트**        | 어려움         | 쉬움            |
+| **복잡한 플로우** | 어려움         | 쉬움            |
 
 ### Saga의 강력한 기능
 
 **1. 자동 취소 (takeLatest)**:
+
 ```typescript
 // 이전 요청이 완료되지 않으면 자동 취소
 yield takeLatest('search/query', searchSaga)
@@ -148,6 +153,7 @@ yield takeLatest('search/query', searchSaga)
 ```
 
 **2. 병렬/순차 처리**:
+
 ```typescript
 // 병렬 처리 - 동시 실행
 const [user, posts, comments] = yield all([
@@ -162,6 +168,7 @@ const userPosts = yield call(fetchUserPosts, user.id)
 ```
 
 **3. 디바운스**:
+
 ```typescript
 // 500ms 동안 추가 입력이 없을 때만 검색
 yield debounce(500, 'search/input', searchSaga)
@@ -193,13 +200,13 @@ yield debounce(500, 'search/input', searchSaga)
 
 ```typescript
 // ✅ 타입이 자동으로 추론됨
-const pokemon = useAppSelector(state => state.sampleReducer.pokemon)
+const pokemon = useAppSelector((state) => state.sampleReducer.pokemon)
 // pokemon의 타입: AsyncState<{ name: string; id: number }>
 
 // ✅ 타입 안전한 dispatch
 const dispatch = useAppDispatch()
-dispatch(sampleAction.getPokemon())  // ✅ OK
-dispatch(sampleAction.getPokemon(123))  // ❌ 타입 에러
+dispatch(sampleAction.getPokemon()) // ✅ OK
+dispatch(sampleAction.getPokemon(123)) // ❌ 타입 에러
 ```
 
 ## 🎯 왜 이런 설계를 선택했는가?
@@ -207,36 +214,44 @@ dispatch(sampleAction.getPokemon(123))  // ❌ 타입 에러
 ### ✅ 장점
 
 **1. 일관성**:
+
 - 모든 API 요청이 동일한 패턴
 - 팀원 누구나 쉽게 이해하고 추가 가능
 
 **2. 보일러플레이트 최소화**:
+
 - reduxMaker로 3줄이면 새 API 추가
 - 수동으로 100+ 줄 작성할 필요 없음
 
 **3. 자동 로딩/에러 관리**:
+
 - loading, error 상태 자동 생성
 - UI에서 간단히 사용 가능
 
 **4. 예측 가능한 상태 흐름**:
+
 - Redux DevTools로 모든 액션 추적
 - Time-travel debugging 가능
 
 **5. 중앙 집중식 에러 처리**:
+
 - HTTP 상태 코드별 자동 에러 메시지
 - 일관된 에러 처리 로직
 
 ### ⚠️ 단점 및 고려사항
 
 **1. 학습 곡선**:
+
 - Redux Saga의 제너레이터 문법 학습 필요
 - 초기 설정이 복잡
 
 **2. 번들 크기**:
+
 - Redux + Redux Saga 라이브러리 추가 (~30KB)
 - 작은 프로젝트에는 오버엔지니어링일 수 있음
 
 **3. 캐싱 전략**:
+
 - React Query처럼 자동 캐싱 기능 없음
 - 필요시 직접 구현 필요
 
@@ -245,12 +260,14 @@ dispatch(sampleAction.getPokemon(123))  // ❌ 타입 에러
 ### 언제 이 아키텍처가 적합한가?
 
 **✅ 적합한 경우**:
+
 - 중대형 프로젝트 (10+ 페이지)
 - 복잡한 비동기 로직
 - 예측 가능한 상태 흐름이 중요
 - 팀 협업 프로젝트
 
 **❌ 부적합한 경우**:
+
 - 작은 프로젝트 (5페이지 이하)
 - 프로토타입/MVP
 - 빠른 개발 속도가 최우선
@@ -259,11 +276,13 @@ dispatch(sampleAction.getPokemon(123))  // ❌ 타입 에러
 ### 대안
 
 **React Query + Zustand**:
+
 - 작은 프로젝트에 적합
 - 자동 캐싱 및 리페칭
 - 빠른 개발 속도
 
 **Redux Toolkit + RTK Query**:
+
 - REST API에 최적화
 - 자동 캐싱
 - 하지만 복잡한 비동기 로직 처리는 제한적
@@ -305,14 +324,14 @@ export const { slice, actions, saga } = module
 const UserProfile = () => {
     const dispatch = useAppDispatch()
     const { data, loading, error } = useAppSelector(state => state.userReducer.user)
-    
+
     useEffect(() => {
         dispatch(userAction.getUser())
         return () => {
             dispatch(userAction.initialize('user'))  // 메모리 정리
         }
     }, [])
-    
+
     if (loading) return <Spinner />
     if (error) return <ErrorMessage />
     return <UserCard data={data} />
@@ -330,4 +349,3 @@ const UserProfile = () => {
 ---
 
 [← Concepts 목차로 돌아가기](./README.md)
-

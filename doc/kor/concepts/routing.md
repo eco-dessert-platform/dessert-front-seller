@@ -37,12 +37,12 @@ src/pages/
 
 ### URL 매핑
 
-| 파일 경로 | URL | 설명 |
-|----------|-----|------|
-| `pages/url/login/LoginPage.tsx` | `/login` | 로그인 페이지 |
-| `pages/url/orders/OrdersPage.tsx` | `/orders` | 주문 목록 |
-| `pages/url/sample/[id]/DetailPage.tsx` | `/sample/123` | 동적 라우트 |
-| `pages/HomePage.tsx` | `/` | 홈 페이지 |
+| 파일 경로                              | URL           | 설명          |
+| -------------------------------------- | ------------- | ------------- |
+| `pages/url/login/LoginPage.tsx`        | `/login`      | 로그인 페이지 |
+| `pages/url/orders/OrdersPage.tsx`      | `/orders`     | 주문 목록     |
+| `pages/url/sample/[id]/DetailPage.tsx` | `/sample/123` | 동적 라우트   |
+| `pages/HomePage.tsx`                   | `/`           | 홈 페이지     |
 
 ## 🔑 핵심 개념
 
@@ -51,6 +51,7 @@ src/pages/
 `pages/url/` 폴더 내의 모든 `**/*.tsx` 파일이 자동으로 라우트로 등록됩니다.
 
 **router.tsx의 동작**:
+
 ```typescript
 // src/global/router/router.tsx
 const modules = import.meta.glob('/src/pages/url/**/*.tsx')
@@ -65,6 +66,7 @@ const modules = import.meta.glob('/src/pages/url/**/*.tsx')
 `[param]` 형식의 폴더로 동적 경로를 생성합니다.
 
 **예시**:
+
 ```
 pages/url/
 └── sample/
@@ -75,12 +77,13 @@ pages/url/
 **URL**: `/sample/123`, `/sample/456`
 
 **컴포넌트에서 사용**:
+
 ```typescript
 import { useParams } from 'react-router-dom'
 
 export default function SampleDetailPage() {
     const { id } = useParams()  // '123', '456' 등
-    
+
     return <div>Sample ID: {id}</div>
 }
 ```
@@ -100,6 +103,7 @@ const SamplePage = lazy(() => import('./pages/url/sample/SamplePage'))
 ```
 
 **장점**:
+
 - ✅ 초기 번들 크기 감소
 - ✅ 페이지별 코드 스플리팅
 - ✅ 더 빠른 초기 로딩 속도
@@ -111,6 +115,7 @@ const SamplePage = lazy(() => import('./pages/url/sample/SamplePage'))
 **규칙**: Feature와 구분하기 위해 `Page` 접미사 사용 권장 (필수 아님)
 
 **좋은 예**:
+
 ```
 - LoginPage.tsx
 - OrdersPage.tsx
@@ -118,6 +123,7 @@ const SamplePage = lazy(() => import('./pages/url/sample/SamplePage'))
 ```
 
 **나쁜 예**:
+
 ```
 - Login.tsx (Feature 컴포넌트와 혼동)
 - page.tsx (명확하지 않음)
@@ -146,13 +152,15 @@ export function LoginPage() {
 **`pages/url/` 폴더 사용 규칙**:
 
 1. **공통 페이지만 추가**:
-   - 로그인, 회원가입, 주문 목록 등
+
+    - 로그인, 회원가입, 주문 목록 등
 
 2. **특정 기능에 종속된 페이지는 추가하지 않음**:
-   - Feature 내부에서만 사용하는 페이지
+
+    - Feature 내부에서만 사용하는 페이지
 
 3. **자동 등록되므로 router.tsx 수정 불필요**:
-   - 파일만 추가하면 자동으로 라우트 생성
+    - 파일만 추가하면 자동으로 라우트 생성
 
 ## 🔄 네비게이션
 
@@ -163,17 +171,17 @@ import { useNavigate } from 'react-router-dom'
 
 function MyComponent() {
     const navigate = useNavigate()
-    
+
     const handleClick = () => {
         // 페이지 이동
         navigate('/orders')
-        
+
         // 동적 라우트로 이동
         navigate(`/sample/${id}`)
-        
+
         // 뒤로 가기
         navigate(-1)
-        
+
         // 히스토리 교체 (뒤로가기 불가)
         navigate('/login', { replace: true })
     }
@@ -260,11 +268,11 @@ import { Navigate } from 'react-router-dom'
 
 function ProtectedRoute({ children }) {
     const isAuthenticated = useAppSelector(state => state.authReducer.isLoggedIn)
-    
+
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />
     }
-    
+
     return children
 }
 
@@ -302,10 +310,10 @@ import { useSearchParams } from 'react-router-dom'
 
 function SearchPage() {
     const [searchParams, setSearchParams] = useSearchParams()
-    
-    const query = searchParams.get('q')  // ?q=hello
-    const page = searchParams.get('page')  // ?page=2
-    
+
+    const query = searchParams.get('q') // ?q=hello
+    const page = searchParams.get('page') // ?page=2
+
     const handleSearch = (newQuery: string) => {
         setSearchParams({ q: newQuery, page: '1' })
     }
@@ -320,10 +328,10 @@ import { useLocation, useNavigate } from 'react-router-dom'
 // 전송
 function ProductList() {
     const navigate = useNavigate()
-    
+
     const handleClick = (product) => {
         navigate(`/products/${product.id}`, {
-            state: { from: 'list', product }
+            state: { from: 'list', product },
         })
     }
 }
@@ -331,7 +339,7 @@ function ProductList() {
 // 수신
 function ProductDetail() {
     const location = useLocation()
-    const state = location.state  // { from: 'list', product: {...} }
+    const state = location.state // { from: 'list', product: {...} }
 }
 ```
 
@@ -346,4 +354,3 @@ function ProductDetail() {
 ---
 
 [← Concepts 목차로 돌아가기](./README.md)
-

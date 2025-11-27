@@ -7,9 +7,11 @@ Official English documentation for the dessert-front-seller project.
 ## 🚀 Quick Links
 
 ### For Beginners
+
 - **[Korean Documentation](../kor/README.md)** - Complete documentation in Korean (recommended)
 
 ### Quick Reference
+
 - **Installation**: See [Korean Quick Start](../kor/quickstarts/installation.md)
 - **Project Structure**: Feature-Sliced Design pattern
 - **State Management**: Redux Toolkit + Redux Saga + reduxMaker utility
@@ -43,11 +45,13 @@ Visit `http://localhost:5173` in your browser.
 ## 📖 Documentation Structure
 
 ### Available Now
+
 - Tech Stack Overview
 - Installation Guide (refer to Korean docs)
 - Project Structure (refer to Korean docs)
 
 ### Coming Soon
+
 - Complete English translation of all guides
 - English tutorials and how-to guides
 - English API reference
@@ -59,6 +63,7 @@ For complete documentation, please visit:
 **[📚 Korean Documentation](../kor/README.md)**
 
 The Korean documentation includes:
+
 - Comprehensive guides
 - Step-by-step tutorials
 - Detailed API references
@@ -81,4 +86,3 @@ Help us improve the English documentation!
 ---
 
 **Last Updated**: 2024-11-26
-

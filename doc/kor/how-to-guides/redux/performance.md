@@ -1,6 +1,7 @@
 # 성능 및 메모리 최적화
 
 ## 📋 목차
+
 1. [메모리 관리 전략](#메모리-관리-전략)
 2. [성능 최적화](#성능-최적화)
 3. [대용량 데이터 처리](#대용량-데이터-처리)
@@ -29,6 +30,7 @@ Redux Store는 전역 상태이므로 데이터가 계속 누적될 수 있습�
 ```
 
 **메모리 누적 시나리오:**
+
 1. 사용자가 여러 페이지를 탐색
 2. 각 페이지에서 API 호출
 3. 데이터가 Store에 계속 쌓임
@@ -42,17 +44,17 @@ Redux Store는 전역 상태이므로 데이터가 계속 누적될 수 있습�
 ```typescript
 const Sample = () => {
     const dispatch = useAppDispatch()
-    
+
     useEffect(() => {
         // 컴포넌트 마운트 시 데이터 fetch
         dispatch(sampleAction.getPokemon())
-        
+
         return () => {
             // ✅ 언마운트 시 해당 상태만 초기화
             dispatch(sampleAction.initialize('pokemon'))
         }
     }, [])
-    
+
     return <div>...</div>
 }
 ```
@@ -63,12 +65,12 @@ const Sample = () => {
 // routerSaga.tsx
 function* handleRouteChange(action) {
     const { from, to } = action.payload
-    
+
     // 특정 페이지를 벗어날 때 대용량 데이터 정리
     if (from === '/orders' && to !== '/orders') {
         yield put(orderAction.initialize('orderHistory'))
     }
-    
+
     // 로그인 페이지로 이동 시 사용자 데이터 정리
     if (to === '/login') {
         yield put(userAction.initializeAll())
@@ -89,7 +91,7 @@ const handleLogout = () => {
     dispatch(sampleAction.initializeAll())
     dispatch(userAction.initializeAll())
     dispatch(orderAction.initializeAll())
-    
+
     // Store가 완전히 초기 상태로 돌아감
 }
 ```
@@ -124,7 +126,7 @@ const localReducers = {
 const Sample = () => {
     // sampleReducer의 어떤 값이라도 변경되면 리렌더링!
     const allState = useAppSelector(state => state.sampleReducer)
-    
+
     return <div>{allState.pokemon.data?.name}</div>
 }
 
@@ -132,7 +134,7 @@ const Sample = () => {
 const Sample = () => {
     // pokemon만 변경될 때만 리렌더링
     const pokemon = useAppSelector(state => state.sampleReducer.pokemon)
-    
+
     return <div>{pokemon.data?.name}</div>
 }
 ```
@@ -151,7 +153,7 @@ const selectPokemonName = createSelector(
         // 무거운 연산 (예: 데이터 변환)
         console.log('복잡한 연산 실행')
         return pokemon.data?.name.toUpperCase()
-    }
+    },
 )
 
 const Sample = () => {
@@ -161,6 +163,7 @@ const Sample = () => {
 ```
 
 **장점:**
+
 - ✅ 동일한 입력에 대해 이전 결과 재사용
 - ✅ 불필요한 계산 방지
 - ✅ 리렌더링 최소화
@@ -197,11 +200,11 @@ import { shallowEqual } from 'react-redux'
 const Sample = () => {
     // 객체의 속성이 변경되지 않으면 리렌더링하지 않음
     const { pokemon, test } = useAppSelector(
-        state => ({
+        (state) => ({
             pokemon: state.sampleReducer.pokemon,
             test: state.sampleReducer.test,
         }),
-        shallowEqual
+        shallowEqual,
     )
 }
 ```
@@ -212,7 +215,7 @@ const Sample = () => {
 // 불필요한 리렌더링 방지
 const PokemonCard = React.memo(({ pokemon }) => {
     console.log('PokemonCard 렌더링')
-    
+
     return (
         <div>
             <h2>{pokemon.data?.name}</h2>
@@ -223,7 +226,7 @@ const PokemonCard = React.memo(({ pokemon }) => {
 
 const Sample = () => {
     const pokemon = useAppSelector(state => state.sampleReducer.pokemon)
-    
+
     // pokemon이 변경될 때만 PokemonCard 리렌더링
     return <PokemonCard pokemon={pokemon} />
 }
@@ -234,12 +237,12 @@ const Sample = () => {
 ```typescript
 const Sample = () => {
     const dispatch = useAppDispatch()
-    
+
     // 콜백 메모이제이션
     const handleFetch = useCallback(() => {
         dispatch(sampleAction.getPokemon())
     }, [dispatch])
-    
+
     return <ExpensiveComponent onFetch={handleFetch} />
 }
 ```
@@ -279,7 +282,7 @@ const asyncRequests = [
             totalPages: 0,
             hasMore: true,
         },
-        api: (params: { page: number; limit: number }) => 
+        api: (params: { page: number; limit: number }) =>
             axios.get(`/api/products?page=${params.page}&limit=${params.limit}`),
     },
 ]
@@ -288,16 +291,16 @@ const asyncRequests = [
 const ProductList = () => {
     const dispatch = useAppDispatch()
     const { data, loading } = useAppSelector(state => state.productReducer.products)
-    
+
     const loadMore = () => {
         if (data?.hasMore && !loading) {
-            dispatch(productAction.getProducts({ 
-                page: (data.page || 0) + 1, 
-                limit: 20 
+            dispatch(productAction.getProducts({
+                page: (data.page || 0) + 1,
+                limit: 20
             }))
         }
     }
-    
+
     return (
         <div>
             {data?.items.map(item => <ProductCard key={item.id} {...item} />)}
@@ -315,7 +318,7 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 const ProductList = () => {
     const parentRef = useRef<HTMLDivElement>(null)
     const products = useAppSelector(state => state.productReducer.products)
-    
+
     // 화면에 보이는 아이템만 렌더링
     const virtualizer = useVirtualizer({
         count: products.data?.items.length || 0,
@@ -323,7 +326,7 @@ const ProductList = () => {
         estimateSize: () => 100, // 각 아이템 높이
         overscan: 5, // 버퍼 아이템 개수
     })
-    
+
     return (
         <div ref={parentRef} style={{ height: '600px', overflow: 'auto' }}>
             <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
@@ -354,9 +357,9 @@ const ProductList = () => {
 function* fetchProductsSaga(action) {
     try {
         const response = yield call(api, action.payload)
-        
+
         // ✅ 필요한 데이터만 추출
-        const essentialData = response.data.map(item => ({
+        const essentialData = response.data.map((item) => ({
             id: item.id,
             name: item.name,
             price: item.price,
@@ -366,7 +369,7 @@ function* fetchProductsSaga(action) {
             // reviews: item.reviews (수십 KB)
             // relatedProducts: item.relatedProducts
         }))
-        
+
         yield put({
             type: 'product/getProductsSuccess',
             payload: essentialData,
@@ -412,7 +415,7 @@ const store = configureStore({
     devTools: {
         // ✅ 액션 히스토리 제한 (메모리 절약)
         maxAge: 50,
-        
+
         // ✅ 큰 payload는 간략하게 표시
         actionSanitizer: (action) => {
             if (action.type === 'product/getProductsSuccess') {
@@ -423,20 +426,20 @@ const store = configureStore({
             }
             return action
         },
-        
+
         // ✅ 상태 직렬화 제한
         stateSanitizer: (state) => {
             return {
                 ...state,
                 productReducer: {
                     ...state.productReducer,
-                    products: state.productReducer.products?.items?.length 
+                    products: state.productReducer.products?.items?.length
                         ? `<<${state.productReducer.products.items.length} items>>`
                         : state.productReducer.products,
                 },
             }
         },
-        
+
         // ✅ 프로덕션에서는 비활성화
         trace: process.env.NODE_ENV === 'development',
         traceLimit: 25,
@@ -455,19 +458,22 @@ const store = configureStore({
 const measureMemory = async (actionName: string, action: any) => {
     if (performance.memory) {
         const before = performance.memory.usedJSHeapSize
-        
+
         store.dispatch(action)
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+
         const after = performance.memory.usedJSHeapSize
         const diff = ((after - before) / 1024 / 1024).toFixed(2)
-        
+
         console.log(`${actionName}: ${diff} MB`)
     }
 }
 
 // 사용
-measureMemory('fetchProducts', sampleAction.getProducts({ page: 1, limit: 100 }))
+measureMemory(
+    'fetchProducts',
+    sampleAction.getProducts({ page: 1, limit: 100 }),
+)
 ```
 
 ### 메모리 누수 감지
@@ -481,18 +487,18 @@ const App = () => {
                 const used = performance.memory.usedJSHeapSize
                 const total = performance.memory.jsHeapSizeLimit
                 const ratio = used / total
-                
+
                 console.log(`Memory: ${(used / 1024 / 1024).toFixed(2)} MB (${(ratio * 100).toFixed(1)}%)`)
-                
+
                 if (ratio > 0.9) {
                     console.warn('⚠️ High memory usage detected!')
                 }
             }, 10000) // 10초마다 체크
-            
+
             return () => clearInterval(checkMemory)
         }
     }, [])
-    
+
     return <Router />
 }
 ```
@@ -507,7 +513,7 @@ const App = () => {
 // App.tsx 또는 라우터 레벨
 const App = () => {
     const dispatch = useAppDispatch()
-    
+
     useEffect(() => {
         // visibility change 감지
         const handleVisibilityChange = () => {
@@ -517,14 +523,14 @@ const App = () => {
                 dispatch(sampleAction.clearTemporaryData())
             }
         }
-        
+
         document.addEventListener('visibilitychange', handleVisibilityChange)
-        
+
         return () => {
             document.removeEventListener('visibilitychange', handleVisibilityChange)
         }
     }, [])
-    
+
     return <Router />
 }
 ```
@@ -534,26 +540,27 @@ const App = () => {
 ```typescript
 const MemoryManager = () => {
     const dispatch = useAppDispatch()
-    
+
     useEffect(() => {
         if ('memory' in performance) {
             const checkMemory = setInterval(() => {
-                const ratio = performance.memory.usedJSHeapSize / 
-                              performance.memory.jsHeapSizeLimit
-                
+                const ratio =
+                    performance.memory.usedJSHeapSize /
+                    performance.memory.jsHeapSizeLimit
+
                 if (ratio > 0.9) {
                     console.warn('High memory usage - clearing caches')
-                    
+
                     // 대용량 데이터 정리
                     dispatch(productAction.initialize('products'))
                     dispatch(orderAction.initialize('orderHistory'))
                 }
             }, 30000) // 30초마다 체크
-            
+
             return () => clearInterval(checkMemory)
         }
     }, [])
-    
+
     return null
 }
 ```
@@ -565,12 +572,12 @@ const MemoryManager = () => {
 const Router = () => {
     const dispatch = useAppDispatch()
     const location = useLocation()
-    
+
     useEffect(() => {
         // 라우트 변경 시 이전 페이지 데이터 정리
         return () => {
             const path = location.pathname
-            
+
             if (path.startsWith('/products')) {
                 dispatch(productAction.initializeAll())
             } else if (path.startsWith('/orders')) {
@@ -578,7 +585,7 @@ const Router = () => {
             }
         }
     }, [location])
-    
+
     return <Routes>...</Routes>
 }
 ```
@@ -589,22 +596,27 @@ const Router = () => {
 // cacheMiddleware.ts
 const cacheMiddleware = (store) => (next) => (action) => {
     const result = next(action)
-    
+
     // 성공 액션에 타임스탬프 추가
     if (action.type.endsWith('Success')) {
         const state = store.getState()
         const timestamp = Date.now()
-        
+
         // 5분 후 데이터 만료
-        setTimeout(() => {
-            const currentState = store.getState()
-            // 데이터가 여전히 같으면 초기화
-            if (currentState === state) {
-                store.dispatch({ type: action.type.replace('Success', 'Expire') })
-            }
-        }, 5 * 60 * 1000)
+        setTimeout(
+            () => {
+                const currentState = store.getState()
+                // 데이터가 여전히 같으면 초기화
+                if (currentState === state) {
+                    store.dispatch({
+                        type: action.type.replace('Success', 'Expire'),
+                    })
+                }
+            },
+            5 * 60 * 1000,
+        )
     }
-    
+
     return result
 }
 ```
@@ -616,6 +628,7 @@ const cacheMiddleware = (store) => (next) => (action) => {
 ### 시나리오: 1000개 상품 목록 렌더링
 
 #### Redux (최적화 전)
+
 ```
 - 초기 렌더링: 850ms
 - 메모리: 12.5 MB
@@ -623,6 +636,7 @@ const cacheMiddleware = (store) => (next) => (action) => {
 ```
 
 #### Redux (최적화 후)
+
 ```
 - 초기 렌더링: 180ms (useSelector 최적화)
 - 메모리: 3.2 MB (필요한 필드만 저장)
@@ -632,12 +646,14 @@ const cacheMiddleware = (store) => (next) => (action) => {
 ### 최적화 체크리스트
 
 #### ✅ 필수 최적화
+
 - [ ] 페이지 언마운트 시 `initialize` 호출
 - [ ] useSelector로 필요한 상태만 구독
 - [ ] 대용량 리스트는 페이지네이션 적용
 - [ ] Redux DevTools 프로덕션 비활성화
 
 #### ✅ 선택적 최적화
+
 - [ ] createSelector로 복잡한 계산 메모이제이션
 - [ ] React.memo로 컴포넌트 리렌더링 방지
 - [ ] shallowEqual 사용
@@ -651,14 +667,17 @@ const cacheMiddleware = (store) => (next) => (action) => {
 ### ✅ Redux Store의 장점
 
 **명시적인 메모리 관리**
+
 - initialize, initializeAll로 언제든 데이터 정리 가능
 - React Query의 자동 캐싱보다 예측 가능
 
 **실시간 모니터링**
+
 - Redux DevTools로 상태 크기 확인
 - 메모리 누수 추적 용이
 
 **선택적 영속성**
+
 - redux-persist로 중요한 데이터만 로컬스토리지에 저장
 - 임시 데이터는 메모리에만 유지
 
@@ -682,4 +701,3 @@ const cacheMiddleware = (store) => (next) => (action) => {
 
 **작성일**: 2024-11-20  
 **버전**: 1.0.0
-

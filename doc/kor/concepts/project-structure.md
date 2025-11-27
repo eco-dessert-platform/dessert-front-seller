@@ -94,12 +94,14 @@ src/
 앱 전체에 영향을 주는 설정, 스토어, 라우터 등 글로벌 레이어입니다.
 
 **책임**:
+
 - 전역 상태 관리 (Redux Store)
 - 라우팅 설정
 - API 클라이언트 설정
 - 앱 초기화
 
 **규칙**:
+
 - 다른 레이어에 의존하지 않음 (최상위 레이어)
 - 앱의 진입점과 설정만 포함
 
@@ -108,12 +110,14 @@ src/
 폰트, 이미지, 다국어 등 정적 리소스를 관리합니다.
 
 **책임**:
+
 - 폰트 파일 관리
 - SVG 아이콘 관리
 - 이미지 파일 관리
 - 다국어 번역 파일 관리
 
 **규칙**:
+
 - 변경되지 않는 정적 파일만 포함
 - 컴포넌트나 로직을 포함하지 않음
 
@@ -122,17 +126,20 @@ src/
 비즈니스 도메인별로 분리된 기능 단위입니다.
 
 **책임**:
+
 - 특정 비즈니스 로직 구현
 - 기능별 상태 관리 (Reducer)
 - 기능별 API 호출
 - 기능별 UI 컴포넌트
 
 **규칙**:
+
 - 각 기능은 독립적으로 동작
 - 다른 feature에 직접 의존하지 않음
 - shared 레이어만 사용 가능
 
 **예시 구조**:
+
 ```
 features/
 └── myFeature/
@@ -148,16 +155,19 @@ features/
 라우트 단위의 페이지 컴포넌트입니다.
 
 **책임**:
+
 - 라우트에 대응하는 페이지 조합
 - Feature 컴포넌트 배치 및 구성
 - 페이지 레벨 레이아웃 적용
 
 **규칙**:
+
 - `pages/url/` 폴더에는 **공통 페이지만** 추가
 - 특정 기능에 종속된 페이지는 추가하지 않음
 - features와 shared 레이어 사용 가능
 
 **파일명 규칙**:
+
 - Feature와 구분하기 위해 `Page` 접미사 사용 권장
 - 예: `HomePage.tsx`, `LoginPage.tsx`
 
@@ -166,17 +176,20 @@ features/
 여러 feature/page에서 공통으로 사용하는 요소입니다.
 
 **책임**:
+
 - 재사용 가능한 UI 컴포넌트
 - 공통 유틸리티 함수
 - 외부 라이브러리 래퍼
 - 공통 레이아웃
 
 **규칙**:
+
 - 비즈니스 로직을 포함하지 않음
 - 다른 레이어에 의존하지 않음 (최하위 레이어)
 - 범용적으로 사용 가능한 것만 포함
 
 **하위 구조**:
+
 - `components/`: 공통 UI 컴포넌트
 - `layout/`: 레이아웃 컴포넌트
 - `lib/`: 외부 라이브러리 래퍼
@@ -236,8 +249,12 @@ import { reduxMaker } from 'src/global/store/redux/reduxUtils'
 
 const prefix = 'myFeature'
 const asyncRequests = [] as const
-const localState = { /* ... */ }
-const localReducers = { /* ... */ }
+const localState = {
+    /* ... */
+}
+const localReducers = {
+    /* ... */
+}
 
 const module = reduxMaker(prefix, asyncRequests, localState, localReducers)
 
@@ -276,11 +293,13 @@ touch src/pages/url/myFeature/MyFeaturePage.tsx
 ### Feature 분리 기준
 
 **✅ 좋은 예**:
+
 - 비즈니스 도메인별로 분리 (auth, orders, products)
 - 독립적으로 동작 가능한 단위
 - 명확한 책임과 경계
 
 **❌ 나쁜 예**:
+
 - 기술별로 분리 (components, apis, reducers)
 - 다른 feature에 강하게 의존
 - 너무 크거나 너무 작은 단위
@@ -319,4 +338,3 @@ import type { MyType } from './types'
 ---
 
 [← Concepts 목차로 돌아가기](./README.md)
-

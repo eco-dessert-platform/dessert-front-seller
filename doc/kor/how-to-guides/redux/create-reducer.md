@@ -1,6 +1,7 @@
 # 사용 가이드
 
 ## 📋 목차
+
 1. [sampleReducer 정의하기](#samplereducer-정의하기)
 2. [컴포넌트에서 사용하기](#컴포넌트에서-사용하기)
 3. [생성되는 상태 구조](#생성되는-상태-구조)
@@ -33,7 +34,7 @@ const asyncRequests = [
         initialState: { name: 'pokemon', id: 1 },
         api: () => axios.get('https://pokeapi.co/api/v2/pokemon/ditto'),
     } as const satisfies AsyncRequest<{ name: string; id: number }, void>,
-    
+
     {
         action: 'getTest',
         state: 'test',
@@ -47,6 +48,7 @@ const asyncRequests = [
 ```
 
 **AsyncRequest 타입 파라미터:**
+
 - 첫 번째: 응답 데이터 타입
 - 두 번째: 요청 파라미터 타입 (없으면 `void`)
 
@@ -130,17 +132,17 @@ import { sampleAction } from 'src/features/sample/sampleReducer'
 
 const Sample = () => {
     const dispatch = useAppDispatch()
-    
+
     // 1. 상태 조회
     const pokemon = useAppSelector(state => state.sampleReducer.pokemon)
     const test = useAppSelector(state => state.sampleReducer.test)
     const value = useAppSelector(state => state.sampleReducer.value)
-    
+
     // 2. API 요청 (파라미터 없음)
     const handleFetchPokemon = () => {
         dispatch(sampleAction.getPokemon())
     }
-    
+
     // 3. API 요청 (파라미터 있음)
     const handleFetchTest = () => {
         dispatch(sampleAction.getTest({
@@ -148,24 +150,24 @@ const Sample = () => {
             param2: 123,
         }))
     }
-    
+
     // 4. 로컬 상태 변경
     const handleDecrement = () => {
         dispatch(sampleAction.decrement())
     }
-    
+
     const handleSetValue = (newValue: number) => {
         dispatch(sampleAction.setValue(newValue))
     }
-    
+
     return (
         <div>
             {/* 로딩 상태 처리 */}
             {pokemon.loading && <Spinner />}
-            
+
             {/* 에러 상태 처리 */}
             {pokemon.error && <ErrorMessage message={pokemon.errorMsg} />}
-            
+
             {/* 데이터 표시 */}
             {pokemon.data && (
                 <div>
@@ -173,11 +175,11 @@ const Sample = () => {
                     <p>ID: {pokemon.data.id}</p>
                 </div>
             )}
-            
+
             <button onClick={handleFetchPokemon}>
                 포켓몬 정보 가져오기
             </button>
-            
+
             <div>
                 <p>Value: {value}</p>
                 <button onClick={handleDecrement}>감소</button>
@@ -193,24 +195,24 @@ const Sample = () => {
 ```typescript
 const Sample = () => {
     const dispatch = useAppDispatch()
-    
+
     useEffect(() => {
         // 컴포넌트 마운트 시 데이터 fetch
         dispatch(sampleAction.getPokemon())
-        
+
         return () => {
             // 언마운트 시 특정 상태만 초기화
             dispatch(sampleAction.initialize('pokemon'))
-            
+
             // 또는 여러 상태 초기화
             // dispatch(sampleAction.initialize('pokemon'))
             // dispatch(sampleAction.initialize('test'))
-            
+
             // 또는 모든 비동기 상태 초기화
             // dispatch(sampleAction.initializeAll())
         }
     }, [])
-    
+
     return <div>...</div>
 }
 ```
@@ -223,14 +225,14 @@ const Sample = () => {
     const { data, loading, error } = useAppSelector(
         state => state.sampleReducer.pokemon
     )
-    
+
     useEffect(() => {
         // 데이터가 없을 때만 fetch
         if (!data && !loading) {
             dispatch(sampleAction.getPokemon())
         }
     }, [data, loading])
-    
+
     return <div>...</div>
 }
 ```
@@ -243,13 +245,13 @@ const Sample = () => {
     const { data, loading, error, errorMsg } = useAppSelector(
         state => state.sampleReducer.pokemon
     )
-    
+
     const handleRetry = () => {
         dispatch(sampleAction.getPokemon())
     }
-    
+
     if (loading) return <Spinner />
-    
+
     if (error) {
         return (
             <div>
@@ -258,7 +260,7 @@ const Sample = () => {
             </div>
         )
     }
-    
+
     return <PokemonCard data={data} />
 }
 ```
@@ -276,7 +278,7 @@ const Sample = () => {
         value: 0,
         isModalOpen: false,
         selectedId: null,
-        
+
         // 비동기 상태 1
         pokemon: {
             data: { name: 'ditto', id: 132 } | null,
@@ -284,7 +286,7 @@ const Sample = () => {
             error: false,
             errorMsg: '',
         },
-        
+
         // 비동기 상태 2
         test: {
             data: [{ success: true, message: 'Hello' }] | null,
@@ -300,8 +302,8 @@ const Sample = () => {
 
 ```typescript
 // API 요청 액션 (직접 사용)
-sampleAction.getPokemon()          // { type: 'sample/getPokemon' }
-sampleAction.getTest(params)       // { type: 'sample/getTest', payload: params }
+sampleAction.getPokemon() // { type: 'sample/getPokemon' }
+sampleAction.getTest(params) // { type: 'sample/getTest', payload: params }
 
 // 성공/실패 액션 (Saga에서 자동 dispatch)
 // sample/getPokemonSuccess
@@ -310,12 +312,12 @@ sampleAction.getTest(params)       // { type: 'sample/getTest', payload: params 
 // sample/getTestFail
 
 // 로컬 액션
-sampleAction.decrement()           // { type: 'sample/decrement' }
-sampleAction.setValue(100)         // { type: 'sample/setValue', payload: 100 }
+sampleAction.decrement() // { type: 'sample/decrement' }
+sampleAction.setValue(100) // { type: 'sample/setValue', payload: 100 }
 
 // 초기화 액션
 sampleAction.initialize('pokemon') // { type: 'sample/initialize', payload: 'pokemon' }
-sampleAction.initializeAll()       // { type: 'sample/initializeAll' }
+sampleAction.initializeAll() // { type: 'sample/initializeAll' }
 ```
 
 ---
@@ -338,14 +340,14 @@ function* () {
 const response = yield call(api)
 
 // 4-a. 성공 시
-yield put({ 
-    type: 'sample/getPokemonSuccess', 
+yield put({
+    type: 'sample/getPokemonSuccess',
     payload: { name: 'ditto', id: 132 }
 })
 
 // 4-b. 실패 시
-yield put({ 
-    type: 'sample/getPokemonFail', 
+yield put({
+    type: 'sample/getPokemonFail',
     payload: '서버 오류가 발생했습니다.'
 })
 
@@ -390,9 +392,8 @@ import { createSelector } from '@reduxjs/toolkit'
 
 // Memoized Selector
 const selectPokemon = (state: RootState) => state.sampleReducer.pokemon
-const selectPokemonName = createSelector(
-    [selectPokemon],
-    (pokemon) => pokemon.data?.name.toUpperCase()
+const selectPokemonName = createSelector([selectPokemon], (pokemon) =>
+    pokemon.data?.name.toUpperCase(),
 )
 
 const Sample = () => {
@@ -431,11 +432,11 @@ import { shallowEqual } from 'react-redux'
 const Sample = () => {
     // 객체의 속성이 변경되지 않으면 리렌더링하지 않음
     const { pokemon, test } = useAppSelector(
-        state => ({
+        (state) => ({
             pokemon: state.sampleReducer.pokemon,
             test: state.sampleReducer.test,
         }),
-        shallowEqual
+        shallowEqual,
     )
 }
 ```
@@ -446,13 +447,13 @@ const Sample = () => {
 const Sample = () => {
     const dispatch = useAppDispatch()
     const [shouldFetch, setShouldFetch] = useState(false)
-    
+
     useEffect(() => {
         if (shouldFetch) {
             dispatch(sampleAction.getPokemon())
         }
     }, [shouldFetch])
-    
+
     return (
         <button onClick={() => setShouldFetch(true)}>
             데이터 가져오기
@@ -466,16 +467,16 @@ const Sample = () => {
 ```typescript
 const Sample = () => {
     const dispatch = useAppDispatch()
-    
+
     useEffect(() => {
         // 초기 데이터 로드
         dispatch(sampleAction.getPokemon())
-        
+
         // 5초마다 데이터 갱신
         const interval = setInterval(() => {
             dispatch(sampleAction.getPokemon())
         }, 5000)
-        
+
         return () => {
             clearInterval(interval)
             dispatch(sampleAction.initialize('pokemon'))
@@ -489,8 +490,8 @@ const Sample = () => {
 ```typescript
 const Sample = () => {
     const dispatch = useAppDispatch()
-    const userId = useAppSelector(state => state.userReducer.user.data?.id)
-    
+    const userId = useAppSelector((state) => state.userReducer.user.data?.id)
+
     useEffect(() => {
         // userId가 있을 때만 포스트 가져오기
         if (userId) {
@@ -506,14 +507,14 @@ const Sample = () => {
 const Sample = () => {
     const dispatch = useAppDispatch()
     const { error, errorMsg } = useAppSelector(
-        state => state.sampleReducer.pokemon
+        (state) => state.sampleReducer.pokemon,
     )
-    
+
     useEffect(() => {
         if (error) {
             // 토스트 메시지 표시
             toast.error(errorMsg)
-            
+
             // 에러 상태 초기화
             dispatch(sampleAction.initialize('pokemon'))
         }
@@ -526,13 +527,13 @@ const Sample = () => {
 ```typescript
 const TodoList = () => {
     const dispatch = useAppDispatch()
-    const todos = useAppSelector(state => state.todoReducer.todos)
-    
+    const todos = useAppSelector((state) => state.todoReducer.todos)
+
     const handleAddTodo = (text: string) => {
         // 즉시 UI 업데이트
         const tempId = Date.now()
         dispatch(todoAction.addOptimistic({ id: tempId, text }))
-        
+
         // API 호출
         dispatch(todoAction.addTodo({ text }))
             .then((result) => {
@@ -564,27 +565,28 @@ const asyncRequests = [
         initialState: [],
         api: () => axios.get('/api/todos'),
     } as const satisfies AsyncRequest<Todo[], void>,
-    
+
     {
         action: 'addTodo',
         state: 'addResult',
         initialState: null,
         api: (params: { text: string }) => axios.post('/api/todos', params),
     } as const satisfies AsyncRequest<Todo, { text: string }>,
-    
+
     {
         action: 'updateTodo',
         state: 'updateResult',
         initialState: null,
-        api: (params: { id: number; text: string }) => 
+        api: (params: { id: number; text: string }) =>
             axios.put(`/api/todos/${params.id}`, { text: params.text }),
     } as const satisfies AsyncRequest<Todo, { id: number; text: string }>,
-    
+
     {
         action: 'deleteTodo',
         state: 'deleteResult',
         initialState: null,
-        api: (params: { id: number }) => axios.delete(`/api/todos/${params.id}`),
+        api: (params: { id: number }) =>
+            axios.delete(`/api/todos/${params.id}`),
     } as const satisfies AsyncRequest<void, { id: number }>,
 ] as const
 
@@ -593,7 +595,10 @@ const localState = {
 }
 
 const localReducers = {
-    setFilter: (state, action: PayloadAction<'all' | 'active' | 'completed'>) => {
+    setFilter: (
+        state,
+        action: PayloadAction<'all' | 'active' | 'completed'>,
+    ) => {
         state.filter = action.payload
     },
 }
@@ -611,11 +616,11 @@ const TodoList = () => {
     const dispatch = useAppDispatch()
     const { data: todos, loading } = useAppSelector(state => state.todoReducer.todos)
     const filter = useAppSelector(state => state.todoReducer.filter)
-    
+
     useEffect(() => {
         dispatch(todoAction.getTodos())
     }, [])
-    
+
     const handleAdd = (text: string) => {
         dispatch(todoAction.addTodo({ text }))
             .then(() => {
@@ -623,36 +628,36 @@ const TodoList = () => {
                 dispatch(todoAction.getTodos())
             })
     }
-    
+
     const handleUpdate = (id: number, text: string) => {
         dispatch(todoAction.updateTodo({ id, text }))
             .then(() => {
                 dispatch(todoAction.getTodos())
             })
     }
-    
+
     const handleDelete = (id: number) => {
         dispatch(todoAction.deleteTodo({ id }))
             .then(() => {
                 dispatch(todoAction.getTodos())
             })
     }
-    
+
     const filteredTodos = todos?.filter(todo => {
         if (filter === 'active') return !todo.completed
         if (filter === 'completed') return todo.completed
         return true
     })
-    
+
     return (
         <div>
             <TodoInput onAdd={handleAdd} />
-            
-            <FilterButtons 
+
+            <FilterButtons
                 current={filter}
                 onChange={(f) => dispatch(todoAction.setFilter(f))}
             />
-            
+
             {loading ? (
                 <Spinner />
             ) : (
@@ -678,4 +683,3 @@ const TodoList = () => {
 
 **작성일**: 2024-11-20  
 **버전**: 1.0.0
-

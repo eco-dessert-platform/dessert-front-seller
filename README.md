@@ -18,13 +18,12 @@ React + TypeScript + Redux Toolkit + Vite 기반의 현대적인 웹 애플리�
 ## 📚 Documentation
 
 ### 한국어 문서 (Korean)
+
 **[📖 한국어 문서 보기](./doc/kor/README.md)**
 
-
 ### English Documentation
+
 **[📖 View English Documentation](./doc/eg/README.md)**
-
-
 
 ## ⚡ Quick Start
 

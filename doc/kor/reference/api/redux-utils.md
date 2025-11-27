@@ -13,7 +13,7 @@ function reduxMaker<LocalState, AsyncRequests>(
     prefix: string,
     asyncRequests: readonly AsyncRequest[],
     localState: LocalState,
-    localReducers: SliceCaseReducers<LocalState>
+    localReducers: SliceCaseReducers<LocalState>,
 ): {
     slice: Slice
     actions: SliceActions
@@ -24,25 +24,29 @@ function reduxMaker<LocalState, AsyncRequests>(
 ### 파라미터
 
 #### `prefix: string`
+
 - Feature의 고유 식별자
 - 액션 타입의 prefix로 사용됨
 - 예: `'sample'` → `'sample/getData'`
 
 #### `asyncRequests: readonly AsyncRequest[]`
+
 - 비동기 API 요청 정의 배열
 - `as const`로 타입 추론 보장
 
 **AsyncRequest 타입**:
+
 ```typescript
 type AsyncRequest<DataType, ParamType> = {
-    action: string          // 액션 이름
-    state: string           // 상태 키 이름
-    initialState: DataType  // 초기 데이터
+    action: string // 액션 이름
+    state: string // 상태 키 이름
+    initialState: DataType // 초기 데이터
     api: (param: ParamType) => Promise<AxiosResponse<DataType>>
 }
 ```
 
 **예시**:
+
 ```typescript
 import { getData } from './api'
 
@@ -57,10 +61,12 @@ const asyncRequests = [
 ```
 
 #### `localState: LocalState`
+
 - 동기 상태 초기값
 - 비동기 상태와 병합됨
 
 **예시**:
+
 ```typescript
 const localState = {
     count: 0,
@@ -69,10 +75,12 @@ const localState = {
 ```
 
 #### `localReducers: SliceCaseReducers<LocalState>`
+
 - 동기 상태 변경 함수들
 - Immer를 사용하므로 직접 수정 가능
 
 **예시**:
+
 ```typescript
 const localReducers = {
     increment: (state) => {
@@ -88,21 +96,23 @@ const localReducers = {
 
 ```typescript
 {
-    slice: Slice               // Redux Toolkit Slice
-    actions: SliceActions      // 액션 생성자 객체
-    saga: () => Generator      // Root Saga 함수
+    slice: Slice // Redux Toolkit Slice
+    actions: SliceActions // 액션 생성자 객체
+    saga: () => Generator // Root Saga 함수
 }
 ```
 
 ### 자동 생성되는 액션들
 
 **API 요청 액션**:
+
 ```typescript
-actions.getData()              // { type: 'prefix/getData' }
-actions.getData(params)        // { type: 'prefix/getData', payload: params }
+actions.getData() // { type: 'prefix/getData' }
+actions.getData(params) // { type: 'prefix/getData', payload: params }
 ```
 
 **내부 액션 (Saga에서 자동 dispatch)**:
+
 ```typescript
 // 성공 시
 { type: 'prefix/getDataSuccess', payload: data }
@@ -112,15 +122,17 @@ actions.getData(params)        // { type: 'prefix/getData', payload: params }
 ```
 
 **동기 액션**:
+
 ```typescript
-actions.increment()            // { type: 'prefix/increment' }
-actions.setOpen(true)          // { type: 'prefix/setOpen', payload: true }
+actions.increment() // { type: 'prefix/increment' }
+actions.setOpen(true) // { type: 'prefix/setOpen', payload: true }
 ```
 
 **초기화 액션**:
+
 ```typescript
-actions.initialize('data')     // 특정 상태 초기화
-actions.initializeAll()        // 모든 비동기 상태 초기화
+actions.initialize('data') // 특정 상태 초기화
+actions.initializeAll() // 모든 비동기 상태 초기화
 ```
 
 ## reducerUtils
@@ -201,7 +213,7 @@ API 호출을 처리하는 Saga를 생성합니다.
 function createRequestSaga(
     prefix: string,
     reducerName: string,
-    api: (param: any) => Promise<AxiosResponse>
+    api: (param: any) => Promise<AxiosResponse>,
 ): Generator
 ```
 
@@ -226,8 +238,8 @@ function createRequestSaga(
 const dispatch = useAppDispatch()
 
 // 타입 체크됨
-dispatch(sampleAction.getData())        // ✅
-dispatch({ type: 'INVALID' })          // ❌ 타입 에러
+dispatch(sampleAction.getData()) // ✅
+dispatch({ type: 'INVALID' }) // ❌ 타입 에러
 ```
 
 ## useAppSelector
@@ -236,7 +248,7 @@ dispatch({ type: 'INVALID' })          // ❌ 타입 에러
 
 ```typescript
 // 타입이 자동으로 추론됨
-const pokemon = useAppSelector(state => state.sampleReducer.pokemon)
+const pokemon = useAppSelector((state) => state.sampleReducer.pokemon)
 // pokemon: AsyncState<{ name: string; id: number }>
 ```
 
@@ -291,12 +303,12 @@ import { actions } from './userReducer'
 function UserProfile() {
     const dispatch = useAppDispatch()
     const { data, loading, error } = useAppSelector(state => state.userReducer.user)
-    
+
     useEffect(() => {
         dispatch(actions.getUser())
         return () => dispatch(actions.initialize('user'))
     }, [])
-    
+
     if (loading) return <Spinner />
     if (error) return <Error />
     return <Profile data={data} />
@@ -326,4 +338,3 @@ type AsyncRequest<DataType, ParamType> = {
 ---
 
 [← Reference 목차로 돌아가기](../README.md)
-

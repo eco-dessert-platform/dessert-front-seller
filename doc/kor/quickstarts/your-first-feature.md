@@ -16,6 +16,7 @@
 ## 📋 만들 기능
 
 **간단한 카운터**:
+
 - 숫자를 증가/감소시키는 버튼
 - 현재 카운트를 표시
 - Redux로 상태 관리
@@ -88,7 +89,7 @@ const reducers = {
     routerReducer: routerSlice.reducer,
     sampleReducer: sampleSlice.reducer,
     themeReducer: themeSlice.reducer,
-    counterReducer: counterSlice.reducer,  // ← 추가
+    counterReducer: counterSlice.reducer, // ← 추가
 }
 
 // rootSaga에 추가
@@ -96,7 +97,7 @@ export function* rootSaga() {
     yield all([
         sampleSaga(),
         routerSaga(),
-        counterSaga(),  // ← 추가
+        counterSaga(), // ← 추가
     ])
 }
 ```
@@ -112,15 +113,15 @@ import { counterAction } from './counterReducer'
 export const Counter = () => {
     const dispatch = useAppDispatch()
     const count = useAppSelector(state => state.counterReducer.count)
-    
+
     return (
         <div className="flex flex-col items-center gap-4 p-8">
             <h1 className="text-4xl font-bold">Counter</h1>
-            
+
             <div className="text-6xl font-bold text-primary">
                 {count}
             </div>
-            
+
             <div className="flex gap-2">
                 <button
                     onClick={() => dispatch(counterAction.decrement())}
@@ -128,14 +129,14 @@ export const Counter = () => {
                 >
                     -1
                 </button>
-                
+
                 <button
                     onClick={() => dispatch(counterAction.reset())}
                     className="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
                 >
                     Reset
                 </button>
-                
+
                 <button
                     onClick={() => dispatch(counterAction.increment())}
                     className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600"
@@ -143,7 +144,7 @@ export const Counter = () => {
                     +1
                 </button>
             </div>
-            
+
             <div className="flex gap-2 mt-4">
                 <button
                     onClick={() => dispatch(counterAction.setCount(10))}
@@ -151,7 +152,7 @@ export const Counter = () => {
                 >
                     Set to 10
                 </button>
-                
+
                 <button
                     onClick={() => dispatch(counterAction.setCount(100))}
                     className="px-4 py-1 bg-blue-500 text-white rounded text-sm"
@@ -188,11 +189,13 @@ export default function CounterPage() {
 ## 6단계: 확인하기
 
 1. 개발 서버가 실행 중인지 확인:
+
 ```bash
 yarn dev
 ```
 
 2. 브라우저에서 접속:
+
 ```
 http://localhost:5173/counter
 ```
@@ -206,21 +209,24 @@ http://localhost:5173/counter
 ### 배운 내용
 
 1. **Feature 폴더 구조**:
-   - `counterReducer.ts`: 상태 관리
-   - `Counter.tsx`: UI 컴포넌트
+
+    - `counterReducer.ts`: 상태 관리
+    - `Counter.tsx`: UI 컴포넌트
 
 2. **reduxMaker 사용법**:
-   - `localState`: 로컬 상태 정의
-   - `localReducers`: 상태 변경 함수 정의
-   - 자동으로 actions와 saga 생성
+
+    - `localState`: 로컬 상태 정의
+    - `localReducers`: 상태 변경 함수 정의
+    - 자동으로 actions와 saga 생성
 
 3. **컴포넌트에서 Redux 사용**:
-   - `useAppSelector`: 상태 읽기
-   - `useAppDispatch`: 액션 dispatch
+
+    - `useAppSelector`: 상태 읽기
+    - `useAppDispatch`: 액션 dispatch
 
 4. **동적 라우팅**:
-   - `pages/url/` 폴더에 페이지 생성
-   - 자동으로 라우트 등록
+    - `pages/url/` 폴더에 페이지 생성
+    - 자동으로 라우트 등록
 
 ## 🔍 코드 분석
 
@@ -228,7 +234,7 @@ http://localhost:5173/counter
 
 ```typescript
 const localState = {
-    count: 0,  // 초기 상태
+    count: 0, // 초기 상태
 }
 
 const localReducers = {
@@ -243,17 +249,17 @@ const localReducers = {
 
 ```typescript
 // 사용 가능한 액션들
-counterAction.increment()      // 카운트 증가
-counterAction.decrement()      // 카운트 감소
-counterAction.reset()          // 0으로 리셋
-counterAction.setCount(100)    // 특정 값으로 설정
+counterAction.increment() // 카운트 증가
+counterAction.decrement() // 카운트 감소
+counterAction.reset() // 0으로 리셋
+counterAction.setCount(100) // 특정 값으로 설정
 ```
 
 ### 컴포넌트에서 사용
 
 ```typescript
 // 상태 읽기
-const count = useAppSelector(state => state.counterReducer.count)
+const count = useAppSelector((state) => state.counterReducer.count)
 
 // 액션 dispatch
 dispatch(counterAction.increment())
@@ -265,10 +271,8 @@ dispatch(counterAction.increment())
 
 1. **비동기 작업 추가하기**:
    API에서 카운트 값을 가져오기
-   
 2. **히스토리 기능 추가하기**:
    변경 내역을 배열로 저장
-   
 3. **로컬 스토리지 연동**:
    새로고침해도 카운트 유지
 
@@ -281,4 +285,3 @@ dispatch(counterAction.increment())
 ---
 
 [← Quickstarts 목차로 돌아가기](./README.md)
-

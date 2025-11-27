@@ -3,12 +3,12 @@ import { useState } from 'react'
 import BgrInputField from 'src/shared/components/inputField/BgrInputField'
 import {
     AlertDialog,
-    AlertDialogFooter,
-    AlertDialogHeader,
     AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
     AlertDialogTitle,
 } from 'src/shared/lib/shadcn/components/ui/alert-dialog'
 import {
@@ -19,7 +19,10 @@ import {
 } from 'src/shared/lib/shadcn/components/ui/dialog'
 import { cn } from 'src/shared/lib/shadcn/lib/utils'
 import { DATA_LIST } from './mock'
-import { useAppDispatch, useAppSelector } from 'src/global/store/redux/reduxHooks'
+import {
+    useAppDispatch,
+    useAppSelector,
+} from 'src/global/store/redux/reduxHooks'
 import { RootState } from 'src/global/store/redux/reduxStore'
 import { storeAction } from '../storeReducer'
 

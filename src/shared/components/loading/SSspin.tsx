@@ -13,15 +13,15 @@ type SSspinProps = {
 }
 
 const SSspin = ({
-                    children,
-                    className = '',
-                    loading,
-                    size = 24,
-                    strokeWidth = 2,
-                    overlayColor = 'bg-white',
-                    overlayOpacity = 'opacity-80',
-                    text = '',
-                }: SSspinProps) => {
+    children,
+    className = '',
+    loading,
+    size = 24,
+    strokeWidth = 2,
+    overlayColor = 'bg-white',
+    overlayOpacity = 'opacity-80',
+    text = '',
+}: SSspinProps) => {
     return (
         <div
             className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-[0.3rem] ${className}`}

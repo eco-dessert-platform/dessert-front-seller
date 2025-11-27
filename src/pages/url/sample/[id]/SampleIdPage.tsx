@@ -11,11 +11,10 @@ import SampleId from 'src/features/sample/[id]/SampleId.tsx'
 
 const SampleIdPage = () => {
     const { pathname, product, productLoading } = useAppSelector(
-        ({ routerReducer, sampleReducer,  }) => ({
+        ({ routerReducer, sampleReducer }) => ({
             pathname: routerReducer.location.path,
             product: sampleReducer.product.data,
             productLoading: sampleReducer.product.loading,
-
         }),
         shallowEqual,
     )
@@ -37,11 +36,6 @@ const SampleIdPage = () => {
                 <SampleId product={product} />
             </SSspin>
         </WhLayout>
-
-
-
-
-
     )
 }
 

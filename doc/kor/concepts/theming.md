@@ -32,12 +32,12 @@ src/shared/lib/shadcn/styles/
 
 ```css
 /* src/styles/index.css */
-@import 'tailwindcss';                          /* 1. TailwindCSS v4 */
-@import 'tw-animate-css';                       /* 2. 애니메이션 */
-@import 'src/styles/typography.pcss';           /* 3. 폰트 */
+@import 'tailwindcss'; /* 1. TailwindCSS v4 */
+@import 'tw-animate-css'; /* 2. 애니메이션 */
+@import 'src/styles/typography.pcss'; /* 3. 폰트 */
 @import 'src/shared/lib/shadcn/styles/shadcn.pcss'; /* 4. 테마 변수 */
-@import './variables.pcss';                     /* 5. 커스텀 변수 */
-@import './base.pcss';                          /* 6. 기본 스타일 */
+@import './variables.pcss'; /* 5. 커스텀 변수 */
+@import './base.pcss'; /* 6. 기본 스타일 */
 ```
 
 ## 🌗 다크/라이트 모드
@@ -45,6 +45,7 @@ src/shared/lib/shadcn/styles/
 ### 테마 전환 방식
 
 **3가지 모드**:
+
 1. **light**: 라이트 모드 강제
 2. **dark**: 다크 모드 강제
 3. **system**: OS 설정 자동 감지
@@ -56,16 +57,16 @@ src/shared/lib/shadcn/styles/
 
 /* 라이트 모드 */
 :root {
-    --background: oklch(1 0 0);           /* 흰색 배경 */
-    --foreground: oklch(0.145 0 0);       /* 검은색 텍스트 */
+    --background: oklch(1 0 0); /* 흰색 배경 */
+    --foreground: oklch(0.145 0 0); /* 검은색 텍스트 */
     --primary: oklch(0.205 0 0);
     /* ... */
 }
 
 /* 다크 모드 */
 .dark {
-    --background: oklch(0.145 0 0);       /* 검은색 배경 */
-    --foreground: oklch(0.985 0 0);       /* 흰색 텍스트 */
+    --background: oklch(0.145 0 0); /* 검은색 배경 */
+    --foreground: oklch(0.985 0 0); /* 흰색 텍스트 */
     --primary: oklch(0.922 0 0);
     /* ... */
 }
@@ -111,40 +112,46 @@ src/shared/lib/shadcn/styles/
 
 ```html
 <html lang="en" class="theme-instant">
-<head>
-    <script>
-        ;(() => {
-            try {
-                // 1. localStorage에서 테마 읽기
-                const theme = localStorage.getItem('vite-ui-theme') || 'system'
-                
-                // 2. 시스템 다크모드 설정 확인
-                const prefersDark = window.matchMedia(
-                    '(prefers-color-scheme: dark)'
-                ).matches
-                
-                // 3. 최종 테마 결정
-                const isDark = theme === 'dark' || (theme === 'system' && prefersDark)
-                
-                // 4. HTML 클래스 즉시 적용
-                document.documentElement.classList.add(isDark ? 'dark' : 'light')
-                
-                // 5. 배경색 즉시 적용 (FOUC 방지)
-                document.documentElement.style.backgroundColor =
-                    isDark ? 'oklch(0.145 0 0)' : ''
-            } catch (e) {
-                console.warn('Early theme apply failed', e)
-            }
-        })()
-    </script>
-</head>
-<body class="preload">
-    <!-- ... -->
-</body>
+    <head>
+        <script>
+            ;(() => {
+                try {
+                    // 1. localStorage에서 테마 읽기
+                    const theme =
+                        localStorage.getItem('vite-ui-theme') || 'system'
+
+                    // 2. 시스템 다크모드 설정 확인
+                    const prefersDark = window.matchMedia(
+                        '(prefers-color-scheme: dark)',
+                    ).matches
+
+                    // 3. 최종 테마 결정
+                    const isDark =
+                        theme === 'dark' || (theme === 'system' && prefersDark)
+
+                    // 4. HTML 클래스 즉시 적용
+                    document.documentElement.classList.add(
+                        isDark ? 'dark' : 'light',
+                    )
+
+                    // 5. 배경색 즉시 적용 (FOUC 방지)
+                    document.documentElement.style.backgroundColor = isDark
+                        ? 'oklch(0.145 0 0)'
+                        : ''
+                } catch (e) {
+                    console.warn('Early theme apply failed', e)
+                }
+            })()
+        </script>
+    </head>
+    <body class="preload">
+        <!-- ... -->
+    </body>
 </html>
 ```
 
 **핵심 포인트**:
+
 - ✅ **동기 실행**: CSS보다 먼저 테마 클래스 적용
 - ✅ **인라인 배경색**: CSS 로드 전에 배경색 표시
 - ✅ **preload 클래스**: 준비될 때까지 콘텐츠 숨김
@@ -183,14 +190,14 @@ body.preload {
     /* 브랜드 컬러 */
     --color-primary-500: #f04c28;
     --color-gray-100: #f5f5f5;
-    
+
     /* 카카오 브랜드 */
     --color-kakao: #fee500;
-    
+
     /* 타이포그래피 */
     --text-14: 14px;
     --text-16: 16px;
-    
+
     /* 커스텀 애니메이션 */
     --animate-heart-pop: heart-pop 0.3s ease-in-out;
 }
@@ -214,15 +221,16 @@ body.preload {
 3. 라이트/다크 모드 각각 설정
 
 **예시**:
+
 ```css
 :root {
     --background: oklch(1 0 0);
-    --primary: oklch(0.54 0.22 13.45);  /* 새로운 primary 색상 */
+    --primary: oklch(0.54 0.22 13.45); /* 새로운 primary 색상 */
 }
 
 .dark {
     --background: oklch(0.11 0 0);
-    --primary: oklch(0.7 0.19 13.45);   /* 다크모드 primary */
+    --primary: oklch(0.7 0.19 13.45); /* 다크모드 primary */
 }
 ```
 
@@ -235,15 +243,15 @@ import { themeAction } from 'src/features/theme/themeReducer'
 
 function ThemeCustomizer() {
     const dispatch = useAppDispatch()
-    
+
     const changeThemeColor = (variable: string, value: string) => {
         // CSS 변수 즉시 변경
         document.documentElement.style.setProperty(variable, value)
-        
+
         // Redux에 저장
         dispatch(themeAction.setThemeVariable({ variable, value }))
     }
-    
+
     return (
         <button onClick={() => changeThemeColor('--primary', 'oklch(0.6 0.3 15)')}>
             Primary 색상 변경
@@ -257,26 +265,34 @@ function ThemeCustomizer() {
 ### Pretendard 폰트
 
 **특징**:
+
 - 한글 가독성 최적화
 - 100~900 폰트 웨이트 지원
 - WOFF2 형식으로 빠른 로딩
 
 **정의** (typography.pcss):
+
 ```css
 @font-face {
     font-family: 'Pretendard';
-    src: 
-        url('/src/assets/fonts/pretendard/PretendardVariable.woff2') format('woff2-variations'),
-        url('/src/assets/fonts/pretendard/woff2-subset/Pretendard-Regular.woff2') format('woff2');
+    src:
+        url('/src/assets/fonts/pretendard/PretendardVariable.woff2')
+            format('woff2-variations'),
+        url('/src/assets/fonts/pretendard/woff2-subset/Pretendard-Regular.woff2')
+            format('woff2');
     font-weight: 100 900;
     font-display: swap;
 }
 ```
 
 **사용**:
+
 ```css
 body {
-    font-family: 'Pretendard', -apple-system, sans-serif;
+    font-family:
+        'Pretendard',
+        -apple-system,
+        sans-serif;
 }
 ```
 
@@ -323,9 +339,9 @@ body {
 // 개발자 도구 콘솔에서
 console.log('Theme:', localStorage.getItem('vite-ui-theme'))
 console.log('Classes:', document.documentElement.className)
-console.log('BG Color:', 
-    getComputedStyle(document.documentElement)
-        .getPropertyValue('--background')
+console.log(
+    'BG Color:',
+    getComputedStyle(document.documentElement).getPropertyValue('--background'),
 )
 ```
 
@@ -362,4 +378,3 @@ location.reload()
 ---
 
 [← Concepts 목차로 돌아가기](./README.md)
-

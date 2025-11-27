@@ -1,12 +1,11 @@
 import BgrButton from 'src/shared/components/button/BgrButton'
-import BgrInput from 'src/shared/components/input/BgrInput'
 import BgrInputField from 'src/shared/components/inputField/BgrInputField'
 import {
     AlertDialog,
     AlertDialogContent,
     AlertDialogDescription,
-    AlertDialogTitle,
     AlertDialogHeader,
+    AlertDialogTitle,
     AlertDialogTrigger,
 } from 'src/shared/lib/shadcn/components/ui/alert-dialog'
 

@@ -1,4 +1,3 @@
-import { ReactNode } from 'react'
 import { TermsData } from 'src/features/auth/type/terms.ts'
 
 export const TERMS_OF_SERVICE: TermsData = {

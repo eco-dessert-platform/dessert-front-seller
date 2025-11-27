@@ -23,6 +23,7 @@ yarn dev
 #### WSL/Linux/macOS
 
 **nvm 사용 (권장)**:
+
 ```bash
 # nvm 설치
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
@@ -42,9 +43,11 @@ node --version  # v18.0.0 이상
 #### Windows
 
 **nvm-windows 사용 (권장)**:
+
 1. [nvm-windows](https://github.com/coreybutler/nvm-windows/releases) 최신 설치 프로그램 다운로드
 2. 관리자 권한으로 실행
 3. PowerShell에서:
+
 ```powershell
 nvm install lts
 nvm use lts
@@ -74,6 +77,7 @@ yarn --version
 ```
 
 **Windows에서 권한 문제 시**:
+
 ```powershell
 # PowerShell 관리자 권한으로 실행
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -149,6 +153,7 @@ yarn test
 **원인**: Node.js가 설치되지 않았거나 PATH에 없습니다.
 
 **해결 방법**:
+
 1. 위의 [Node.js 설치](#nodejs-18-설치) 섹션을 따라 설치
 2. 터미널을 재시작
 3. `node --version`으로 확인
@@ -158,6 +163,7 @@ yarn test
 **원인**: Yarn이 설치되지 않았습니다.
 
 **해결 방법**:
+
 1. `corepack enable` 실행
 2. 터미널을 재시작
 3. `yarn --version`으로 확인 (4.11.0이어야 함)
@@ -169,6 +175,7 @@ yarn test
 **해결 방법**:
 
 **Option 1**: 포트를 변경하여 실행
+
 ```bash
 yarn dev --port 3000
 ```
@@ -176,6 +183,7 @@ yarn dev --port 3000
 **Option 2**: 프로세스 종료
 
 **WSL/Linux/macOS**:
+
 ```bash
 # 포트 사용 프로세스 확인
 lsof -ti:5173
@@ -185,6 +193,7 @@ kill -9 $(lsof -ti:5173)
 ```
 
 **Windows**:
+
 ```powershell
 # 포트 사용 프로세스 확인
 netstat -ano | findstr :5173
@@ -198,6 +207,7 @@ taskkill /PID <PID> /F
 **원인**: Git이 CRLF를 사용하여 파일이 계속 수정된 것으로 표시됩니다.
 
 **해결 방법**:
+
 ```bash
 git config --global core.autocrlf false
 git config --global core.eol lf
@@ -213,6 +223,7 @@ git reset --hard
 
 **해결 방법**:
 프로젝트를 WSL 파일 시스템으로 이동:
+
 ```bash
 # WSL 홈 디렉토리로 이동
 cd ~
@@ -226,6 +237,7 @@ git clone <repository-url>
 **원인**: 경로가 너무 깁니다.
 
 **해결 방법**:
+
 ```powershell
 # PowerShell 관리자 권한으로 실행
 New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" `
@@ -241,12 +253,14 @@ New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" `
 Windows 사용자는 WSL2 사용을 강력히 권장합니다.
 
 **장점**:
+
 - ✅ Linux 환경에서 개발 가능
 - ✅ 더 빠른 파일 I/O
 - ✅ 줄바꿈 문자 문제 없음
 - ✅ 대부분의 도구가 Linux를 기준으로 개발됨
 
 **설치**:
+
 ```powershell
 # PowerShell 관리자 권한으로 실행
 wsl --install
@@ -257,10 +271,12 @@ wsl --install
 ### 개발 환경 설정
 
 **권장 IDE**:
+
 - VS Code (추천)
 - WebStorm
 
 **권장 VS Code 확장**:
+
 - ESLint
 - Prettier
 - Tailwind CSS IntelliSense
@@ -294,4 +310,3 @@ yarn dev
 ---
 
 [← Quickstarts 목차로 돌아가기](./README.md)
-

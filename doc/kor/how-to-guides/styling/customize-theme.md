@@ -29,9 +29,9 @@
 :root {
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
-    
+
     /* 여기에 생성된 Primary 색상 붙여넣기 */
-    --primary: oklch(0.54 0.22 13.45);  /* 예: 오렌지색 */
+    --primary: oklch(0.54 0.22 13.45); /* 예: 오렌지색 */
     --primary-foreground: oklch(0.985 0 0);
 }
 
@@ -39,9 +39,9 @@
 .dark {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
-    
+
     /* 다크 모드용 Primary 색상 */
-    --primary: oklch(0.7 0.19 13.45);   /* 밝기 조정 */
+    --primary: oklch(0.7 0.19 13.45); /* 밝기 조정 */
     --primary-foreground: oklch(0.11 0 0);
 }
 ```
@@ -57,12 +57,12 @@
     /* 브랜드 메인 컬러 */
     --color-brand-primary: #f04c28;
     --color-brand-secondary: #ff6b6b;
-    
+
     /* 그레이스케일 */
     --color-gray-50: #fafafa;
     --color-gray-100: #f5f5f5;
     --color-gray-900: #1a1a1a;
-    
+
     /* 기능별 컬러 */
     --color-success: #10b981;
     --color-warning: #f59e0b;
@@ -95,13 +95,13 @@
 ```css
 .dark {
     /* 배경은 완전한 검정이 아닌 약간 밝은 검정 */
-    --background: oklch(0.15 0 0);  /* 0.145 → 0.15 */
-    
+    --background: oklch(0.15 0 0); /* 0.145 → 0.15 */
+
     /* 텍스트도 완전한 흰색이 아닌 약간 어두운 흰색 */
-    --foreground: oklch(0.92 0 0);  /* 0.985 → 0.92 */
-    
+    --foreground: oklch(0.92 0 0); /* 0.985 → 0.92 */
+
     /* Primary는 더 밝게 */
-    --primary: oklch(0.75 0.19 13.45);  /* 0.7 → 0.75 */
+    --primary: oklch(0.75 0.19 13.45); /* 0.7 → 0.75 */
 }
 ```
 
@@ -126,11 +126,11 @@ import { themeAction } from 'src/shared/components/theme/themeReducer'
 
 function ThemeToggle() {
     const dispatch = useAppDispatch()
-    
+
     const handleChange = (newTheme: 'light' | 'dark' | 'system') => {
         dispatch(themeAction.setTheme(newTheme))
     }
-    
+
     return (
         <select onChange={(e) => handleChange(e.target.value)}>
             <option value="light">라이트</option>
@@ -150,17 +150,17 @@ function ColorPicker() {
     const changePrimaryColor = (color: string) => {
         // OKLCH로 변환 (실제로는 변환 함수 필요)
         const oklch = convertToOKLCH(color)
-        
+
         // CSS 변수 업데이트
         document.documentElement.style.setProperty(
             '--primary',
             oklch
         )
-        
+
         // localStorage에 저장
         localStorage.setItem('custom-primary', oklch)
     }
-    
+
     return (
         <input
             type="color"
@@ -196,7 +196,9 @@ function ColorPicker() {
 }
 
 /* 적용 */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     font-family: var(--font-heading);
 }
 
@@ -216,7 +218,7 @@ body {
     /* 애니메이션 타이밍 */
     --animate-bounce-slow: bounce 2s infinite;
     --animate-pulse-fast: pulse 1s infinite;
-    
+
     /* 트랜지션 속도 */
     --transition-fast: 150ms;
     --transition-normal: 300ms;
@@ -259,10 +261,10 @@ body {
     --color-primary-100: #ffe6d9;
     --color-primary-500: #f04c28;
     --color-primary-900: #7a1f0f;
-    
+
     /* Secondary */
     --color-secondary-500: #6366f1;
-    
+
     /* Neutral */
     --color-gray-50: #fafafa;
     --color-gray-500: #737373;
@@ -302,4 +304,3 @@ body {
 ---
 
 [← How-to 가이드 목차로 돌아가기](../README.md)
-
