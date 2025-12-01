@@ -65,7 +65,7 @@ export const TermsAllAgree = ({ checked, onChange }: TermsAllAgreeProps) => {
             </div>
 
             <div className="flex flex-col items-start gap-2.5 self-stretch py-1">
-                <div className="h-[1px] w-full bg-gray-300" />
+                <div className="h-0.5 w-full bg-gray-300" />
             </div>
         </>
     )
