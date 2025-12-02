@@ -9,7 +9,7 @@ import {
     AccordionTrigger,
 } from 'src/shared/lib/shadcn/components/ui/accordion'
 
-// TODO :: API 연동 후, 삭제
+// TODO :: API 연동 후, 삭제 (분리 필요)
 const MOCK_DATA = [
     {
         orderNumber: 'ORDER-2025-04-05-test',

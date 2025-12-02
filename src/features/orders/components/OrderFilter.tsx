@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
-import { ko } from 'date-fns/locale'
 import { CalendarDays, ChevronDown, RotateCw, Search } from 'lucide-react'
-import { DayPicker } from 'react-day-picker'
+import { ko } from 'date-fns/locale'
 import * as SelectPrimitive from '@radix-ui/react-select'
+
+import { Calendar } from 'src/shared/lib/shadcn/components/ui/calendar'
 
 interface OrderFilterProps {
     filterValue: {
@@ -65,14 +66,13 @@ const OrderFilter = ({
                     </div>
                     {isOpenDayPicker && (
                         <div className="absolute top-[calc(100%+4px)] z-50 rounded-lg border border-gray-200 bg-white px-4 py-5 shadow-[0px_3px_10px_0px_rgba(0,0,0,0.1),0px_2px_4px_0px_rgba(0,0,0,0.078)]">
-                            <DayPicker
+                            <Calendar
                                 mode="range"
-                                navLayout="around"
+                                locale={ko}
                                 selected={{
                                     from: filterValue.startDate,
                                     to: filterValue.endDate,
                                 }}
-                                locale={ko}
                                 onSelect={(range) => {
                                     if (range && range.from && range.to) {
                                         onChangeDate({

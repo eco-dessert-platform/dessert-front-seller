@@ -9,6 +9,8 @@ import {
 } from 'src/shared/components/tab/BGRtab.tsx'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
 import { Dialog } from 'src/shared/components/dialog/Dialog'
+import { ButtonGroup } from 'src/shared/lib/shadcn/components/ui/button-group'
+import { Button } from 'src/shared/lib/shadcn/components/ui/button'
 import OrderStatusLabel from './components/OrderStatusLabel'
 import OrderFilter from './components/OrderFilter'
 import TrackingNumberModal from './components/TrackingNumberModal'
@@ -44,12 +46,6 @@ const TABS: Array<{ key: TabCategory; title: string }> = [
 
 const columnHelper = createColumnHelper<OrderTableRow>()
 
-const ButtonGroup = ({ children }: { children: React.ReactNode }) => (
-    <div className="divide-x divide-gray-200 overflow-hidden rounded-sm border border-gray-200">
-        {children}
-    </div>
-)
-
 const Orders = () => {
     const [activeTab, setActiveTab] = useState<TabCategory>('ALL')
     const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set())
@@ -76,97 +72,121 @@ const Orders = () => {
         ALL: null,
         PAID: (
             <>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                <Button
+                    variant="outline"
+                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
+                >
                     발주확인
-                </button>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                </Button>
+                <Button
+                    variant="outline"
+                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
+                >
                     주문취소
-                </button>
+                </Button>
             </>
         ),
         CHECKED: (
             <>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                <Button
+                    variant="outline"
+                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
+                >
                     주문취소
-                </button>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                </Button>
+                <Button
+                    variant="outline"
+                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
+                >
                     반품
-                </button>
+                </Button>
             </>
         ),
         SHIPPED: (
             <>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                <Button
+                    variant="outline"
+                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
+                >
                     반품
-                </button>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                </Button>
+                <Button
+                    variant="outline"
+                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
+                >
                     교환
-                </button>
+                </Button>
             </>
         ),
         DELIVERED: (
             <>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                <Button
+                    variant="outline"
+                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
+                >
                     반품
-                </button>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
+                </Button>
+                <Button
+                    variant="outline"
+                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
+                >
                     교환
-                </button>
+                </Button>
             </>
         ),
         PAYMENT_COMPLETED: (
             <ButtonGroup>
-                <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
+                <Button className="text-12 h-[30px] min-w-[61px] rounded-l-sm border border-gray-200 bg-white p-0 font-medium">
                     취소승인
-                </button>
-                <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
+                </Button>
+                <Button className="text-12 h-[30px] min-w-[61px] rounded-r-sm border border-gray-200 bg-white p-0 font-medium">
                     취소거절
-                </button>
+                </Button>
             </ButtonGroup>
         ),
         REFUND: (
             <>
                 <ButtonGroup>
-                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
+                    <Button className="text-12 h-[30px] min-w-[61px] rounded-l-sm border border-gray-200 bg-white p-0 font-medium">
                         반품승인
-                    </button>
-                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
+                    </Button>
+                    <Button className="text-12 h-[30px] min-w-[61px] rounded-r-sm border border-gray-200 bg-white p-0 font-medium">
                         반품거절
-                    </button>
+                    </Button>
                 </ButtonGroup>
                 <ButtonGroup>
-                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
+                    <Button className="text-12 h-[30px] min-w-[61px] rounded-l-sm border border-gray-200 bg-white p-0 font-medium">
                         반품완료
-                    </button>
-                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
+                    </Button>
+                    <Button className="text-12 h-[30px] min-w-[61px] border border-gray-200 bg-white p-0 font-medium">
                         반품반려
-                    </button>
-                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
+                    </Button>
+                    <Button className="text-12 h-[30px] min-w-[61px] rounded-r-sm border border-gray-200 bg-white p-0 font-medium">
                         반품보류
-                    </button>
+                    </Button>
                 </ButtonGroup>
             </>
         ),
         CHANGE: (
             <>
                 <ButtonGroup>
-                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
+                    <Button className="text-12 h-[30px] min-w-[61px] rounded-l-sm border border-gray-200 bg-white p-0 font-medium">
                         반품승인
-                    </button>
-                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
+                    </Button>
+                    <Button className="text-12 h-[30px] min-w-[61px] rounded-r-sm border border-gray-200 bg-white p-0 font-medium">
                         반품거절
-                    </button>
+                    </Button>
                 </ButtonGroup>
                 <ButtonGroup>
-                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
+                    <Button className="text-12 h-[30px] min-w-[61px] rounded-l-sm border border-gray-200 bg-white p-0 font-medium">
                         반품완료
-                    </button>
-                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
+                    </Button>
+                    <Button className="text-12 h-[30px] min-w-[61px] border border-gray-200 bg-white p-0 font-medium">
                         반품반려
-                    </button>
-                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
+                    </Button>
+                    <Button className="text-12 h-[30px] min-w-[61px] rounded-r-sm border border-gray-200 bg-white p-0 font-medium">
                         반품보류
-                    </button>
+                    </Button>
                 </ButtonGroup>
             </>
         ),
@@ -652,12 +672,13 @@ const Orders = () => {
                 <div className="w-full rounded-lg border border-gray-300 bg-white">
                     <div className="flex items-center justify-between px-6 pt-4 pb-3">
                         <div className="flex items-center gap-4">
-                            <button
-                                className="text-primary-500 text-12 border-primary-500 cursor-pointer rounded-md border px-2.5 py-1.5"
+                            <Button
+                                variant="outline"
+                                className="text-primary-500 text-12 border-primary-500 h-[30px] w-[61px] cursor-pointer rounded-md border p-0"
                                 onClick={handleClickDetail}
                             >
                                 상세보기
-                            </button>
+                            </Button>
                             {tableButtons[activeTab]}
                             <div className="flex items-center gap-1">
                                 <p className="text-14 font-normal text-gray-700">
