@@ -9,7 +9,6 @@ import {
 } from 'src/shared/components/tab/BGRtab.tsx'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
 import { Dialog } from 'src/shared/components/dialog/Dialog'
-import { ButtonGroup } from 'src/shared/lib/shadcn/components/ui/button-group'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
 import OrderStatusLabel from './components/OrderStatusLabel'
 import OrderFilter from './components/OrderFilter'
@@ -23,6 +22,7 @@ import type {
     OrderSearchFilter,
     DeliveryStatus,
 } from './type'
+import OrderControlButtons from './components/OrderControlButtons'
 
 const DELIVERY_STATUS_MAP: Record<DeliveryStatus, string> = {
     PREPARING_PRODUCT: '-',
@@ -66,131 +66,6 @@ const Orders = () => {
     })
 
     const [modalType, setModalType] = useState<string | null>(null)
-
-    // TODO :: REFACTORING 필요, 복잡도 높음
-    const tableButtons: Record<TabCategory, React.ReactNode> = {
-        ALL: null,
-        PAID: (
-            <>
-                <Button
-                    variant="outline"
-                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
-                >
-                    발주확인
-                </Button>
-                <Button
-                    variant="outline"
-                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
-                >
-                    주문취소
-                </Button>
-            </>
-        ),
-        CHECKED: (
-            <>
-                <Button
-                    variant="outline"
-                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
-                >
-                    주문취소
-                </Button>
-                <Button
-                    variant="outline"
-                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
-                >
-                    반품
-                </Button>
-            </>
-        ),
-        SHIPPED: (
-            <>
-                <Button
-                    variant="outline"
-                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
-                >
-                    반품
-                </Button>
-                <Button
-                    variant="outline"
-                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
-                >
-                    교환
-                </Button>
-            </>
-        ),
-        DELIVERED: (
-            <>
-                <Button
-                    variant="outline"
-                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
-                >
-                    반품
-                </Button>
-                <Button
-                    variant="outline"
-                    className="text-12 h-[30px] min-w-[61px] border border-gray-200 p-0"
-                >
-                    교환
-                </Button>
-            </>
-        ),
-        PAYMENT_COMPLETED: (
-            <ButtonGroup>
-                <Button className="text-12 h-[30px] min-w-[61px] rounded-l-sm border border-gray-200 bg-white p-0 font-medium">
-                    취소승인
-                </Button>
-                <Button className="text-12 h-[30px] min-w-[61px] rounded-r-sm border border-gray-200 bg-white p-0 font-medium">
-                    취소거절
-                </Button>
-            </ButtonGroup>
-        ),
-        REFUND: (
-            <>
-                <ButtonGroup>
-                    <Button className="text-12 h-[30px] min-w-[61px] rounded-l-sm border border-gray-200 bg-white p-0 font-medium">
-                        반품승인
-                    </Button>
-                    <Button className="text-12 h-[30px] min-w-[61px] rounded-r-sm border border-gray-200 bg-white p-0 font-medium">
-                        반품거절
-                    </Button>
-                </ButtonGroup>
-                <ButtonGroup>
-                    <Button className="text-12 h-[30px] min-w-[61px] rounded-l-sm border border-gray-200 bg-white p-0 font-medium">
-                        반품완료
-                    </Button>
-                    <Button className="text-12 h-[30px] min-w-[61px] border border-gray-200 bg-white p-0 font-medium">
-                        반품반려
-                    </Button>
-                    <Button className="text-12 h-[30px] min-w-[61px] rounded-r-sm border border-gray-200 bg-white p-0 font-medium">
-                        반품보류
-                    </Button>
-                </ButtonGroup>
-            </>
-        ),
-        CHANGE: (
-            <>
-                <ButtonGroup>
-                    <Button className="text-12 h-[30px] min-w-[61px] rounded-l-sm border border-gray-200 bg-white p-0 font-medium">
-                        반품승인
-                    </Button>
-                    <Button className="text-12 h-[30px] min-w-[61px] rounded-r-sm border border-gray-200 bg-white p-0 font-medium">
-                        반품거절
-                    </Button>
-                </ButtonGroup>
-                <ButtonGroup>
-                    <Button className="text-12 h-[30px] min-w-[61px] rounded-l-sm border border-gray-200 bg-white p-0 font-medium">
-                        반품완료
-                    </Button>
-                    <Button className="text-12 h-[30px] min-w-[61px] border border-gray-200 bg-white p-0 font-medium">
-                        반품반려
-                    </Button>
-                    <Button className="text-12 h-[30px] min-w-[61px] rounded-r-sm border border-gray-200 bg-white p-0 font-medium">
-                        반품보류
-                    </Button>
-                </ButtonGroup>
-            </>
-        ),
-    }
 
     // 데이터를 Table 타입에 맞게 변환
     const tableData: OrderTableRow[] = response.content.flatMap((order) =>
@@ -616,6 +491,10 @@ const Orders = () => {
         }),
     ]
 
+    const handleOrderAction = (actionType: string) => {
+        // TODO :: 주문 상태 변경 API 작업 완료되면 작업 필요
+    }
+
     useEffect(() => {
         handleResetFilter()
     }, [activeTab])
@@ -679,7 +558,10 @@ const Orders = () => {
                             >
                                 상세보기
                             </Button>
-                            {tableButtons[activeTab]}
+                            <OrderControlButtons
+                                activeTab={activeTab}
+                                onClick={handleOrderAction}
+                            />
                             <div className="flex items-center gap-1">
                                 <p className="text-14 font-normal text-gray-700">
                                     선택
