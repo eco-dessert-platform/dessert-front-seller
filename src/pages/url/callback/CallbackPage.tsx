@@ -32,7 +32,7 @@ const CallbackPage = () => {
         }
     }, [searchParams, provider])
 
-    return
+    return null
 }
 
 export default CallbackPage
