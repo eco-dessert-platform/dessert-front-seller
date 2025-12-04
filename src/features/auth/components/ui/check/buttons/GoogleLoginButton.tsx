@@ -12,6 +12,7 @@ const GoogleLoginButton = () => {
         const queryObject = {
             client_id: GOOGLE.client_id,
             redirect_uri: GOOGLE.redirect_uri,
+            clientsecret: GOOGLE.clientsecret,
             response_type: GOOGLE.response_type,
             scope: GOOGLE.scope,
         }
