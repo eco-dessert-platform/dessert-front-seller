@@ -25,7 +25,6 @@ const GoogleLoginButton = () => {
         })
 
         if (!popup) {
-            console.error('팝업이 차단되었습니다.')
             return
         }
 

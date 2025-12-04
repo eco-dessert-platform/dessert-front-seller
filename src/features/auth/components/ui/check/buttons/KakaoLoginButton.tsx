@@ -18,16 +18,12 @@ const KakaoLoginButton = () => {
         const query = new URLSearchParams(queryObject as Record<string, string>)
         const url = `${KAKAO.authUrl}?${query}`
 
-        console.log('Redirect URI:', KAKAO.redirect_uri)
-        console.log('팝업 URL:', `${KAKAO.authUrl}?${query}`)
-
         const popup = openCenteredPopup(url, 'kakao-login', {
             width: 400,
             height: 650,
         })
 
         if (!popup) {
-            console.error('팝업이 차단되었습니다.')
             return
         }
 
