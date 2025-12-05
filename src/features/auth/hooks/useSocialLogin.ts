@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-
 import {
     getKakaoPopup,
     getGooglePopup,
@@ -9,7 +8,10 @@ import {
 } from 'src/features/auth/utils/popupManager'
 import { RootState } from 'src/global/store/redux/reduxStore'
 import { authAction } from '../store/authReducer'
-import { useAppDispatch } from 'src/global/store/redux/reduxHooks'
+import {
+    useAppDispatch,
+    useAppSelector,
+} from 'src/global/store/redux/reduxHooks'
 
 interface SocialLoginMessage {
     type: 'SOCIAL_LOGIN_SUCCESS' | 'SOCIAL_LOGIN_ERROR'
@@ -20,8 +22,13 @@ interface SocialLoginMessage {
 
 export const useSocialLogin = () => {
     const dispatch = useAppDispatch()
-    const { socialLoginType, isLoading } = useSelector(
-        (state: RootState) => state.auth,
+    const { socialLoginType } = useAppSelector((state: RootState) => state.auth)
+
+    const kakaoLoginData = useSelector(
+        (state: RootState) => state.auth.kakaoLoginData,
+    )
+    const googleLoginData = useSelector(
+        (state: RootState) => state.auth.googleLoginData,
     )
 
     useEffect(() => {
@@ -30,6 +37,8 @@ export const useSocialLogin = () => {
             const { type, provider, code, error } = event.data
 
             if (type === 'SOCIAL_LOGIN_SUCCESS' && provider && code) {
+                console.log('소셜 로그인 성공:', { provider, code })
+
                 const upperProvider = provider.toUpperCase() as
                     | 'KAKAO'
                     | 'GOOGLE'
@@ -46,7 +55,7 @@ export const useSocialLogin = () => {
 
             if (type === 'SOCIAL_LOGIN_ERROR') {
                 console.error('소셜 로그인 에러:', error)
-                dispatch(authAction.clearSocialLoginType(undefined))
+                dispatch(authAction.clearSocialLoginType())
                 clearGooglePopup()
                 clearKakaoPopup()
             }
@@ -55,6 +64,24 @@ export const useSocialLogin = () => {
         window.addEventListener('message', handleMessage)
         return () => window.removeEventListener('message', handleMessage)
     }, [dispatch])
+
+    useEffect(() => {
+        if (kakaoLoginData?.data && !kakaoLoginData.loading) {
+            console.log('카카오 로그인 완료:', kakaoLoginData.data)
+            dispatch(authAction.handleLoginSuccess(kakaoLoginData.data))
+
+            window.location.href = '/'
+        }
+    }, [kakaoLoginData, dispatch])
+
+    useEffect(() => {
+        if (googleLoginData?.data && !googleLoginData.loading) {
+            console.log('구글 로그인 완료:', googleLoginData.data)
+            dispatch(authAction.handleLoginSuccess(googleLoginData.data))
+
+            window.location.href = '/'
+        }
+    }, [googleLoginData, dispatch])
 
     useEffect(() => {
         if (!socialLoginType) return
@@ -66,8 +93,12 @@ export const useSocialLogin = () => {
 
         const checkPopupClosed = setInterval(() => {
             if (popup.closed) {
-                if (!isLoading)
-                    dispatch(authAction.clearSocialLoginType(undefined))
+                const isLoading =
+                    kakaoLoginData?.loading || googleLoginData?.loading
+
+                if (!isLoading) {
+                    dispatch(authAction.clearSocialLoginType())
+                }
                 clearGooglePopup()
                 clearKakaoPopup()
                 clearInterval(checkPopupClosed)
@@ -75,5 +106,5 @@ export const useSocialLogin = () => {
         }, 1000)
 
         return () => clearInterval(checkPopupClosed)
-    }, [socialLoginType, isLoading, dispatch])
+    }, [socialLoginType, kakaoLoginData, googleLoginData, dispatch])
 }

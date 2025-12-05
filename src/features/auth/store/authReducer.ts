@@ -1,6 +1,10 @@
 import { reduxMaker } from 'src/global/store/redux/reduxUtils.ts'
 import { PayloadAction } from '@reduxjs/toolkit'
-import { deleteCookie } from 'src/global/store/cookie/cookieUtils'
+import {
+    deleteCookie,
+    getExpFromToken,
+    setCookie,
+} from 'src/global/store/cookie/cookieUtils'
 import { googleLogin, kakaoLogin, refreshToken } from '../apis/authApi'
 import { SocialType } from '../type/auth'
 
@@ -40,7 +44,7 @@ const localReducers = {
         state.socialLoginType = action.payload
     },
 
-    clearSocialLoginType: (state: typeof localState) => {
+    clearSocialLoginType(state: typeof localState) {
         state.socialLoginType = null
     },
 
@@ -55,6 +59,22 @@ const localReducers = {
         action: PayloadAction<boolean>,
     ) => {
         state.isLoggedIn = action.payload
+    },
+
+    handleLoginSuccess: (
+        state: typeof localState,
+        action: PayloadAction<{ accessToken: string; refreshToken: string }>,
+    ) => {
+        const { accessToken, refreshToken } = action.payload
+
+        const accessTokenExp = getExpFromToken(accessToken)
+        const refreshTokenExp = getExpFromToken(refreshToken)
+
+        setCookie('accessToken', accessToken, accessTokenExp)
+        setCookie('refreshToken', refreshToken, refreshTokenExp)
+
+        state.isLoggedIn = true
+        state.socialLoginType = null
     },
 }
 

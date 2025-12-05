@@ -35,6 +35,7 @@ export const kakaoLogin = async (
     )
 
     console.log('카카오 로그인 성공')
+
     return response
 }
 
@@ -64,6 +65,7 @@ export const googleLogin = async (
     )
 
     console.log('구글 로그인 성공')
+
     return response
 }
 
