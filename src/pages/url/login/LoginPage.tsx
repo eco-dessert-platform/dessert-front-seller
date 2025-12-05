@@ -5,13 +5,10 @@ import { BgrLoginFooter } from 'src/features/auth/components/layout/BgrLoginFoot
 import BgrHeader from 'src/shared/layout/BgrHeader'
 import AuthCard from 'src/features/auth/components/layout/AuthCard'
 import { AUTH_MESSAGES } from 'src/features/auth/locales/authMessages'
-import { useSocialLogin } from 'src/features/auth/hooks/useSocialLogin'
 import KakaoLoginButton from 'src/features/auth/components/ui/check/buttons/KakaoLoginButton'
 import GoogleLoginButton from 'src/features/auth/components/ui/check/buttons/GoogleLoginButton'
 
 const LoginPage = () => {
-    useSocialLogin()
-
     return (
         <AuthPageContainer>
             <BgrHeader />
