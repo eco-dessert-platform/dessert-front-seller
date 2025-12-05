@@ -54,7 +54,7 @@ export const useSocialLogin = () => {
 
             if (type === 'SOCIAL_LOGIN_ERROR') {
                 console.error('소셜 로그인 에러:', error)
-                dispatch(authAction.clearSocialLoginType())
+                dispatch(authAction.clearSocialLoginType({}))
                 clearGooglePopup()
                 clearKakaoPopup()
             }
@@ -96,7 +96,7 @@ export const useSocialLogin = () => {
                     kakaoLoginData?.loading || googleLoginData?.loading
 
                 if (!isLoading) {
-                    dispatch(authAction.clearSocialLoginType())
+                    dispatch(authAction.clearSocialLoginType({}))
                 }
                 clearGooglePopup()
                 clearKakaoPopup()
