@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
 import {
     getKakaoPopup,
     getGooglePopup,
@@ -24,10 +23,10 @@ export const useSocialLogin = () => {
     const dispatch = useAppDispatch()
     const { socialLoginType } = useAppSelector((state: RootState) => state.auth)
 
-    const kakaoLoginData = useSelector(
+    const kakaoLoginData = useAppSelector(
         (state: RootState) => state.auth.kakaoLoginData,
     )
-    const googleLoginData = useSelector(
+    const googleLoginData = useAppSelector(
         (state: RootState) => state.auth.googleLoginData,
     )
 
