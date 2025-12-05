@@ -4,7 +4,7 @@ import {
     KakaoAuthResponse,
     LoginResponse,
 } from '../type/auth'
-import { GOOGLE, KAKAO } from '../locales/socialLogin'
+import { GOOGLE, KAKAO } from '../locales/socialProvider'
 import {
     client,
     googleOAuthClient,
