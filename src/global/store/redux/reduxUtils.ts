@@ -3,7 +3,7 @@ import { AxiosResponse, isAxiosError } from 'axios'
 import { call, put, takeLatest } from 'redux-saga/effects'
 import { AnyAction, SagaIterator } from 'redux-saga'
 
-type AsyncState<DataType> = {
+export type AsyncState<DataType> = {
     data: DataType | null
     loading: boolean
     error: boolean

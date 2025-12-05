@@ -1,12 +1,12 @@
-import { useDispatch } from 'react-redux'
 import { authAction } from 'src/features/auth/authReducer.ts'
 import { openCenteredPopup } from 'src/shared/utils/popup'
 import { setGooglePopup } from 'src/features/auth/utils/popupManager'
 import ButtonGoogle from 'src/assets/icons/button/bbangle-google-button.svg?react'
 import { GOOGLE } from 'src/features/auth/locales/socialLogin'
+import { useAppDispatch } from 'src/global/store/redux/reduxHooks'
 
 const GoogleLoginButton = () => {
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
 
     const openGoogleLoginPopup = () => {
         const queryObject = {

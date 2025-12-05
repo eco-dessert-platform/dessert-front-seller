@@ -1,8 +1,8 @@
 import { ChangeEvent, useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { Label } from 'src/shared/lib/shadcn/components/ui/label.tsx'
 import { hexToOklch, oklchToHex } from 'src/shared/utils/colorUtils.tsx'
-import { useDispatch } from 'react-redux'
 import { themeAction } from 'src/shared/components/theme/themeReducer.tsx'
+import { useAppDispatch } from 'src/global/store/redux/reduxHooks'
 
 type ColorPickerProps = {
     variableKey: string
@@ -17,13 +17,17 @@ const ColorPicker = ({
     onChange,
     label,
 }: ColorPickerProps) => {
+
+    const dispatch = useAppDispatch()
+
+
+    
     const [localColor, setLocalColor] = useState(color)
 
     useEffect(() => {
         setLocalColor(hexToOklch(color))
     }, [color])
 
-    const dispatch = useDispatch()
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
     const debouncedUpdate = useCallback(
