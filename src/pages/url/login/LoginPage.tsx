@@ -9,11 +9,7 @@ import AuthCard from 'src/features/auth/components/layout/AuthCard'
 import { AUTH_MESSAGES } from 'src/features/auth/locales/authMessages'
 import KakaoLoginButton from 'src/features/auth/components/ui/check/buttons/KakaoLoginButton'
 import GoogleLoginButton from 'src/features/auth/components/ui/check/buttons/GoogleLoginButton'
-
-interface LoginErrorMessage {
-    type: 'LOGIN_ERROR'
-    message: string
-}
+import { LoginErrorMessage } from 'src/features/auth/type/auth'
 
 const LoginPage = () => {
     // 팝업에서 전달된 로그인 에러 메시지 수신

@@ -42,3 +42,13 @@ export interface JwtPayload {
     exp: number // 만료 시간
     iat: number // 발급 시간
 }
+
+
+
+/**
+ * 팝업에서 부모 창으로 전달되는 로그인 에러 메시지
+ */
+export interface LoginErrorMessage {
+    type: 'LOGIN_ERROR'
+    message: string
+}

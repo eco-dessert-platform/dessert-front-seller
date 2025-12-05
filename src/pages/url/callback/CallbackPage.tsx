@@ -95,7 +95,7 @@ const CallbackPage = () => {
                 dispatch(authAction.setUser(user))
             }
             dispatch(authAction.setIsLoggedIn(true))
-            dispatch(authAction.clearSocialLoginType())
+            dispatch(authAction.clearSocialLoginType({}))
 
             // 부모 창 리다이렉트 후 팝업 닫기
             // (부모 창에서 useAuthInit이 쿠키를 읽어 로그인 상태 초기화)

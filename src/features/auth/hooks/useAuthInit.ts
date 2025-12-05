@@ -24,7 +24,7 @@ export const useAuthInit = () => {
         if (accessToken) {
             // 토큰 만료 확인
             if (isTokenExpired(accessToken)) {
-                dispatch(authAction.logout())
+                dispatch(authAction.logout({}))
                 return
             }
 
@@ -34,7 +34,7 @@ export const useAuthInit = () => {
                 dispatch(authAction.setIsLoggedIn(true))
                 dispatch(authAction.setUser(user))
             } else {
-                dispatch(authAction.logout())
+                dispatch(authAction.logout({}))
             }
         }
     }, [dispatch, isLoggedIn])
