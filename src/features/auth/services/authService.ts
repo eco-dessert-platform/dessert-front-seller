@@ -122,6 +122,48 @@ class AuthService {
 
         return data.result
     }
+
+    async getSocialLoginResponse({
+        provider,
+        code,
+    }: {
+        provider: SocialType
+        code: string
+    }): Promise<LoginResponse & { provider: SocialType }> {
+        console.log('플랫폼 토큰 발급 시작:', {
+            provider,
+            code: code.substring(0, 20) + '...',
+        })
+
+        let socialToken: string
+        if (provider === 'KAKAO') {
+            const kakaoData = await this.getKakaoToken(code)
+            socialToken = kakaoData.access_token
+            console.log('카카오 토큰 발급 성공')
+        } else if (provider === 'GOOGLE') {
+            const googleData = await this.getGoogleToken(code)
+            socialToken = googleData.access_token
+            console.log('구글 토큰 발급 성공')
+        } else {
+            throw new Error(`지원하지 않는 소셜 로그인: ${provider}`)
+        }
+
+        console.log('백엔드 로그인 시도:', {
+            provider,
+            socialToken: socialToken.substring(0, 20) + '...',
+        })
+
+        const loginData = await this.login({
+            socialType: provider,
+            socialToken,
+        })
+        console.log('백엔드 로그인 성공')
+
+        return {
+            ...loginData,
+            provider,
+        }
+    }
 }
 
 export const authService = new AuthService()

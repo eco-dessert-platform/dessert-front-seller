@@ -1,9 +1,6 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-    clearSocialLoginType,
-    socialLoginRequest,
-} from 'src/features/auth/store/authSlice'
+import { authAction } from 'src/features/auth/authReducer.ts'
 import {
     getKakaoPopup,
     getGooglePopup,
@@ -39,7 +36,7 @@ export const useSocialLogin = () => {
                     | 'GOOGLE'
 
                 dispatch(
-                    socialLoginRequest({
+                    authAction.socialLogin({
                         provider: upperProvider,
                         code,
                     }),
@@ -54,7 +51,7 @@ export const useSocialLogin = () => {
 
             if (type === 'SOCIAL_LOGIN_ERROR') {
                 console.error('소셜 로그인 에러:', error)
-                dispatch(clearSocialLoginType())
+                dispatch(authAction.clearSocialLoginType())
                 clearKakaoPopup()
                 clearGooglePopup()
             }
@@ -78,7 +75,7 @@ export const useSocialLogin = () => {
         const checkPopupClosed = setInterval(() => {
             if (popup.closed) {
                 if (!isLoading) {
-                    dispatch(clearSocialLoginType())
+                    dispatch(authAction.clearSocialLoginType())
                 }
                 clearKakaoPopup()
                 clearGooglePopup()

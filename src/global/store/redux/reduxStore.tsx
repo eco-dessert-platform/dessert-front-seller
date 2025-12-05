@@ -1,6 +1,6 @@
 import createSagaMiddleware from 'redux-saga'
 import { configureStore, Tuple } from '@reduxjs/toolkit'
-import authReducer from '../../../features/auth/store/authSlice'
+import { authSlice, authSaga } from 'src/features/auth/authReducer.ts'
 
 import { all } from 'redux-saga/effects'
 import { routerSaga, routerSlice } from 'src/global/router/routerReducer.tsx'
@@ -10,14 +10,13 @@ import {
     storeSaga,
     storeSlice,
 } from 'src/pages/url/register/store/storeReducer'
-import { authSaga } from 'src/features/auth/store/authSaga'
 
 const reducers = {
     routerReducer: routerSlice.reducer,
     sampleReducer: sampleSlice.reducer,
     themeReducer: themeSlice.reducer,
     storeReducer: storeSlice.reducer,
-    auth: authReducer.reducer,
+    auth: authSlice.reducer,
 }
 
 export function* rootSaga() {
