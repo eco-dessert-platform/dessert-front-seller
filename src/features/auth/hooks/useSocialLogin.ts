@@ -8,7 +8,7 @@ import {
     clearGooglePopup,
 } from 'src/features/auth/utils/popupManager'
 import { RootState } from 'src/global/store/redux/reduxStore'
-import { authAction } from '../apis/authReducer'
+import { authAction } from '../store/authReducer'
 import { useAppDispatch } from 'src/global/store/redux/reduxHooks'
 
 interface SocialLoginMessage {

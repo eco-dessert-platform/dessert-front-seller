@@ -3,7 +3,7 @@ import { openCenteredPopup } from 'src/shared/utils/popup'
 import { setKakaoPopup } from 'src/features/auth/utils/popupManager'
 import ButtonKakao from 'src/assets/icons/button/bbangle-kakao-button.svg?react'
 import { KAKAO } from 'src/features/auth/locales/socialLogin'
-import { authAction } from 'src/features/auth/apis/authReducer'
+import { authAction } from 'src/features/auth/store/authReducer'
 
 const KakaoLoginButton = () => {
     const dispatch = useDispatch()

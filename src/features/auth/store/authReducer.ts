@@ -1,7 +1,7 @@
 import { reduxMaker } from 'src/global/store/redux/reduxUtils.ts'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { deleteCookie } from 'src/global/store/cookie/cookieUtils'
-import { googleLogin, kakaoLogin, refreshToken } from './authApi'
+import { googleLogin, kakaoLogin, refreshToken } from '../apis/authApi'
 import { SocialType } from '../type/auth'
 
 const prefix = 'auth'

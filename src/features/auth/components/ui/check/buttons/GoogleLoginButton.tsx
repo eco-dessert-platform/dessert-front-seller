@@ -3,7 +3,7 @@ import { openCenteredPopup } from 'src/shared/utils/popup'
 import { setGooglePopup } from 'src/features/auth/utils/popupManager'
 import ButtonGoogle from 'src/assets/icons/button/bbangle-google-button.svg?react'
 import { GOOGLE } from 'src/features/auth/locales/socialLogin'
-import { authAction } from 'src/features/auth/apis/authReducer'
+import { authAction } from 'src/features/auth/store/authReducer'
 
 const GoogleLoginButton = () => {
     const dispatch = useDispatch()
