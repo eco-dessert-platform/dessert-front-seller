@@ -4,9 +4,11 @@ import useRouteListener from 'src/global/router/useRouteListener.tsx'
 import { Bounce, ToastContainer } from 'react-toastify'
 import { ThemeProvider } from 'src/shared/lib/shadcn/components/ThemeProvider.tsx'
 import { useEffect } from 'react'
+import { useAuthInit } from 'src/features/auth/hooks/useAuthInit'
 
 function App() {
     useRouteListener()
+    useAuthInit() // 쿠키에서 토큰 읽어 인증 상태 초기화
 
     // 새로 고침시 애니메이션, 임시 배경색상 처리
     useEffect(() => {

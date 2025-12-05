@@ -4,6 +4,7 @@ import { setKakaoPopup } from 'src/features/auth/utils/popupManager'
 import ButtonKakao from 'src/assets/icons/button/bbangle-kakao-button.svg?react'
 import { KAKAO } from 'src/features/auth/locales/socialLogin'
 import { useAppDispatch } from 'src/global/store/redux/reduxHooks'
+import { toast } from 'react-toastify'
 
 const KakaoLoginButton = () => {
     const dispatch = useAppDispatch()
@@ -24,6 +25,7 @@ const KakaoLoginButton = () => {
         })
 
         if (!popup) {
+            toast.error('팝업이 차단되었습니다. 팝업 차단을 해제해주세요.')
             return
         }
 

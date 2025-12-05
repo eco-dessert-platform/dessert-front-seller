@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+import { toast } from 'react-toastify'
 import ImagePlaceholder from 'src/features/auth/components/ImagePlaceholderProps'
 import AuthContentWrapper from 'src/features/auth/components/layout/AuthContentWrapper'
 import AuthPageContainer from 'src/features/auth/components/layout/AuthPageContainer'
@@ -8,7 +10,24 @@ import { AUTH_MESSAGES } from 'src/features/auth/locales/authMessages'
 import KakaoLoginButton from 'src/features/auth/components/ui/check/buttons/KakaoLoginButton'
 import GoogleLoginButton from 'src/features/auth/components/ui/check/buttons/GoogleLoginButton'
 
+interface LoginErrorMessage {
+    type: 'LOGIN_ERROR'
+    message: string
+}
+
 const LoginPage = () => {
+    // 팝업에서 전달된 로그인 에러 메시지 수신
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent<LoginErrorMessage>) => {
+            if (event.data?.type === 'LOGIN_ERROR') {
+                toast.error(event.data.message)
+            }
+        }
+
+        window.addEventListener('message', handleMessage)
+        return () => window.removeEventListener('message', handleMessage)
+    }, [])
+
     return (
         <AuthPageContainer>
             <BgrHeader />

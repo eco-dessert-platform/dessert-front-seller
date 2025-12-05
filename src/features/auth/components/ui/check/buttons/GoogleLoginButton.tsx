@@ -4,6 +4,7 @@ import { setGooglePopup } from 'src/features/auth/utils/popupManager'
 import ButtonGoogle from 'src/assets/icons/button/bbangle-google-button.svg?react'
 import { GOOGLE } from 'src/features/auth/locales/socialLogin'
 import { useAppDispatch } from 'src/global/store/redux/reduxHooks'
+import { toast } from 'react-toastify'
 
 const GoogleLoginButton = () => {
     const dispatch = useAppDispatch()
@@ -26,6 +27,7 @@ const GoogleLoginButton = () => {
         })
 
         if (!popup) {
+            toast.error('팝업이 차단되었습니다. 팝업 차단을 해제해주세요.')
             return
         }
 

@@ -8,13 +8,18 @@ import {
 } from 'src/global/store/redux/reduxHooks'
 import { LoginResponse } from 'src/features/auth/type/auth'
 import { AsyncState } from 'src/global/store/redux/reduxUtils'
+import { toast } from 'react-toastify'
+import {
+    getExpFromToken,
+    parseUserFromToken,
+} from 'src/features/auth/utils/jwtUtils'
 
-const getExpFromToken = (token: string): Date => {
-    try {
-        const payload = JSON.parse(atob(token.split('.')[1]))
-        return new Date(payload.exp * 1000)
-    } catch {
-        return new Date(Date.now() + 3600 * 1000)
+/**
+ * 부모 창에 에러 메시지 전달
+ */
+const showErrorInParent = (message: string) => {
+    if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({ type: 'LOGIN_ERROR', message }, '*')
     }
 }
 
@@ -38,15 +43,22 @@ const CallbackPage = () => {
 
         const code = searchParams.get('code')
         const error = searchParams.get('error')
+        const errorDescription = searchParams.get('error_description')
 
         if (error) {
+            const errorMsg = errorDescription || '소셜 로그인이 취소되었습니다.'
             console.error('소셜 로그인 에러:', error)
-            window.close()
+            toast.error(errorMsg)
+            showErrorInParent(errorMsg)
+            setTimeout(() => window.close(), 1500)
             return
         }
 
         if (!code || !provider) {
-            window.close()
+            const errorMsg = '잘못된 로그인 요청입니다.'
+            toast.error(errorMsg)
+            showErrorInParent(errorMsg)
+            setTimeout(() => window.close(), 1500)
             return
         }
 
@@ -69,6 +81,7 @@ const CallbackPage = () => {
         if (loginData?.data) {
             const { accessToken, refreshToken } = loginData.data
 
+            // 쿠키에 토큰 저장
             setCookie('accessToken', accessToken, getExpFromToken(accessToken))
             setCookie(
                 'refreshToken',
@@ -76,8 +89,17 @@ const CallbackPage = () => {
                 getExpFromToken(refreshToken),
             )
 
-            // 부모 창에 로그인 성공 알림 후 리다이렉트
-            if (window.opener) {
+            // JWT에서 사용자 정보 파싱 후 Redux 상태 업데이트
+            const user = parseUserFromToken(accessToken)
+            if (user) {
+                dispatch(authAction.setUser(user))
+            }
+            dispatch(authAction.setIsLoggedIn(true))
+            dispatch(authAction.clearSocialLoginType())
+
+            // 부모 창 리다이렉트 후 팝업 닫기
+            // (부모 창에서 useAuthInit이 쿠키를 읽어 로그인 상태 초기화)
+            if (window.opener && !window.opener.closed) {
                 window.opener.location.href = '/'
             }
             window.close()
@@ -85,8 +107,11 @@ const CallbackPage = () => {
 
         // 로그인 실패
         if (loginData?.error) {
-            console.error('로그인 처리 실패:', loginData.errorMsg)
-            window.close()
+            const errorMsg = loginData.errorMsg || '로그인에 실패했습니다.'
+            console.error('로그인 처리 실패:', errorMsg)
+            toast.error(errorMsg)
+            showErrorInParent(errorMsg)
+            setTimeout(() => window.close(), 2000)
         }
     }, [kakaoLoginData, googleLoginData, provider])
 

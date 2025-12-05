@@ -2,6 +2,7 @@ import { reduxMaker } from 'src/global/store/redux/reduxUtils.ts'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { kakaoLogin, googleLogin, refreshToken } from './authAPI'
 import { SocialType } from './type/social'
+import { UserInfo } from './type/auth'
 import { deleteCookie } from 'src/global/store/cookie/cookieUtils'
 
 const prefix = 'auth'
@@ -30,6 +31,7 @@ const asyncRequests = [
 const localState = {
     socialLoginType: null as SocialType | null,
     isLoggedIn: false,
+    user: null as UserInfo | null,
 }
 
 const localReducers = {
@@ -44,11 +46,21 @@ const localReducers = {
     },
     logout: (state: typeof localState) => {
         state.isLoggedIn = false
+        state.user = null
         deleteCookie('accessToken')
         deleteCookie('refreshToken')
     },
-    setIsLoggedIn: (state: typeof localState, action: PayloadAction<boolean>) => {
+    setIsLoggedIn: (
+        state: typeof localState,
+        action: PayloadAction<boolean>,
+    ) => {
         state.isLoggedIn = action.payload
+    },
+    setUser: (
+        state: typeof localState,
+        action: PayloadAction<UserInfo | null>,
+    ) => {
+        state.user = action.payload
     },
 }
 

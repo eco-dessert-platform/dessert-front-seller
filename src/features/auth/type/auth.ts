@@ -15,3 +15,30 @@ export interface LoginResponse {
     accessToken: string
     refreshToken: string
 }
+
+/**
+ * JWT에서 파싱한 사용자 정보
+ */
+export interface UserInfo {
+    id: string | number
+    email?: string
+    name?: string
+    nickname?: string
+    profileImage?: string
+    role?: string
+}
+
+/**
+ * JWT Payload 구조 (백엔드에서 발급한 토큰 기준)
+ */
+export interface JwtPayload {
+    sub?: string // subject (사용자 ID)
+    id?: string | number
+    email?: string
+    name?: string
+    nickname?: string
+    profileImage?: string
+    role?: string
+    exp: number // 만료 시간
+    iat: number // 발급 시간
+}
