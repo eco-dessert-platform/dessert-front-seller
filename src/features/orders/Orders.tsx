@@ -25,10 +25,11 @@ import type {
 import OrderControlButtons from './components/OrderControlButtons'
 
 const DELIVERY_STATUS_MAP: Record<DeliveryStatus, string> = {
-    PREPARING_PRODUCT: '-',
-    SHIPPING: '상품배송',
-    COLLECTING: '수거중',
-    COLLECTED: '수거완료',
+    NONE: '-',
+    PREPARING: '-',
+    DELIVERING: '상품배송',
+    PICKING_UP: '수거중',
+    PICKED_UP: '수거완료',
     DELIVERED: '배송완료',
 }
 
