@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 
 import * as SelectPrimitive from '@radix-ui/react-select'
-import { Dialog } from 'src/shared/components/dialog/Dialog'
+import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 import RejectImageUploader from './RejectImageUploader'
 
 type RejectType =
@@ -113,7 +113,7 @@ const RejectModal = ({
     }
 
     return (
-        <Dialog open type="popup" title={title} onOpenChange={() => {}}>
+        <BgrDialog open type="popup" title={title} onOpenChange={() => {}}>
             <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
                     <SelectPrimitive.Root
@@ -195,7 +195,7 @@ const RejectModal = ({
                     </button>
                 </div>
             </div>
-        </Dialog>
+        </BgrDialog>
     )
 }
 

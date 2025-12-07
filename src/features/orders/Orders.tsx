@@ -8,7 +8,7 @@ import {
     BgrTabsTrigger,
 } from 'src/shared/components/tab/BGRtab.tsx'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
-import { Dialog } from 'src/shared/components/dialog/Dialog'
+import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
 import OrderStatusLabel from './components/OrderStatusLabel'
 import OrderFilter from './components/OrderFilter'
@@ -547,7 +547,7 @@ const Orders = () => {
             </div>
             {/* TODO :: 협의 후, 전역 모달로 분리 & REFACTORING */}
             {modalType && (
-                <Dialog
+                <BgrDialog
                     open={modalType === 'noSelect'}
                     type="alert"
                     title="주문을 선택해주세요."
@@ -558,7 +558,7 @@ const Orders = () => {
                 />
             )}
             {modalType && (
-                <Dialog
+                <BgrDialog
                     open={modalType === 'noKeyword'}
                     type="alert"
                     title="상세 검색 내용을 입력해주세요."

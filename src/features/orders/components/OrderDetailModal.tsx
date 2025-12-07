@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
 
-import { Dialog } from 'src/shared/components/dialog/Dialog'
+import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 import {
     Accordion,
     AccordionContent,
@@ -24,7 +24,7 @@ const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
     )
 
     return (
-        <Dialog open type="popup" title="주문 상세" onOpenChange={onClose}>
+        <BgrDialog open type="popup" title="주문 상세" onOpenChange={onClose}>
             <Accordion type="single" className="flex flex-col gap-3">
                 {orderDetailList.map(
                     ({
@@ -180,7 +180,7 @@ const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
                     ),
                 )}
             </Accordion>
-        </Dialog>
+        </BgrDialog>
     )
 }
 

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 
-import { Dialog } from 'src/shared/components/dialog/Dialog'
+import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 
 interface TrackingNumberModalProps {
     type: 'register' | 'modify'
@@ -44,7 +44,7 @@ const TrackingNumberModal = ({
     })
 
     return (
-        <Dialog
+        <BgrDialog
             open
             type="popup"
             title={type === 'register' ? '운송장 입력' : '운송장 수정'}
@@ -124,7 +124,7 @@ const TrackingNumberModal = ({
                     </button>
                 </div>
             </div>
-        </Dialog>
+        </BgrDialog>
     )
 }
 
