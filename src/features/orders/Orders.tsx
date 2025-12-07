@@ -69,7 +69,6 @@ const Orders = () => {
     const [response] = useState(MOCK_ORDER_LIST)
     const [modalType, setModalType] = useState<string | null>(null)
 
-    // 데이터를 Table 타입에 맞게 변환
     const tableData: OrderTableRow[] = response.content.flatMap((order) =>
         order.orderItems.map((item) => ({
             recipientName: order.recipientName,
@@ -87,36 +86,7 @@ const Orders = () => {
         })),
     )
 
-    const handleOrderCheckboxChange = (
-        orderNumber: string,
-        tableData: OrderTableRow[],
-    ) => {
-        setSelections((prev) => {
-            const isRemoving = prev.orders.has(orderNumber)
-            const nextCheckedOrders = new Set(prev.orders)
-            const nextCheckedItems = new Set(prev.items)
-
-            if (isRemoving) {
-                nextCheckedOrders.delete(orderNumber)
-            } else {
-                nextCheckedOrders.add(orderNumber)
-            }
-
-            tableData.forEach((row, index) => {
-                if (row.orderNumber === orderNumber) {
-                    if (isRemoving) {
-                        nextCheckedItems.delete(index.toString())
-                    } else {
-                        nextCheckedItems.add(index.toString())
-                    }
-                }
-            })
-
-            return { orders: nextCheckedOrders, items: nextCheckedItems }
-        })
-    }
-
-    const handleAllOrdersToggle = () => {
+    const handleSelectAll = () => {
         if (selections.orders.size === allOrderNumbers.length) {
             setSelections({ orders: new Set(), items: new Set() })
         } else {
@@ -157,65 +127,75 @@ const Orders = () => {
         // TODO :: API 요청 함수 할당 필요
     }
 
-    const handleOrderRowCheckboxChange = (orderNumber: string) => {
-        const isCurrentlySelected = selections.orders.has(orderNumber)
-
-        // 주문 선택 상태 토글
-        handleOrderCheckboxChange(orderNumber, tableData)
-
-        // 해당 주문의 모든 상품 행을 찾아서 선택/해제
+    const handleSelectOrder = (targetOrderNumber: string) => {
         setSelections((prev) => {
-            const nextCheckedItems = new Set(prev.items)
+            const isOrderSelected = prev.orders.has(targetOrderNumber)
+            const nextSelectedOrders = new Set(prev.orders)
+            const nextSelectedItems = new Set(prev.items)
+
+            if (isOrderSelected) {
+                nextSelectedOrders.delete(targetOrderNumber)
+            } else {
+                nextSelectedOrders.add(targetOrderNumber)
+            }
+
             tableData.forEach((row, index) => {
-                if (row.orderNumber === orderNumber) {
-                    if (isCurrentlySelected) {
-                        nextCheckedItems.delete(index.toString())
+                if (row.orderNumber === targetOrderNumber) {
+                    if (isOrderSelected) {
+                        nextSelectedItems.delete(index.toString())
                     } else {
-                        nextCheckedItems.add(index.toString())
+                        nextSelectedItems.add(index.toString())
                     }
                 }
             })
-            return { ...prev, items: nextCheckedItems }
+
+            return { orders: nextSelectedOrders, items: nextSelectedItems }
         })
     }
 
-    const handleItemCheckboxChange = (rowId: string, orderNumber: string) => {
+    const handleSelectItem = (rowId: string, targetOrderNumber: string) => {
         setSelections((prev) => {
-            const nextCheckedItems = new Set(prev.items)
-            if (nextCheckedItems.has(rowId)) {
-                nextCheckedItems.delete(rowId)
+            const nextSelectedOrders = new Set(prev.orders)
+            const nextSelectedItems = new Set(prev.items)
+
+            if (nextSelectedItems.has(rowId)) {
+                nextSelectedItems.delete(rowId)
             } else {
-                nextCheckedItems.add(rowId)
+                nextSelectedItems.add(rowId)
             }
 
-            const nextCheckedOrders = new Set(prev.orders)
-            const orderItemIndices = tableData
+            const targetOrderItemIndicies = tableData
                 .map((item, index) =>
-                    item.orderNumber === orderNumber ? index.toString() : null,
+                    item.orderNumber === targetOrderNumber
+                        ? index.toString()
+                        : null,
                 )
                 .filter((idx) => idx !== null) as string[]
 
-            const allItemsSelected = orderItemIndices.every((idx) =>
-                nextCheckedItems.has(idx),
+            const isAllItemsSelected = targetOrderItemIndicies.every((idx) =>
+                nextSelectedItems.has(idx),
             )
 
-            if (allItemsSelected) {
-                nextCheckedOrders.add(orderNumber)
+            if (isAllItemsSelected) {
+                nextSelectedOrders.add(targetOrderNumber)
             } else {
-                nextCheckedOrders.delete(orderNumber)
+                nextSelectedOrders.delete(targetOrderNumber)
             }
 
             return {
-                orders: nextCheckedOrders,
-                items: nextCheckedItems,
+                orders: nextSelectedOrders,
+                items: nextSelectedItems,
             }
         })
     }
 
-    // 전체 주문 목록 추출
     const allOrderNumbers = Array.from(
         new Set(response.content.map((order) => order.orderNumber)),
     )
+
+    const handleOrderAction = (actionType: string) => {
+        // TODO :: 주문 상태 변경 API 작업 완료되면 작업 필요
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const columns: ColumnDef<OrderTableRow, any>[] = [
@@ -238,7 +218,7 @@ const Orders = () => {
                         }}
                         type="checkbox"
                         checked={isAllSelected}
-                        onChange={handleAllOrdersToggle}
+                        onChange={handleSelectAll}
                         className="cursor-pointer"
                     />
                 )
@@ -257,9 +237,7 @@ const Orders = () => {
                         <input
                             type="checkbox"
                             checked={isOrderSelected}
-                            onChange={() =>
-                                handleOrderRowCheckboxChange(orderNumber)
-                            }
+                            onChange={() => handleSelectOrder(orderNumber)}
                             className="cursor-pointer"
                         />
                     </div>
@@ -300,7 +278,7 @@ const Orders = () => {
                             type="checkbox"
                             checked={selections.items.has(rowId)}
                             onChange={() =>
-                                handleItemCheckboxChange(rowId, orderNumber)
+                                handleSelectItem(rowId, orderNumber)
                             }
                             className="cursor-pointer"
                         />
@@ -457,10 +435,6 @@ const Orders = () => {
             meta: { merge: true },
         }),
     ]
-
-    const handleOrderAction = (actionType: string) => {
-        // TODO :: 주문 상태 변경 API 작업 완료되면 작업 필요
-    }
 
     useEffect(() => {
         handleResetFilter()
