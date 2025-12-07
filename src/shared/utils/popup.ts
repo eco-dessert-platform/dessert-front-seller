@@ -3,9 +3,6 @@ interface PopupOptions {
     height?: number
 }
 
-/**
- * 화면 중앙에 팝업 창을 엽니다
- */
 export const openCenteredPopup = (
     url: string,
     title: string = '_blank',
