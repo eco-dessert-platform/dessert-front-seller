@@ -71,3 +71,103 @@ export const MOCK_ORDER_LIST = {
     totalPages: 48,
     totalElements: 480,
 }
+
+export const MOCK_ORDER_DETAIL_LIST = [
+    {
+        orderNumber: 'ORDER-2025-04-05-test',
+        orderInfo: {
+            orderDate: '2025-04-05',
+            orderStatusLabel: '반품-상품발송',
+        },
+        buyer: {
+            recipientName: '홍길동',
+            buyerName: '홍길동',
+            buyerPhone1: '010-1234-5678',
+            buyerPhone2: '010-9876-5432',
+        },
+        shipping: {
+            statusLabel: '수거중',
+            courierCompany: 'CJ대한통운',
+            trackingNumber: '1234-5678-910',
+            shippingFee: 3000,
+            address: '서울시 강남구 예제로 123',
+            memo: '문 앞에 두세요.',
+        },
+        orderItem: [
+            {
+                boardTitle: '예제 상품',
+                itemName: '예제 상품',
+                quantity: 2,
+                unitPrice: 50000,
+                totalPrice: 100000,
+            },
+            {
+                boardTitle: '예제 상품2',
+                itemName: '예제 상품2',
+                quantity: 3,
+                unitPrice: 50000,
+                totalPrice: 150000,
+            },
+        ],
+    },
+    {
+        orderNumber: 'ORDER-2025-04-06-test',
+        orderInfo: {
+            orderDate: '2025-04-05',
+            orderStatusLabel: '반품-상품발송',
+        },
+        buyer: {
+            recipientName: '홍길동',
+            buyerName: '홍길동',
+            buyerPhone1: '010-1234-5678',
+            buyerPhone2: '010-9876-5432',
+        },
+        shipping: {
+            statusLabel: '수거중',
+            courierCompany: 'CJ대한통운',
+            trackingNumber: '1234-5678-910',
+            shippingFee: 3000,
+            address: '서울시 강남구 예제로 123',
+            memo: '문 앞에 두세요.',
+        },
+        orderItem: [
+            {
+                boardTitle: '예제 상품',
+                itemName: '예제 상품',
+                quantity: 2,
+                unitPrice: 50000,
+                totalPrice: 100000,
+            },
+        ],
+    },
+    {
+        orderNumber: 'ORDER-2025-04-07-test',
+        orderInfo: {
+            orderDate: '2025-04-05',
+            orderStatusLabel: '반품-상품발송',
+        },
+        buyer: {
+            recipientName: '홍길동',
+            buyerName: '홍길동',
+            buyerPhone1: '010-1234-5678',
+            buyerPhone2: '010-9876-5432',
+        },
+        shipping: {
+            statusLabel: '수거중',
+            courierCompany: 'CJ대한통운',
+            trackingNumber: '1234-5678-910',
+            shippingFee: 3000,
+            address: '서울시 강남구 예제로 123',
+            memo: '문 앞에 두세요.',
+        },
+        orderItem: [
+            {
+                boardTitle: '예제 상품',
+                itemName: '예제 상품',
+                quantity: 2,
+                unitPrice: 50000,
+                totalPrice: 100000,
+            },
+        ],
+    },
+]

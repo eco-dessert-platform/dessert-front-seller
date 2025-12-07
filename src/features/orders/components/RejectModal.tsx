@@ -184,7 +184,6 @@ const RejectModal = ({
                     >
                         취소
                     </button>
-                    {/* TODO :: IMAGE 값이 optional인지 확실하지 않음 */}
                     <button
                         disabled={
                             !inputValues.type || inputValues.reason.length < 1

@@ -8,107 +8,9 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from 'src/shared/lib/shadcn/components/ui/accordion'
+import { MOCK_ORDER_DETAIL_LIST } from '../data/ordersMockData'
 
 // TODO :: API 연동 후, 삭제 (분리 필요)
-const MOCK_DATA = [
-    {
-        orderNumber: 'ORDER-2025-04-05-test',
-        orderInfo: {
-            orderDate: '2025-04-05',
-            orderStatusLabel: '반품-상품발송',
-        },
-        buyer: {
-            recipientName: '홍길동',
-            buyerName: '홍길동',
-            buyerPhone1: '010-1234-5678',
-            buyerPhone2: '010-9876-5432',
-        },
-        shipping: {
-            statusLabel: '수거중',
-            courierCompany: 'CJ대한통운',
-            trackingNumber: '1234-5678-910',
-            shippingFee: 3000,
-            address: '서울시 강남구 예제로 123',
-            memo: '문 앞에 두세요.',
-        },
-        orderItem: [
-            {
-                boardTitle: '예제 상품',
-                itemName: '예제 상품',
-                quantity: 2,
-                unitPrice: 50000,
-                totalPrice: 100000,
-            },
-            {
-                boardTitle: '예제 상품2',
-                itemName: '예제 상품2',
-                quantity: 3,
-                unitPrice: 50000,
-                totalPrice: 150000,
-            },
-        ],
-    },
-    {
-        orderNumber: 'ORDER-2025-04-06-test',
-        orderInfo: {
-            orderDate: '2025-04-05',
-            orderStatusLabel: '반품-상품발송',
-        },
-        buyer: {
-            recipientName: '홍길동',
-            buyerName: '홍길동',
-            buyerPhone1: '010-1234-5678',
-            buyerPhone2: '010-9876-5432',
-        },
-        shipping: {
-            statusLabel: '수거중',
-            courierCompany: 'CJ대한통운',
-            trackingNumber: '1234-5678-910',
-            shippingFee: 3000,
-            address: '서울시 강남구 예제로 123',
-            memo: '문 앞에 두세요.',
-        },
-        orderItem: [
-            {
-                boardTitle: '예제 상품',
-                itemName: '예제 상품',
-                quantity: 2,
-                unitPrice: 50000,
-                totalPrice: 100000,
-            },
-        ],
-    },
-    {
-        orderNumber: 'ORDER-2025-04-07-test',
-        orderInfo: {
-            orderDate: '2025-04-05',
-            orderStatusLabel: '반품-상품발송',
-        },
-        buyer: {
-            recipientName: '홍길동',
-            buyerName: '홍길동',
-            buyerPhone1: '010-1234-5678',
-            buyerPhone2: '010-9876-5432',
-        },
-        shipping: {
-            statusLabel: '수거중',
-            courierCompany: 'CJ대한통운',
-            trackingNumber: '1234-5678-910',
-            shippingFee: 3000,
-            address: '서울시 강남구 예제로 123',
-            memo: '문 앞에 두세요.',
-        },
-        orderItem: [
-            {
-                boardTitle: '예제 상품',
-                itemName: '예제 상품',
-                quantity: 2,
-                unitPrice: 50000,
-                totalPrice: 100000,
-            },
-        ],
-    },
-]
 
 interface OrderDetailModalProps {
     // TODO :: orderNum 배열 형태로 받은 뒤, 노출 처리
@@ -117,7 +19,9 @@ interface OrderDetailModalProps {
 }
 
 const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
-    const [orderDetailList, setOrderDetailList] = useState(MOCK_DATA)
+    const [orderDetailList, setOrderDetailList] = useState(
+        MOCK_ORDER_DETAIL_LIST,
+    )
 
     return (
         <Dialog open type="popup" title="주문 상세" onOpenChange={onClose}>
