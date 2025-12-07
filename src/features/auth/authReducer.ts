@@ -4,9 +4,9 @@ import {
     deleteCookie,
     getExpFromToken,
     setCookie,
-} from 'src/global/store/cookie/cookieUtils'
-import { googleLogin, kakaoLogin, refreshToken } from '../apis/authApi'
-import { SocialType } from '../type/auth'
+} from 'src/global/store/cookie/cookieUtils.ts'
+import { googleLogin, kakaoLogin, refreshToken } from './authAPI.ts'
+import { SocialType } from './type/auth.ts'
 
 const prefix = 'auth'
 

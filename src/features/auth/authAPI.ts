@@ -3,13 +3,13 @@ import {
     GoogleAuthResponse,
     KakaoAuthResponse,
     LoginResponse,
-} from '../type/auth'
-import { GOOGLE, KAKAO } from '../locales/socialProvider'
+} from './type/auth.ts'
+import { GOOGLE, KAKAO } from './locales/socialProvider.ts'
 import {
     client,
     googleOAuthClient,
     kakaoOAuthClient,
-} from 'src/global/api/client'
+} from 'src/global/api/client.tsx'
 
 export const kakaoLogin = async (
     code: string,

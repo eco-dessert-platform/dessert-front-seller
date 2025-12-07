@@ -8,7 +8,7 @@ import {
     storeSaga,
     storeSlice,
 } from 'src/pages/url/register/store/storeReducer'
-import { authSaga, authSlice } from 'src/features/auth/store/authReducer'
+import { authSaga, authSlice } from 'src/features/auth/authReducer.ts'
 
 const reducers = {
     routerReducer: routerSlice.reducer,
