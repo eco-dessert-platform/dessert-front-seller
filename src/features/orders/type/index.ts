@@ -16,7 +16,7 @@ export type OrderTableRow = {
     itemPrice: number
     itemName: string
     orderStatus: string // enum
-    orderNumber?: string
+    orderNumber: string
     paymentAt: string
     totalPaid: string
     deliveryStatus: string // enum

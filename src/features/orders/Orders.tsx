@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { createColumnHelper } from '@tanstack/react-table'
+import { createColumnHelper, type ColumnDef } from '@tanstack/react-table'
 import { format, sub } from 'date-fns'
 
 import {
@@ -15,7 +15,7 @@ import OrderFilter from './components/OrderFilter'
 import TrackingNumberModal from './components/TrackingNumberModal'
 import RejectModal from './components/RejectModal'
 import OrderDetailModal from './components/OrderDetailModal'
-import { MOCK_ORDERS } from './data/ordersMockData'
+import { MOCK_ORDER_LIST } from './data/ordersMockData'
 import type {
     TabCategory,
     OrderTableRow,
@@ -33,7 +33,9 @@ const DELIVERY_STATUS_MAP: Record<DeliveryStatus, string> = {
     DELIVERED: '배송완료',
 }
 
-// TODO :: unknown key 확정 시 할당 및 주석 제거
+/**
+ * TODO :: 탭 카운트 조회 API 확정 시, 해당 key를 할당
+ */
 const TABS: Array<{ key: TabCategory; title: string }> = [
     { key: 'ALL', title: '전체' },
     { key: 'PAID', title: '결제완료' }, // unknown key
@@ -49,8 +51,13 @@ const columnHelper = createColumnHelper<OrderTableRow>()
 
 const Orders = () => {
     const [activeTab, setActiveTab] = useState<TabCategory>('ALL')
-    const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set())
-    const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set())
+    const [selections, setSelections] = useState<{
+        orders: Set<string>
+        items: Set<string>
+    }>({
+        orders: new Set(),
+        items: new Set(),
+    })
     const [orderFilter, setOrderFilter] = useState<OrderSearchFilter>({
         orderStatus: 'ALL',
         startDate: sub(new Date(), { weeks: 1 }),
@@ -58,14 +65,8 @@ const Orders = () => {
         searchType: 'ORDER_NUMBER',
         keyword: '',
     })
-    const [response] = useState({
-        content: MOCK_ORDERS,
-        page: 0,
-        size: 10,
-        totalPages: 48,
-        totalElements: 480,
-    })
 
+    const [response] = useState(MOCK_ORDER_LIST)
     const [modalType, setModalType] = useState<string | null>(null)
 
     // 데이터를 Table 타입에 맞게 변환
@@ -90,44 +91,41 @@ const Orders = () => {
         orderNumber: string,
         tableData: OrderTableRow[],
     ) => {
-        setSelectedOrders((prev) => {
-            const newSet = new Set(prev)
-            const isRemoving = newSet.has(orderNumber)
+        setSelections((prev) => {
+            const isRemoving = prev.orders.has(orderNumber)
+            const nextCheckedOrders = new Set(prev.orders)
+            const nextCheckedItems = new Set(prev.items)
 
             if (isRemoving) {
-                newSet.delete(orderNumber)
+                nextCheckedOrders.delete(orderNumber)
             } else {
-                newSet.add(orderNumber)
+                nextCheckedOrders.add(orderNumber)
             }
 
-            setSelectedItems((prevItems) => {
-                const newItemSet = new Set(prevItems)
-                tableData.forEach((row, index) => {
-                    if (row.orderNumber === orderNumber) {
-                        if (isRemoving) {
-                            newItemSet.delete(index.toString())
-                        } else {
-                            newItemSet.add(index.toString())
-                        }
+            tableData.forEach((row, index) => {
+                if (row.orderNumber === orderNumber) {
+                    if (isRemoving) {
+                        nextCheckedItems.delete(index.toString())
+                    } else {
+                        nextCheckedItems.add(index.toString())
                     }
-                })
-
-                return newItemSet
+                }
             })
 
-            return newSet
+            return { orders: nextCheckedOrders, items: nextCheckedItems }
         })
     }
 
     const handleAllOrdersToggle = () => {
-        if (selectedOrders.size === allOrderNumbers.length) {
-            setSelectedOrders(new Set())
-            setSelectedItems(new Set())
+        if (selections.orders.size === allOrderNumbers.length) {
+            setSelections({ orders: new Set(), items: new Set() })
         } else {
-            setSelectedOrders(new Set(allOrderNumbers))
-            setSelectedItems(
-                new Set(Array.from(tableData, (_, idx) => idx.toString())),
-            )
+            setSelections({
+                orders: new Set(allOrderNumbers),
+                items: new Set(
+                    Array.from(tableData, (_, idx) => idx.toString()),
+                ),
+            })
         }
     }
 
@@ -142,12 +140,11 @@ const Orders = () => {
     }
 
     const handleClickDetail = () => {
-        if (selectedOrders.size === 0) {
+        if (selections.orders.size === 0) {
             setModalType('noSelect')
             return
         }
 
-        // TODO :: 주문번호 넘겨야 함
         setModalType('orderDetail')
     }
 
@@ -160,22 +157,77 @@ const Orders = () => {
         // TODO :: API 요청 함수 할당 필요
     }
 
+    const handleOrderRowCheckboxChange = (orderNumber: string) => {
+        const isCurrentlySelected = selections.orders.has(orderNumber)
+
+        // 주문 선택 상태 토글
+        handleOrderCheckboxChange(orderNumber, tableData)
+
+        // 해당 주문의 모든 상품 행을 찾아서 선택/해제
+        setSelections((prev) => {
+            const nextCheckedItems = new Set(prev.items)
+            tableData.forEach((row, index) => {
+                if (row.orderNumber === orderNumber) {
+                    if (isCurrentlySelected) {
+                        nextCheckedItems.delete(index.toString())
+                    } else {
+                        nextCheckedItems.add(index.toString())
+                    }
+                }
+            })
+            return { ...prev, items: nextCheckedItems }
+        })
+    }
+
+    const handleItemCheckboxChange = (rowId: string, orderNumber: string) => {
+        setSelections((prev) => {
+            const nextCheckedItems = new Set(prev.items)
+            if (nextCheckedItems.has(rowId)) {
+                nextCheckedItems.delete(rowId)
+            } else {
+                nextCheckedItems.add(rowId)
+            }
+
+            const nextCheckedOrders = new Set(prev.orders)
+            const orderItemIndices = tableData
+                .map((item, index) =>
+                    item.orderNumber === orderNumber ? index.toString() : null,
+                )
+                .filter((idx) => idx !== null) as string[]
+
+            const allItemsSelected = orderItemIndices.every((idx) =>
+                nextCheckedItems.has(idx),
+            )
+
+            if (allItemsSelected) {
+                nextCheckedOrders.add(orderNumber)
+            } else {
+                nextCheckedOrders.delete(orderNumber)
+            }
+
+            return {
+                orders: nextCheckedOrders,
+                items: nextCheckedItems,
+            }
+        })
+    }
+
     // 전체 주문 목록 추출
     const allOrderNumbers = Array.from(
         new Set(response.content.map((order) => order.orderNumber)),
     )
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const columns: any = [
+    const columns: ColumnDef<OrderTableRow, any>[] = [
         {
             id: 'select',
             header: () => {
                 const isAllSelected =
-                    selectedOrders.size === allOrderNumbers.length &&
+                    selections.orders.size === allOrderNumbers.length &&
                     allOrderNumbers.length > 0
                 const isSomeSelected =
-                    selectedOrders.size > 0 &&
-                    selectedOrders.size < allOrderNumbers.length
+                    selections.orders.size > 0 &&
+                    selections.orders.size < allOrderNumbers.length
 
                 return (
                     <input
@@ -194,53 +246,20 @@ const Orders = () => {
             accessorFn: (row: OrderTableRow) => row.orderNumber,
             cell: ({
                 row,
-                table,
             }: {
                 row: { original: OrderTableRow; id: string }
-                table: {
-                    getRowModel: () => {
-                        rows: { id: string; original: OrderTableRow }[]
-                    }
-                    toggleAllRowsSelected: (value: boolean) => void
-                }
             }) => {
                 const orderNumber = row.original.orderNumber
-                if (!orderNumber) return null
-
-                const isOrderSelected = selectedOrders.has(orderNumber)
-
-                const handleChange = () => {
-                    const isCurrentlySelected = selectedOrders.has(orderNumber)
-
-                    // 주문 선택 상태 토글
-                    handleOrderCheckboxChange(orderNumber, tableData)
-
-                    // 해당 주문의 모든 상품 행을 찾아서 선택/해제
-                    const allRows = table.getRowModel().rows
-                    allRows.forEach((r) => {
-                        if (r.original.orderNumber === orderNumber) {
-                            const rowId = r.id
-                            if (isCurrentlySelected) {
-                                setSelectedItems((prev) => {
-                                    const newSet = new Set(prev)
-                                    newSet.delete(rowId)
-                                    return newSet
-                                })
-                            } else {
-                                setSelectedItems((prev) =>
-                                    new Set(prev).add(rowId),
-                                )
-                            }
-                        }
-                    })
-                }
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
                         <input
                             type="checkbox"
                             checked={isOrderSelected}
-                            onChange={handleChange}
+                            onChange={() =>
+                                handleOrderRowCheckboxChange(orderNumber)
+                            }
                             className="cursor-pointer"
                         />
                     </div>
@@ -252,9 +271,7 @@ const Orders = () => {
             header: '수취인명/주문번호',
             cell: ({ row }) => {
                 const orderNumber = row.original.orderNumber
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div
@@ -275,53 +292,16 @@ const Orders = () => {
             cell: ({ row }) => {
                 const rowId = row.id
                 const orderNumber = row.original.orderNumber
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
-
-                const handleItemCheckboxChange = () => {
-                    setSelectedItems((prev) => {
-                        const newSet = new Set(prev)
-                        if (newSet.has(rowId)) {
-                            newSet.delete(rowId)
-                        } else {
-                            newSet.add(rowId)
-                        }
-
-                        if (orderNumber) {
-                            const orderItemIndices = tableData
-                                .map((item, index) =>
-                                    item.orderNumber === orderNumber
-                                        ? index.toString()
-                                        : null,
-                                )
-                                .filter((idx) => idx !== null) as string[]
-
-                            const allItemsSelected = orderItemIndices.every(
-                                (idx) => newSet.has(idx),
-                            )
-
-                            setSelectedOrders((prevOrders) => {
-                                const newOrderSet = new Set(prevOrders)
-                                if (allItemsSelected) {
-                                    newOrderSet.add(orderNumber)
-                                } else {
-                                    newOrderSet.delete(orderNumber)
-                                }
-                                return newOrderSet
-                            })
-                        }
-
-                        return newSet
-                    })
-                }
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
                         <input
                             type="checkbox"
-                            checked={selectedItems.has(rowId)}
-                            onChange={handleItemCheckboxChange}
+                            checked={selections.items.has(rowId)}
+                            onChange={() =>
+                                handleItemCheckboxChange(rowId, orderNumber)
+                            }
                             className="cursor-pointer"
                         />
                     </div>
@@ -333,10 +313,8 @@ const Orders = () => {
             cell: ({ row }) => {
                 const rowId = row.id
                 const orderNumber = row.original.orderNumber
-                const isItemSelected = selectedItems.has(rowId)
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isItemSelected = selections.items.has(rowId)
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div
@@ -367,10 +345,8 @@ const Orders = () => {
             cell: ({ row }) => {
                 const rowId = row.id
                 const orderNumber = row.original.orderNumber
-                const isItemSelected = selectedItems.has(rowId)
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isItemSelected = selections.items.has(rowId)
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div
@@ -392,9 +368,7 @@ const Orders = () => {
             header: '결제수단/결제일',
             cell: ({ row }) => {
                 const orderNumber = row.original.orderNumber
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
@@ -408,9 +382,7 @@ const Orders = () => {
             header: '총 주문금액',
             cell: ({ row }) => {
                 const orderNumber = row.original.orderNumber
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
@@ -424,9 +396,7 @@ const Orders = () => {
             header: '배송상태',
             cell: ({ row }) => {
                 const orderNumber = row.original.orderNumber
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isOrderSelected = selections.orders.has(orderNumber)
                 const deliveryStatus = row.original.deliveryStatus
                 const isValidDeliveryStatus =
                     deliveryStatus in DELIVERY_STATUS_MAP
@@ -447,9 +417,7 @@ const Orders = () => {
             header: '택배사',
             cell: ({ row }) => {
                 const orderNumber = row.original.orderNumber
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
@@ -463,9 +431,7 @@ const Orders = () => {
             header: '운송장 번호',
             cell: ({ row }) => {
                 const orderNumber = row.original.orderNumber
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isOrderSelected = selections.orders.has(orderNumber)
                 const trackingNumber = row.original.trackingNumber
 
                 return (
@@ -567,7 +533,7 @@ const Orders = () => {
                                 <p className="text-14 font-normal text-gray-700">
                                     선택
                                     <span className="text-primary-500 font-medium">
-                                        {selectedOrders.size}개
+                                        {selections.orders.size}개
                                     </span>
                                 </p>
                                 <div className="h-3 w-0.5 bg-gray-400" />
@@ -580,12 +546,12 @@ const Orders = () => {
                             </div>
                         </div>
                     </div>
-                    {selectedOrders.size > 0 && (
+                    {selections.orders.size > 0 && (
                         <div className="px-6 py-2.5">
                             <p className="text-14 rounded-md bg-[#FEF4F2] py-2.5 text-center text-gray-700">
                                 이 페이지에 있는 주문{' '}
                                 <span className="text-primary-500 font-medium">
-                                    {selectedOrders.size}개
+                                    {selections.orders.size}개
                                 </span>
                                 가 모두 선택되었습니다.
                             </p>
@@ -675,7 +641,7 @@ const Orders = () => {
             )}
             {modalType && modalType === 'orderDetail' && (
                 <OrderDetailModal
-                    orderList={Array.from(selectedOrders)}
+                    orderList={Array.from(selections.orders)}
                     onClose={() => {
                         setModalType(null)
                     }}
