@@ -1,114 +1,16 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
 
-import { Dialog } from 'src/shared/components/dialog/Dialog'
+import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
 } from 'src/shared/lib/shadcn/components/ui/accordion'
+import { MOCK_ORDER_DETAIL_LIST } from '../data/ordersMockData'
 
-// TODO :: API 연동 후, 삭제
-const MOCK_DATA = [
-    {
-        orderNumber: 'ORDER-2025-04-05-test',
-        orderInfo: {
-            orderDate: '2025-04-05',
-            orderStatusLabel: '반품-상품발송',
-        },
-        buyer: {
-            recipientName: '홍길동',
-            buyerName: '홍길동',
-            buyerPhone1: '010-1234-5678',
-            buyerPhone2: '010-9876-5432',
-        },
-        shipping: {
-            statusLabel: '수거중',
-            courierCompany: 'CJ대한통운',
-            trackingNumber: '1234-5678-910',
-            shippingFee: 3000,
-            address: '서울시 강남구 예제로 123',
-            memo: '문 앞에 두세요.',
-        },
-        orderItem: [
-            {
-                boardTitle: '예제 상품',
-                itemName: '예제 상품',
-                quantity: 2,
-                unitPrice: 50000,
-                totalPrice: 100000,
-            },
-            {
-                boardTitle: '예제 상품2',
-                itemName: '예제 상품2',
-                quantity: 3,
-                unitPrice: 50000,
-                totalPrice: 150000,
-            },
-        ],
-    },
-    {
-        orderNumber: 'ORDER-2025-04-06-test',
-        orderInfo: {
-            orderDate: '2025-04-05',
-            orderStatusLabel: '반품-상품발송',
-        },
-        buyer: {
-            recipientName: '홍길동',
-            buyerName: '홍길동',
-            buyerPhone1: '010-1234-5678',
-            buyerPhone2: '010-9876-5432',
-        },
-        shipping: {
-            statusLabel: '수거중',
-            courierCompany: 'CJ대한통운',
-            trackingNumber: '1234-5678-910',
-            shippingFee: 3000,
-            address: '서울시 강남구 예제로 123',
-            memo: '문 앞에 두세요.',
-        },
-        orderItem: [
-            {
-                boardTitle: '예제 상품',
-                itemName: '예제 상품',
-                quantity: 2,
-                unitPrice: 50000,
-                totalPrice: 100000,
-            },
-        ],
-    },
-    {
-        orderNumber: 'ORDER-2025-04-07-test',
-        orderInfo: {
-            orderDate: '2025-04-05',
-            orderStatusLabel: '반품-상품발송',
-        },
-        buyer: {
-            recipientName: '홍길동',
-            buyerName: '홍길동',
-            buyerPhone1: '010-1234-5678',
-            buyerPhone2: '010-9876-5432',
-        },
-        shipping: {
-            statusLabel: '수거중',
-            courierCompany: 'CJ대한통운',
-            trackingNumber: '1234-5678-910',
-            shippingFee: 3000,
-            address: '서울시 강남구 예제로 123',
-            memo: '문 앞에 두세요.',
-        },
-        orderItem: [
-            {
-                boardTitle: '예제 상품',
-                itemName: '예제 상품',
-                quantity: 2,
-                unitPrice: 50000,
-                totalPrice: 100000,
-            },
-        ],
-    },
-]
+// TODO :: API 연동 후, 삭제 (분리 필요)
 
 interface OrderDetailModalProps {
     // TODO :: orderNum 배열 형태로 받은 뒤, 노출 처리
@@ -117,10 +19,12 @@ interface OrderDetailModalProps {
 }
 
 const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
-    const [orderDetailList, setOrderDetailList] = useState(MOCK_DATA)
+    const [orderDetailList, setOrderDetailList] = useState(
+        MOCK_ORDER_DETAIL_LIST,
+    )
 
     return (
-        <Dialog open type="popup" title="주문 상세" onOpenChange={onClose}>
+        <BgrDialog open type="popup" title="주문 상세" onOpenChange={onClose}>
             <Accordion type="single" className="flex flex-col gap-3">
                 {orderDetailList.map(
                     ({
@@ -169,11 +73,13 @@ const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
                                                     totalPrice,
                                                 }) => (
                                                     <div className="flex items-center justify-between gap-2.5">
-                                                        <p className="text-14 text-gray-900">
-                                                            {boardTitle}
-                                                            <span className="text-12 pl-2.5 text-gray-500">{`${itemName} / ${quantity}개`}</span>
-                                                        </p>
-                                                        <p className="text-12 font-bold text-gray-800">
+                                                        <div className="flex items-center gap-2.5">
+                                                            <p className="text-14 line-clamp-1 grow text-gray-900">
+                                                                {boardTitle}
+                                                            </p>
+                                                            <p className="text-12 shrink-0 text-gray-500">{`${itemName} / ${quantity}개`}</p>
+                                                        </div>
+                                                        <p className="text-12 shrink-0 font-bold text-gray-800">
                                                             {totalPrice.toLocaleString()}
                                                             원
                                                         </p>
@@ -188,7 +94,7 @@ const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
                                             </p>
                                             {/* TODO :: API 응답 필드 수정 후, 반영 필요 */}
                                             <p className="text-16 text-primary-500 font-semibold">
-                                                {100000}원
+                                                {(100000).toLocaleString()}원
                                             </p>
                                         </div>
                                     </div>
@@ -200,7 +106,7 @@ const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
                                         </h2>
                                         <div className="flex flex-col gap-3">
                                             <div className="flex items-start justify-between">
-                                                <p className="text-14 font-medium text-gray-600">
+                                                <p className="text-14 shrink-0 font-medium text-gray-600">
                                                     수취인명
                                                 </p>
                                                 <p className="text-14 text-gray-800">
@@ -208,7 +114,7 @@ const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
                                                 </p>
                                             </div>
                                             <div className="flex items-start justify-between">
-                                                <p className="text-14 font-medium text-gray-600">
+                                                <p className="text-14 shrink-0 font-medium text-gray-600">
                                                     연락처
                                                 </p>
                                                 <div>
@@ -228,41 +134,41 @@ const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
                                         </h2>
                                         <div className="flex flex-col gap-3 [&>div]:flex [&>div]:items-start [&>div]:justify-between">
                                             <div>
-                                                <p className="text-14 font-medium text-gray-600">
+                                                <p className="text-14 shrink-0 font-medium text-gray-600">
                                                     배송상태
                                                 </p>
-                                                <p className="text-14 text-gray-800">
+                                                <p className="text-14 text-right text-gray-800">
                                                     {shipping.statusLabel}
                                                 </p>
                                             </div>
                                             <div>
-                                                <p className="text-14 font-medium text-gray-600">
+                                                <p className="text-14 shrink-0 font-medium text-gray-600">
                                                     택배사/운송장 번호
                                                 </p>
-                                                <p className="text-14 text-gray-800">{`${shipping.courierCompany} / ${shipping.trackingNumber}`}</p>
+                                                <p className="text-14 text-right text-gray-800">{`${shipping.courierCompany} / ${shipping.trackingNumber}`}</p>
                                             </div>
                                             <div>
-                                                <p className="text-14 font-medium text-gray-600">
+                                                <p className="text-14 shrink-0 font-medium text-gray-600">
                                                     배송비
                                                 </p>
-                                                <p className="text-14 text-gray-800">
+                                                <p className="text-14 text-right text-gray-800">
                                                     {shipping.shippingFee.toLocaleString()}
                                                     원
                                                 </p>
                                             </div>
                                             <div>
-                                                <p className="text-14 font-medium text-gray-600">
+                                                <p className="text-14 shrink-0 font-medium text-gray-600">
                                                     배송주소
                                                 </p>
-                                                <p className="text-14 text-gray-800">
+                                                <p className="text-14 text-right text-gray-800">
                                                     {shipping.address}
                                                 </p>
                                             </div>
                                             <div>
-                                                <p className="text-14 font-medium text-gray-600">
+                                                <p className="text-14 shrink-0 font-medium text-gray-600">
                                                     배송요청사항
                                                 </p>
-                                                <p className="text-14 text-gray-800">
+                                                <p className="text-14 text-right text-gray-800">
                                                     {shipping.memo}
                                                 </p>
                                             </div>
@@ -274,7 +180,7 @@ const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
                     ),
                 )}
             </Accordion>
-        </Dialog>
+        </BgrDialog>
     )
 }
 

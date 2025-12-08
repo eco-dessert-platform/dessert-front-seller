@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { createColumnHelper } from '@tanstack/react-table'
+import { createColumnHelper, type ColumnDef } from '@tanstack/react-table'
 import { format, sub } from 'date-fns'
 
 import {
@@ -7,41 +7,35 @@ import {
     BgrTabsList,
     BgrTabsTrigger,
 } from 'src/shared/components/tab/BGRtab.tsx'
-import { Table } from 'src/shared/lib/shadcn/components/ui/table'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
-import { Dialog } from 'src/shared/components/dialog/Dialog'
-import OrderStatusLabel from './OrderStatusLabel'
-import OrderFilter from './OrderFilter'
-import TrackingNumberModal from './TrackingNumberModal'
-import RejectModal from './RejectModal'
-import OrderDetailModal from './OrderDetailModal'
-
-type TabCategory =
-    | 'ALL'
-    | 'PAID'
-    | 'CHECKED'
-    | 'SHIPPED'
-    | 'DELIVERED'
-    | 'PAYMENT_COMPLETED'
-    | 'REFUND'
-    | 'CHANGE'
-
-type DeliveryStatus =
-    | 'PREPARING_PRODUCT'
-    | 'SHIPPING'
-    | 'COLLECTING'
-    | 'COLLECTED'
-    | 'DELIVERED'
+import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
+import { Button } from 'src/shared/lib/shadcn/components/ui/button'
+import OrderStatusLabel from './components/OrderStatusLabel'
+import OrderFilter from './components/OrderFilter'
+import TrackingNumberModal from './components/TrackingNumberModal'
+import RejectModal from './components/RejectModal'
+import OrderDetailModal from './components/OrderDetailModal'
+import { MOCK_ORDER_LIST } from './data/ordersMockData'
+import type {
+    TabCategory,
+    OrderTableRow,
+    OrderSearchFilter,
+    DeliveryStatus,
+} from './type'
+import OrderControlButtons from './components/OrderControlButtons'
 
 const DELIVERY_STATUS_MAP: Record<DeliveryStatus, string> = {
-    PREPARING_PRODUCT: '-',
-    SHIPPING: '상품배송',
-    COLLECTING: '수거중',
-    COLLECTED: '수거완료',
+    NONE: '-',
+    PREPARING: '-',
+    DELIVERING: '상품배송',
+    PICKING_UP: '수거중',
+    PICKED_UP: '수거완료',
     DELIVERED: '배송완료',
 }
 
-// TODO :: unknown key 확정 시 할당 및 주석 제거
+/**
+ * TODO :: 탭 카운트 조회 API 확정 시, 해당 key를 할당
+ */
 const TABS: Array<{ key: TabCategory; title: string }> = [
     { key: 'ALL', title: '전체' },
     { key: 'PAID', title: '결제완료' }, // unknown key
@@ -53,111 +47,17 @@ const TABS: Array<{ key: TabCategory; title: string }> = [
     { key: 'CHANGE', title: '교환' }, // unknown key
 ]
 
-// TODO :: enum 확정 시 할당 및 주석 제거
-type Table = {
-    recipientName: string
-    productName: string
-    itemQuantity: number
-    itemPrice: number
-    itemName: string
-    orderStatus: string // enum
-    orderNumber?: string
-    paymentAt: string
-    totalPaid: string
-    deliveryStatus: string // enum
-    courierCompany: string | null
-    trackingNumber: string | null
-}
-
-const columnHelper = createColumnHelper<Table>()
-
-// TODO :: API 연동 후, 삭제 처리
-const MOCK_ORDERS = [
-    {
-        deliveryStatus: 'PREPARING_PRODUCT',
-        courierCompany: 'CJ 대한통운',
-        trackingNumber: '1234567890',
-        orderNumber: 'ORDER-20240921-00001',
-        paymentAt: '2025-11-08T11:54:18.375192088',
-        totalPaid: 200000,
-        recipientName: '홍길동',
-        orderItems: [
-            {
-                boardTitle: '예제 1',
-                itemName: '예제 2',
-                quantity: 2,
-                unitPrice: 50000,
-                totalPrice: 100000,
-                orderStatus: 'PAID',
-            },
-            {
-                boardTitle: '쿠키 1',
-                itemName: '쿠키 2',
-                quantity: 1,
-                unitPrice: 50000,
-                totalPrice: 100000,
-                orderStatus: 'PAID',
-            },
-        ],
-    },
-    {
-        deliveryStatus: 'SHIPPING',
-        courierCompany: '우체국 택배',
-        trackingNumber: '0987654321',
-        totalPaid: 100000,
-        orderNumber: 'ORDER-20240921-00002',
-        paymentAt: '2025-11-08T10:54:18.377200473',
-        recipientName: '김철수',
-        orderItems: [
-            {
-                boardTitle: '식빵',
-                itemName: '식빵',
-                quantity: 2,
-                unitPrice: 50000,
-                totalPrice: 100000,
-                orderStatus: 'PAID',
-            },
-        ],
-    },
-    {
-        deliveryStatus: 'PREPARING_PRODUCT',
-        courierCompany: null,
-        trackingNumber: null,
-        totalPaid: 150000,
-        orderNumber: 'ORDER-20240921-00003',
-        paymentAt: '2025-11-09T14:30:22.123456789',
-        recipientName: '이영희',
-        orderItems: [
-            {
-                boardTitle: '케이크',
-                itemName: '초코케이크',
-                quantity: 1,
-                unitPrice: 150000,
-                totalPrice: 150000,
-                orderStatus: 'PAID',
-            },
-        ],
-    },
-]
-
-interface OrderSearchFilter {
-    orderStatus: string // TODO :: enum type 할당 후, 주석 제거
-    startDate: Date
-    endDate: Date
-    searchType: string // TODO :: enum type 할당 후, 주석 제거
-    keyword: string
-}
-
-const ButtonGroup = ({ children }: { children: React.ReactNode }) => (
-    <div className="divide-x divide-gray-200 overflow-hidden rounded-sm border border-gray-200">
-        {children}
-    </div>
-)
+const columnHelper = createColumnHelper<OrderTableRow>()
 
 const Orders = () => {
     const [activeTab, setActiveTab] = useState<TabCategory>('ALL')
-    const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set())
-    const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set())
+    const [selections, setSelections] = useState<{
+        orders: Set<string>
+        items: Set<string>
+    }>({
+        orders: new Set(),
+        items: new Set(),
+    })
     const [orderFilter, setOrderFilter] = useState<OrderSearchFilter>({
         orderStatus: 'ALL',
         startDate: sub(new Date(), { weeks: 1 }),
@@ -165,194 +65,11 @@ const Orders = () => {
         searchType: 'ORDER_NUMBER',
         keyword: '',
     })
-    const [response] = useState({
-        content: MOCK_ORDERS,
-        page: 0,
-        size: 10,
-        totalPages: 48,
-        totalElements: 480,
-    })
 
+    const [response] = useState(MOCK_ORDER_LIST)
     const [modalType, setModalType] = useState<string | null>(null)
 
-    // TODO :: REFACTORING 필요, 복잡도 높음
-    const tableButtons: Record<TabCategory, React.ReactNode> = {
-        ALL: null,
-        PAID: (
-            <>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                    발주확인
-                </button>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                    주문취소
-                </button>
-            </>
-        ),
-        CHECKED: (
-            <>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                    주문취소
-                </button>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                    반품
-                </button>
-            </>
-        ),
-        SHIPPED: (
-            <>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                    반품
-                </button>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                    교환
-                </button>
-            </>
-        ),
-        DELIVERED: (
-            <>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                    반품
-                </button>
-                <button className="text-12 h-[30px] min-w-[61px] rounded-md border border-gray-200 bg-white font-medium">
-                    교환
-                </button>
-            </>
-        ),
-        PAYMENT_COMPLETED: (
-            <ButtonGroup>
-                <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
-                    취소승인
-                </button>
-                <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
-                    취소거절
-                </button>
-            </ButtonGroup>
-        ),
-        REFUND: (
-            <>
-                <ButtonGroup>
-                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
-                        반품승인
-                    </button>
-                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
-                        반품거절
-                    </button>
-                </ButtonGroup>
-                <ButtonGroup>
-                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
-                        반품완료
-                    </button>
-                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
-                        반품반려
-                    </button>
-                    <button className="text-12 h-[30px] min-w-[61px] bg-white font-medium">
-                        반품보류
-                    </button>
-                </ButtonGroup>
-            </>
-        ),
-        CHANGE: (
-            <>
-                <ButtonGroup>
-                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
-                        반품승인
-                    </button>
-                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
-                        반품거절
-                    </button>
-                </ButtonGroup>
-                <ButtonGroup>
-                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
-                        반품완료
-                    </button>
-                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
-                        반품반려
-                    </button>
-                    <button className="text-12 h-[30px] min-w-[61px] rounded-md bg-white font-medium">
-                        반품보류
-                    </button>
-                </ButtonGroup>
-            </>
-        ),
-    }
-
-    const handleOrderCheckboxChange = (
-        orderNumber: string,
-        tableData: Table[],
-    ) => {
-        setSelectedOrders((prev) => {
-            const newSet = new Set(prev)
-            const isRemoving = newSet.has(orderNumber)
-
-            if (isRemoving) {
-                newSet.delete(orderNumber)
-            } else {
-                newSet.add(orderNumber)
-            }
-
-            setSelectedItems((prevItems) => {
-                const newItemSet = new Set(prevItems)
-                tableData.forEach((row, index) => {
-                    if (row.orderNumber === orderNumber) {
-                        if (isRemoving) {
-                            newItemSet.delete(index.toString())
-                        } else {
-                            newItemSet.add(index.toString())
-                        }
-                    }
-                })
-
-                return newItemSet
-            })
-
-            return newSet
-        })
-    }
-
-    const handleAllOrdersToggle = () => {
-        if (selectedOrders.size === allOrderNumbers.length) {
-            setSelectedOrders(new Set())
-        } else {
-            setSelectedOrders(new Set(allOrderNumbers))
-        }
-    }
-
-    const handleResetFilter = () => {
-        setOrderFilter({
-            orderStatus: 'ALL',
-            startDate: sub(new Date(), { weeks: 1 }),
-            endDate: new Date(),
-            searchType: 'ORDER_NUMBER',
-            keyword: '',
-        })
-    }
-
-    const handleClickDetail = () => {
-        if (selectedOrders.size === 0) {
-            setModalType('noSelect')
-            return
-        }
-
-        // TODO :: 주문번호 넘겨야 함
-        setModalType('orderDetail')
-    }
-
-    const handleSearch = () => {
-        if (!orderFilter.keyword) {
-            setModalType('noKeyword')
-            return
-        }
-
-        // TODO :: API 요청 함수 할당 필요
-    }
-
-    // 전체 주문 목록 추출
-    const allOrderNumbers = Array.from(
-        new Set(response.content.map((order) => order.orderNumber)),
-    )
-
-    // 데이터를 Table 타입에 맞게 변환
-    const tableData: Table[] = response.content.flatMap((order) =>
+    const tableData: OrderTableRow[] = response.content.flatMap((order) =>
         order.orderItems.map((item) => ({
             recipientName: order.recipientName,
             productName: item.boardTitle,
@@ -369,17 +86,128 @@ const Orders = () => {
         })),
     )
 
+    const handleSelectAll = () => {
+        if (selections.orders.size === allOrderNumbers.length) {
+            setSelections({ orders: new Set(), items: new Set() })
+        } else {
+            setSelections({
+                orders: new Set(allOrderNumbers),
+                items: new Set(
+                    Array.from(tableData, (_, idx) => idx.toString()),
+                ),
+            })
+        }
+    }
+
+    const handleResetFilter = () => {
+        setOrderFilter({
+            orderStatus: 'ALL',
+            startDate: sub(new Date(), { weeks: 1 }),
+            endDate: new Date(),
+            searchType: 'ORDER_NUMBER',
+            keyword: '',
+        })
+    }
+
+    const handleClickDetail = () => {
+        if (selections.orders.size === 0) {
+            setModalType('noSelect')
+            return
+        }
+
+        setModalType('orderDetail')
+    }
+
+    const handleSearch = () => {
+        if (!orderFilter.keyword) {
+            setModalType('noKeyword')
+            return
+        }
+
+        // TODO :: API 요청 함수 할당 필요
+    }
+
+    const handleSelectOrder = (targetOrderNumber: string) => {
+        setSelections((prev) => {
+            const isOrderSelected = prev.orders.has(targetOrderNumber)
+            const nextSelectedOrders = new Set(prev.orders)
+            const nextSelectedItems = new Set(prev.items)
+
+            if (isOrderSelected) {
+                nextSelectedOrders.delete(targetOrderNumber)
+            } else {
+                nextSelectedOrders.add(targetOrderNumber)
+            }
+
+            tableData.forEach((row, index) => {
+                if (row.orderNumber === targetOrderNumber) {
+                    if (isOrderSelected) {
+                        nextSelectedItems.delete(index.toString())
+                    } else {
+                        nextSelectedItems.add(index.toString())
+                    }
+                }
+            })
+
+            return { orders: nextSelectedOrders, items: nextSelectedItems }
+        })
+    }
+
+    const handleSelectItem = (rowId: string, targetOrderNumber: string) => {
+        setSelections((prev) => {
+            const nextSelectedOrders = new Set(prev.orders)
+            const nextSelectedItems = new Set(prev.items)
+
+            if (nextSelectedItems.has(rowId)) {
+                nextSelectedItems.delete(rowId)
+            } else {
+                nextSelectedItems.add(rowId)
+            }
+
+            const targetOrderItemIndicies = tableData
+                .map((item, index) =>
+                    item.orderNumber === targetOrderNumber
+                        ? index.toString()
+                        : null,
+                )
+                .filter((idx) => idx !== null) as string[]
+
+            const isAllItemsSelected = targetOrderItemIndicies.every((idx) =>
+                nextSelectedItems.has(idx),
+            )
+
+            if (isAllItemsSelected) {
+                nextSelectedOrders.add(targetOrderNumber)
+            } else {
+                nextSelectedOrders.delete(targetOrderNumber)
+            }
+
+            return {
+                orders: nextSelectedOrders,
+                items: nextSelectedItems,
+            }
+        })
+    }
+
+    const allOrderNumbers = Array.from(
+        new Set(response.content.map((order) => order.orderNumber)),
+    )
+
+    const handleOrderAction = (actionType: string) => {
+        // TODO :: 주문 상태 변경 API 작업 완료되면 작업 필요
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const columns: any = [
+    const columns: ColumnDef<OrderTableRow, any>[] = [
         {
             id: 'select',
             header: () => {
                 const isAllSelected =
-                    selectedOrders.size === allOrderNumbers.length &&
+                    selections.orders.size === allOrderNumbers.length &&
                     allOrderNumbers.length > 0
                 const isSomeSelected =
-                    selectedOrders.size > 0 &&
-                    selectedOrders.size < allOrderNumbers.length
+                    selections.orders.size > 0 &&
+                    selections.orders.size < allOrderNumbers.length
 
                 return (
                     <input
@@ -390,61 +218,26 @@ const Orders = () => {
                         }}
                         type="checkbox"
                         checked={isAllSelected}
-                        onChange={handleAllOrdersToggle}
+                        onChange={handleSelectAll}
                         className="cursor-pointer"
                     />
                 )
             },
-            accessorFn: (row: Table) => row.orderNumber,
+            accessorFn: (row: OrderTableRow) => row.orderNumber,
             cell: ({
                 row,
-                table,
             }: {
-                row: { original: Table; id: string }
-                table: {
-                    getRowModel: () => {
-                        rows: { id: string; original: Table }[]
-                    }
-                    toggleAllRowsSelected: (value: boolean) => void
-                }
+                row: { original: OrderTableRow; id: string }
             }) => {
                 const orderNumber = row.original.orderNumber
-                if (!orderNumber) return null
-
-                const isOrderSelected = selectedOrders.has(orderNumber)
-
-                const handleChange = () => {
-                    const isCurrentlySelected = selectedOrders.has(orderNumber)
-
-                    // 주문 선택 상태 토글
-                    handleOrderCheckboxChange(orderNumber, tableData)
-
-                    // 해당 주문의 모든 상품 행을 찾아서 선택/해제
-                    const allRows = table.getRowModel().rows
-                    allRows.forEach((r) => {
-                        if (r.original.orderNumber === orderNumber) {
-                            const rowId = r.id
-                            if (isCurrentlySelected) {
-                                setSelectedItems((prev) => {
-                                    const newSet = new Set(prev)
-                                    newSet.delete(rowId)
-                                    return newSet
-                                })
-                            } else {
-                                setSelectedItems((prev) =>
-                                    new Set(prev).add(rowId),
-                                )
-                            }
-                        }
-                    })
-                }
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
                         <input
                             type="checkbox"
                             checked={isOrderSelected}
-                            onChange={handleChange}
+                            onChange={() => handleSelectOrder(orderNumber)}
                             className="cursor-pointer"
                         />
                     </div>
@@ -456,9 +249,7 @@ const Orders = () => {
             header: '수취인명/주문번호',
             cell: ({ row }) => {
                 const orderNumber = row.original.orderNumber
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div
@@ -479,53 +270,16 @@ const Orders = () => {
             cell: ({ row }) => {
                 const rowId = row.id
                 const orderNumber = row.original.orderNumber
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
-
-                const handleItemCheckboxChange = () => {
-                    setSelectedItems((prev) => {
-                        const newSet = new Set(prev)
-                        if (newSet.has(rowId)) {
-                            newSet.delete(rowId)
-                        } else {
-                            newSet.add(rowId)
-                        }
-
-                        if (orderNumber) {
-                            const orderItemIndices = tableData
-                                .map((item, index) =>
-                                    item.orderNumber === orderNumber
-                                        ? index.toString()
-                                        : null,
-                                )
-                                .filter((idx) => idx !== null) as string[]
-
-                            const allItemsSelected = orderItemIndices.every(
-                                (idx) => newSet.has(idx),
-                            )
-
-                            setSelectedOrders((prevOrders) => {
-                                const newOrderSet = new Set(prevOrders)
-                                if (allItemsSelected) {
-                                    newOrderSet.add(orderNumber)
-                                } else {
-                                    newOrderSet.delete(orderNumber)
-                                }
-                                return newOrderSet
-                            })
-                        }
-
-                        return newSet
-                    })
-                }
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
                         <input
                             type="checkbox"
-                            checked={selectedItems.has(rowId)}
-                            onChange={handleItemCheckboxChange}
+                            checked={selections.items.has(rowId)}
+                            onChange={() =>
+                                handleSelectItem(rowId, orderNumber)
+                            }
                             className="cursor-pointer"
                         />
                     </div>
@@ -537,10 +291,8 @@ const Orders = () => {
             cell: ({ row }) => {
                 const rowId = row.id
                 const orderNumber = row.original.orderNumber
-                const isItemSelected = selectedItems.has(rowId)
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isItemSelected = selections.items.has(rowId)
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div
@@ -571,10 +323,8 @@ const Orders = () => {
             cell: ({ row }) => {
                 const rowId = row.id
                 const orderNumber = row.original.orderNumber
-                const isItemSelected = selectedItems.has(rowId)
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isItemSelected = selections.items.has(rowId)
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div
@@ -596,9 +346,7 @@ const Orders = () => {
             header: '결제수단/결제일',
             cell: ({ row }) => {
                 const orderNumber = row.original.orderNumber
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
@@ -612,9 +360,7 @@ const Orders = () => {
             header: '총 주문금액',
             cell: ({ row }) => {
                 const orderNumber = row.original.orderNumber
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
@@ -628,9 +374,7 @@ const Orders = () => {
             header: '배송상태',
             cell: ({ row }) => {
                 const orderNumber = row.original.orderNumber
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isOrderSelected = selections.orders.has(orderNumber)
                 const deliveryStatus = row.original.deliveryStatus
                 const isValidDeliveryStatus =
                     deliveryStatus in DELIVERY_STATUS_MAP
@@ -651,9 +395,7 @@ const Orders = () => {
             header: '택배사',
             cell: ({ row }) => {
                 const orderNumber = row.original.orderNumber
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
@@ -667,9 +409,7 @@ const Orders = () => {
             header: '운송장 번호',
             cell: ({ row }) => {
                 const orderNumber = row.original.orderNumber
-                const isOrderSelected = orderNumber
-                    ? selectedOrders.has(orderNumber)
-                    : false
+                const isOrderSelected = selections.orders.has(orderNumber)
                 const trackingNumber = row.original.trackingNumber
 
                 return (
@@ -752,18 +492,22 @@ const Orders = () => {
                 <div className="w-full rounded-lg border border-gray-300 bg-white">
                     <div className="flex items-center justify-between px-6 pt-4 pb-3">
                         <div className="flex items-center gap-4">
-                            <button
-                                className="text-primary-500 text-12 border-primary-500 cursor-pointer rounded-md border px-2.5 py-1.5"
+                            <Button
+                                variant="outline"
+                                className="text-primary-500 text-12 border-primary-500 h-[30px] w-[61px] cursor-pointer rounded-md border p-0"
                                 onClick={handleClickDetail}
                             >
                                 상세보기
-                            </button>
-                            {tableButtons[activeTab]}
+                            </Button>
+                            <OrderControlButtons
+                                activeTab={activeTab}
+                                onClick={handleOrderAction}
+                            />
                             <div className="flex items-center gap-1">
                                 <p className="text-14 font-normal text-gray-700">
                                     선택
                                     <span className="text-primary-500 font-medium">
-                                        {selectedOrders.size}개
+                                        {selections.orders.size}개
                                     </span>
                                 </p>
                                 <div className="h-3 w-0.5 bg-gray-400" />
@@ -776,12 +520,12 @@ const Orders = () => {
                             </div>
                         </div>
                     </div>
-                    {selectedOrders.size > 0 && (
+                    {selections.orders.size > 0 && (
                         <div className="px-6 py-2.5">
                             <p className="text-14 rounded-md bg-[#FEF4F2] py-2.5 text-center text-gray-700">
                                 이 페이지에 있는 주문{' '}
                                 <span className="text-primary-500 font-medium">
-                                    {selectedOrders.size}개
+                                    {selections.orders.size}개
                                 </span>
                                 가 모두 선택되었습니다.
                             </p>
@@ -803,7 +547,7 @@ const Orders = () => {
             </div>
             {/* TODO :: 협의 후, 전역 모달로 분리 & REFACTORING */}
             {modalType && (
-                <Dialog
+                <BgrDialog
                     open={modalType === 'noSelect'}
                     type="alert"
                     title="주문을 선택해주세요."
@@ -814,7 +558,7 @@ const Orders = () => {
                 />
             )}
             {modalType && (
-                <Dialog
+                <BgrDialog
                     open={modalType === 'noKeyword'}
                     type="alert"
                     title="상세 검색 내용을 입력해주세요."
@@ -871,7 +615,7 @@ const Orders = () => {
             )}
             {modalType && modalType === 'orderDetail' && (
                 <OrderDetailModal
-                    orderList={Array.from(selectedOrders)}
+                    orderList={Array.from(selections.orders)}
                     onClose={() => {
                         setModalType(null)
                     }}

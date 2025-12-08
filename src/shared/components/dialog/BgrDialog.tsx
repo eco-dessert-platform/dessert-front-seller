@@ -14,53 +14,51 @@ const Overlay: React.FC<OverlayProps> = ({ onClose, children }) => {
     )
 }
 
-export type DialogType = 'confirm' | 'alert' | 'popup'
-
-// TODO :: DialogType에 따라 props가 추론 되도록 discriminated union타입으로 추론되도록 분기 처리 필요
-export interface DialogProps {
-    type: DialogType
+type BaseDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
     title?: string
+}
+
+type AlertDialogProps = BaseDialogProps & {
+    type: 'alert'
     description?: string
-    children?: React.ReactNode
-    /**
-     * @default 확인
-     */
     confirmText?: string
-    /**
-     * @default 취소
-     */
+    onConfirm?: () => void
+}
+
+type ConfirmDialogProps = BaseDialogProps & {
+    type: 'confirm'
+    description?: string
+    confirmText?: string
     cancelText?: string
     onConfirm?: () => void
     onCancel?: () => void
 }
 
-export const Dialog: React.FC<DialogProps> = ({
-    type,
-    open,
-    onOpenChange,
-    title,
-    description,
-    children,
-    confirmText = '확인',
-    cancelText = '취소',
-    onConfirm,
-    onCancel,
-}) => {
-    const handleConfirm = () => {
-        onConfirm?.()
-        onOpenChange(false)
-    }
+type PopupDialogProps = BaseDialogProps & {
+    type: 'popup'
+    children: React.ReactNode
+}
 
-    const handleCancel = () => {
-        onCancel?.()
-        onOpenChange(false)
-    }
+export type BgrDialogProps =
+    | AlertDialogProps
+    | ConfirmDialogProps
+    | PopupDialogProps
+
+export const BgrDialog: React.FC<BgrDialogProps> = (props) => {
+    const { type, open, onOpenChange, title } = props
 
     if (!open) return null
 
     if (type === 'alert') {
+        const { description, confirmText = '확인', onConfirm } = props
+
+        const handleConfirm = () => {
+            onConfirm?.()
+            onOpenChange(false)
+        }
+
         return (
             <Overlay onClose={() => onOpenChange(false)}>
                 <div className="relative w-full max-w-md rounded-lg bg-white px-5 py-4 shadow-lg">
@@ -90,6 +88,24 @@ export const Dialog: React.FC<DialogProps> = ({
     }
 
     if (type === 'confirm') {
+        const {
+            description,
+            confirmText = '확인',
+            cancelText = '취소',
+            onConfirm,
+            onCancel,
+        } = props
+
+        const handleConfirm = () => {
+            onConfirm?.()
+            onOpenChange(false)
+        }
+
+        const handleCancel = () => {
+            onCancel?.()
+            onOpenChange(false)
+        }
+
         return (
             <Overlay onClose={() => onOpenChange(false)}>
                 <div className="relative w-full max-w-md rounded-lg bg-white px-5 py-4 shadow-lg">
@@ -123,6 +139,8 @@ export const Dialog: React.FC<DialogProps> = ({
             </Overlay>
         )
     }
+
+    const { children } = props
 
     return (
         <Overlay onClose={() => onOpenChange(false)}>
