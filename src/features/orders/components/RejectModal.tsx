@@ -4,29 +4,11 @@ import { ChevronDown } from 'lucide-react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 import RejectImageUploader from './RejectImageUploader'
-
-type RejectType =
-    | 'CANCEL'
-    | 'CANCEL_REFUSE'
-    | 'REFUND'
-    | 'REFUND_REFUSE'
-    | 'REFUND_PENDING'
-    | 'CHANGE'
-    | 'CHANGE_REFUSE'
-    | 'CHANGE_PENDING'
-
-interface RejectModalProps {
-    rejectType: RejectType
-    title: string
-    onConfirm: () => void
-    onCancel?: () => void
-}
-
-interface InputValue {
-    type: null | string
-    reason: string
-    images: string[]
-}
+import type {
+    RejectType,
+    RejectModalProps,
+    RejectInputValue,
+} from '../type/orderModalType'
 
 const MAX_REASON_LENGTH = 2000
 
@@ -74,7 +56,7 @@ const RejectModal = ({
     onConfirm,
     onCancel,
 }: RejectModalProps) => {
-    const [inputValues, setInputValues] = useState<InputValue>({
+    const [inputValues, setInputValues] = useState<RejectInputValue>({
         type: null,
         reason: '',
         images: [],

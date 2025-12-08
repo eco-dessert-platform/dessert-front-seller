@@ -16,12 +16,9 @@ import TrackingNumberModal from './components/TrackingNumberModal'
 import RejectModal from './components/RejectModal'
 import OrderDetailModal from './components/OrderDetailModal'
 import { MOCK_ORDER_LIST } from './data/ordersMockData'
-import type {
-    TabCategory,
-    OrderTableRow,
-    OrderSearchFilter,
-    DeliveryStatus,
-} from './type'
+import type { TabCategory, DeliveryStatus } from './type/orderStatusType'
+import type { OrderTableRow } from './type/orderTableType'
+import type { OrderSearchFilter } from './type/orderFilterType'
 import OrderControlButtons from './components/OrderControlButtons'
 
 const DELIVERY_STATUS_MAP: Record<DeliveryStatus, string> = {

@@ -9,14 +9,9 @@ import {
     AccordionTrigger,
 } from 'src/shared/lib/shadcn/components/ui/accordion'
 import { MOCK_ORDER_DETAIL_LIST } from '../data/ordersMockData'
+import type { OrderDetailModalProps } from '../type/orderModalType'
 
 // TODO :: API 연동 후, 삭제 (분리 필요)
-
-interface OrderDetailModalProps {
-    // TODO :: orderNum 배열 형태로 받은 뒤, 노출 처리
-    orderList: string[]
-    onClose: () => void
-}
 
 const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
     const [orderDetailList, setOrderDetailList] = useState(

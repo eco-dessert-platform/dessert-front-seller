@@ -3,14 +3,7 @@ import { ChevronDown } from 'lucide-react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 
 import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
-
-interface TrackingNumberModalProps {
-    type: 'register' | 'modify'
-    courierCompany?: string
-    trackingNumber?: string
-    onConfirm: () => void
-    onCancel: () => void
-}
+import type { TrackingNumberModalProps } from '../type/orderModalType'
 
 const CARRIER_LIST = [
     'CJ대한통운',

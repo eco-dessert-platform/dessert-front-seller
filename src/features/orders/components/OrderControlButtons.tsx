@@ -1,23 +1,8 @@
 import { ButtonGroup } from 'src/shared/lib/shadcn/components/ui/button-group'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
-import { TabCategory } from '../type'
-
-type ActionType =
-    | 'ORDER_CONFIRMED'
-    | 'CANCEL_APPROVED'
-    | 'CANCEL_REJECTED'
-    | 'RETURN_APPROVED'
-    | 'RETURN_REJECTED'
-    | 'RETURN_COMPLETED'
-    | 'RETURN_RETURNED'
-    | 'RETURN_ON_HOLD'
-    | 'EXCHANGE_APPROVED'
-
-type ButtonConfig = {
-    label: string
-    action: ActionType
-    disabled: boolean
-}
+import type { TabCategory } from '../type/orderStatusType'
+import type { ActionType, ButtonConfig } from '../type/orderActionType'
+import type { OrderControlButtonsProps } from '../type/orderModalType'
 
 const BUTTONS_BY_TAB = {
     ALL: [],
@@ -69,11 +54,6 @@ function checkIsButtonGroup(
     buttons: ButtonConfig[] | ButtonConfig[][],
 ): buttons is ButtonConfig[][] {
     return buttons.length > 0 && Array.isArray(buttons[0])
-}
-
-interface OrderControlButtonsProps {
-    activeTab: TabCategory
-    onClick: (actionType: ActionType) => void
 }
 
 const OrderControlButtons = ({

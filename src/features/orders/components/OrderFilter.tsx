@@ -5,28 +5,7 @@ import { ko } from 'date-fns/locale'
 import * as SelectPrimitive from '@radix-ui/react-select'
 
 import { Calendar } from 'src/shared/lib/shadcn/components/ui/calendar'
-
-interface OrderFilterProps {
-    filterValue: {
-        orderStatus: string // TODO :: enum type
-        startDate: Date
-        endDate: Date
-        searchType: string // TODO :: enum type
-        keyword: string
-    }
-    onChangeDate: ({
-        startDate,
-        endDate,
-    }: {
-        startDate: Date
-        endDate: Date
-    }) => void
-    onChangeOrderStatus: (changedValue: string) => void
-    onChangeSearchType: (nextSearchType: string) => void
-    onChangeKeyword: (keyword: string) => void
-    onSearch: () => void
-    onReset: () => void
-}
+import type { OrderFilterProps } from '../type/orderModalType'
 
 const OrderFilter = ({
     filterValue,

@@ -1,16 +1,7 @@
 import clsx from 'clsx'
 import { X } from 'lucide-react'
 import CameraIcon from 'src/assets/icons/camera.svg?react'
-
-interface RejectImageUploaderProps {
-    images: Array<{
-        id: string
-        previewSrc: string
-    }>
-    maxUploadCount: number
-    onUploadImage: (event: React.ChangeEvent<HTMLInputElement>) => void
-    onDeleteImage: (imageId: string) => void
-}
+import type { RejectImageUploaderProps } from '../type/orderModalType'
 
 const RejectImageUploader = ({
     images,
