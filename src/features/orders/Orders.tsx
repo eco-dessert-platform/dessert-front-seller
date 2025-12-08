@@ -83,19 +83,7 @@ const Orders = () => {
         })),
     )
 
-    const handleSelectAll = () => {
-        if (selections.orders.size === allOrderNumbers.length) {
-            setSelections({ orders: new Set(), items: new Set() })
-        } else {
-            setSelections({
-                orders: new Set(allOrderNumbers),
-                items: new Set(
-                    Array.from(tableData, (_, idx) => idx.toString()),
-                ),
-            })
-        }
-    }
-
+  
     const handleResetFilter = () => {
         setOrderFilter({
             orderStatus: 'ALL',
@@ -215,7 +203,18 @@ const Orders = () => {
                         }}
                         type="checkbox"
                         checked={isAllSelected}
-                        onChange={handleSelectAll}
+                        onChange={() => {
+                            if (selections.orders.size === allOrderNumbers.length) {
+                                setSelections({ orders: new Set(), items: new Set() })
+                            } else {
+                                setSelections({
+                                    orders: new Set(allOrderNumbers),
+                                    items: new Set(
+                                        Array.from(tableData, (_, idx) => idx.toString()),
+                                    ),
+                                })
+                            }
+                        }}
                         className="cursor-pointer"
                     />
                 )
