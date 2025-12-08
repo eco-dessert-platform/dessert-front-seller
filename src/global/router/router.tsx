@@ -4,6 +4,7 @@ import React from 'react'
 import NotFoundPage from 'src/pages/extra/NotFoundPage'
 import BgrLayout from 'src/shared/layout/BgrLayout'
 import Test from 'src/pages/test'
+import CallbackPage from 'src/pages/url/callback/CallbackPage'
 
 const MODULES = import.meta.glob(['src/pages/url/**/*.tsx'], {
     eager: true,
@@ -51,12 +52,19 @@ const layoutRoutes = allRoutes.filter(
 )
 
 const router = createBrowserRouter([
-    // 레이아웃 없는 라우트 (로그인/회원가입)
+    // 레이아웃 없는 라우트
     {
         path: '/',
         element: <Outlet />,
         errorElement: <NotFoundPage />,
-        children: noLayoutRoutes,
+        children: [
+            ...noLayoutRoutes,
+            // callback은 동적으로 관려(ex- callback/:provider)
+            {
+                path: 'callback/:provider',
+                element: <CallbackPage />,
+            },
+        ],
     },
     // 레이아웃 있는 라우트 (메인 페이지 등)
     {
