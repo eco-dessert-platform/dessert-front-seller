@@ -11,7 +11,6 @@ import {
 import { MOCK_ORDER_DETAIL_LIST } from '../data/ordersMockData'
 import type { OrderDetailModalProps } from '../type/orderModalType'
 
-// TODO :: API 연동 후, 삭제 (분리 필요)
 
 const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
     const [orderDetailList, setOrderDetailList] = useState(
