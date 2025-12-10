@@ -171,3 +171,46 @@ export const MOCK_ORDER_DETAIL_LIST = [
         ],
     },
 ]
+
+// TODO :: 데이터 구조 미확정
+export const MOCK_ORDER_COMPLETED = {
+    content: [
+        {
+            deliveryStatus: 'PREPARING_PRODUCT',
+            orderId: 1,
+            orderNumber: '000-123',
+            paymentAt: '2024-01-01',
+            paidDayOfWeek: 'MONDAY',
+            recipientName: '홍길동',
+            courierCompany: 'CJ대한통운',
+            trackingNumber: '123-123',
+            totalPaid: 200000,
+            orderItems: [
+                {
+                    orderItemId: 1,
+                    orderStatus: 'PURCHASED',
+                    courierCompany: 'CJ대한통운',
+                    trackingNumber: '123-123',
+                    boardTitle: '베이글',
+                    itemName: '저칼로리 베이글',
+                    quantity: 5,
+                    totalPrice: 10000,
+                },
+                {
+                    orderItemId: 2,
+                    orderStatus: 'CANCELED',
+                    courierCompany: '롯데택배',
+                    trackingNumber: '123-456',
+                    boardTitle: '초콜릿',
+                    itemName: '저당 초콜릿',
+                    quantity: 10,
+                    totalPrice: 10000,
+                },
+            ],
+        },
+    ],
+    page: 0,
+    size: 10,
+    totalPages: 1,
+    totalElements: 10,
+}
