@@ -13,18 +13,10 @@ import { MOCK_ORDER_COMPLETED } from './data/ordersMockData'
 import OrderFilter from './components/OrderFilter'
 import OrderStatusLabel from './components/OrderStatusLabel'
 import type { OrderTableRow } from './type/orderTableType'
-import type { DeliveryStatus } from './type/orderStatusType'
+import type { DeliveryStatus, OrderStatus } from './type/orderStatusType'
 import type { OrderSearchFilter } from './type/orderFilterType'
 import type { SelectOption } from './type/orderModalType'
-
-const DELIVERY_STATUS_MAP: Record<DeliveryStatus, string> = {
-    NONE: '-',
-    PREPARING: '-',
-    DELIVERING: '상품배송',
-    PICKING_UP: '수거중',
-    PICKED_UP: '수거완료',
-    DELIVERED: '배송완료',
-}
+import { DELIVERY_STATUS_LABEL_MAP } from './data/orderStatusMap'
 
 type TabCategory = 'PURCHASED' | 'CANCELED' | 'RETURNED' | 'EXCHANGED'
 
@@ -238,8 +230,7 @@ const OrderCompleted = () => {
                 return (
                     <div>
                         <OrderStatusLabel
-                            type={row.original.orderStatus}
-                            text={row.original.orderStatus}
+                            type={row.original.orderStatus as OrderStatus}
                         />
                     </div>
                 )
@@ -251,7 +242,9 @@ const OrderCompleted = () => {
                 // const orderNumber = row.original.orderNumber
                 // const isOrderSelected = selections.orders.has(orderNumber)
 
-                return <div>{format(row.original.paymentAt, 'yyyy.MM.dd')}</div>
+                return (
+                    <div>{format(row.original.paymentAt, 'yyyy. MM. dd')}</div>
+                )
             },
             meta: { merge: true },
         }),
@@ -262,7 +255,9 @@ const OrderCompleted = () => {
                 // const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
-                    <div>{Number(row.original.totalPaid).toLocaleString()}</div>
+                    <div>
+                        {Number(row.original.totalPaid).toLocaleString()}원
+                    </div>
                 )
             },
             meta: { merge: true },
@@ -274,12 +269,12 @@ const OrderCompleted = () => {
                 // const isOrderSelected = selections.orders.has(orderNumber)
                 const deliveryStatus = row.original.deliveryStatus
                 const isValidDeliveryStatus =
-                    deliveryStatus in DELIVERY_STATUS_MAP
+                    deliveryStatus in DELIVERY_STATUS_LABEL_MAP
 
                 return (
                     <div>
                         {isValidDeliveryStatus
-                            ? DELIVERY_STATUS_MAP[
+                            ? DELIVERY_STATUS_LABEL_MAP[
                                   deliveryStatus as DeliveryStatus
                               ]
                             : deliveryStatus}

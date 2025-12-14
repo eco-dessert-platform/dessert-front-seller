@@ -17,19 +17,15 @@ import RejectModal from './components/RejectModal'
 import OrderDetailModal from './components/OrderDetailModal'
 import OrderControlButtons from './components/OrderControlButtons'
 import { MOCK_ORDER_LIST } from './data/ordersMockData'
-import type { TabCategory, DeliveryStatus } from './type/orderStatusType'
+import type {
+    TabCategory,
+    DeliveryStatus,
+    OrderStatus,
+} from './type/orderStatusType'
 import type { OrderTableRow } from './type/orderTableType'
 import type { OrderSearchFilter } from './type/orderFilterType'
 import type { SelectOption } from './type/orderModalType'
-
-const DELIVERY_STATUS_MAP: Record<DeliveryStatus, string> = {
-    NONE: '-',
-    PREPARING: '-',
-    DELIVERING: '상품배송',
-    PICKING_UP: '수거중',
-    PICKED_UP: '수거완료',
-    DELIVERED: '배송완료',
-}
+import { DELIVERY_STATUS_LABEL_MAP } from './data/orderStatusMap'
 
 /**
  * TODO :: 탭 카운트 조회 API 확정 시, 해당 key를 할당
@@ -341,8 +337,7 @@ const Orders = () => {
                         }
                     >
                         <OrderStatusLabel
-                            type={row.original.orderStatus}
-                            text={row.original.orderStatus}
+                            type={row.original.orderStatus as OrderStatus}
                         />
                     </div>
                 )
@@ -356,7 +351,7 @@ const Orders = () => {
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
-                        {format(row.original.paymentAt, 'yyyy.MM.dd')}
+                        {format(row.original.paymentAt, 'yyyy. MM. dd')}
                     </div>
                 )
             },
@@ -370,7 +365,7 @@ const Orders = () => {
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
-                        {Number(row.original.totalPaid).toLocaleString()}
+                        {Number(row.original.totalPaid).toLocaleString()}원
                     </div>
                 )
             },
@@ -383,12 +378,12 @@ const Orders = () => {
                 const isOrderSelected = selections.orders.has(orderNumber)
                 const deliveryStatus = row.original.deliveryStatus
                 const isValidDeliveryStatus =
-                    deliveryStatus in DELIVERY_STATUS_MAP
+                    deliveryStatus in DELIVERY_STATUS_LABEL_MAP
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
                         {isValidDeliveryStatus
-                            ? DELIVERY_STATUS_MAP[
+                            ? DELIVERY_STATUS_LABEL_MAP[
                                   deliveryStatus as DeliveryStatus
                               ]
                             : deliveryStatus}
