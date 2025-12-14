@@ -9,12 +9,13 @@ import {
 } from 'src/shared/components/tab/BGRtab'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
-import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 import { MOCK_ORDER_COMPLETED } from './data/ordersMockData'
 import OrderFilter from './components/OrderFilter'
-import type { OrderTableRow } from './type/orderTableType'
 import OrderStatusLabel from './components/OrderStatusLabel'
+import type { OrderTableRow } from './type/orderTableType'
 import type { DeliveryStatus } from './type/orderStatusType'
+import type { OrderSearchFilter } from './type/orderFilterType'
+import type { SelectOption } from './type/orderModalType'
 
 const DELIVERY_STATUS_MAP: Record<DeliveryStatus, string> = {
     NONE: '-',
@@ -34,22 +35,7 @@ const TABS: Array<{ key: TabCategory; title: string }> = [
     { key: 'EXCHANGED', title: '교환' },
 ]
 
-type FilterOrderStatusType =
-    | 'ALL'
-    | 'PURCHASE_CONFIRMED'
-    | 'CANCEL_COMPLETED'
-    | 'CANCEL_REJECTED'
-    | 'RETURN_REJECTED'
-    | 'RETURN_COMPLETED'
-    | 'RETURN_RETURNED'
-    | 'EXCHANGE_REJECTED'
-    | 'EXCHANGE_COMPLETED'
-    | 'EXCHANGE_RETURNED'
-
-const ORDER_STATUS_OPTIONS: Array<{
-    value: FilterOrderStatusType
-    label: string
-}> = [
+const ORDER_STATUS_OPTIONS = [
     { value: 'ALL', label: '전체' },
     { value: 'PURCHASE_CONFIRMED', label: '구매확정' },
     // TODO :: 취소 완료라는 상태가 없어, 확인 필요
@@ -61,61 +47,30 @@ const ORDER_STATUS_OPTIONS: Array<{
     { value: 'EXCHANGE_REJECTED', label: '교환 거절' },
     { value: 'EXCHANGE_COMPLETED', label: '교환 완료' },
     { value: 'EXCHANGE_RETURNED', label: '교환 반려' },
-]
+] as const satisfies SelectOption[]
 
-/**
- * 상세조건 select 종류
- *
- * 주문번호(Default) - ORDER_NUMBER
- * 수취인명 - BUYER_NAME
- * 상품명 - PRODUCT_NAME
- * 송장번호 - TRACKING_NUMBER
- */
+const SEARCH_OPTIONS = [
+    { value: 'ORDER_NUMBER', label: '주문번호' },
+    { value: 'BUYER_NAME', label: '수취인명' },
+    { value: 'PRODUCT_NAME', label: '상품명' },
+    { value: 'TRACKING_NUMBER', label: '송장번호' },
+] as const satisfies SelectOption[]
 
-type FilterSearchType =
-    | 'BUYER_NAME'
-    | 'ORDER_NUMBER'
-    | 'PRODUCT_NAME'
-    | 'TRACKING_NUMBER'
-
-interface SearchFilter {
-    orderStatus: FilterOrderStatusType
-    startDate: Date
-    endDate: Date
-    searchType: FilterSearchType
-    keyword: string
-}
+const getInitialFilterValue = (): OrderSearchFilter => ({
+    orderStatus: 'ALL',
+    startDate: sub(new Date(), { months: 1 }),
+    endDate: new Date(),
+    searchType: 'ORDER_NUMBER',
+    keyword: '',
+})
 
 const columnHelper = createColumnHelper<OrderTableRow>()
 
 const OrderCompleted = () => {
     const [activeTab, setActiveTab] = useState<TabCategory>('PURCHASED')
     const [orderContent, setOrderContent] = useState(MOCK_ORDER_COMPLETED)
-    const [modalType, setModalType] = useState<string | null>(null)
-    const [orderFilter, setOrderFilter] = useState<SearchFilter>({
-        orderStatus: 'ALL',
-        startDate: sub(new Date(), { months: 1 }),
-        endDate: new Date(),
-        searchType: 'ORDER_NUMBER',
-        keyword: '',
-    })
-
-    const handleResetFilter = () => {
-        setOrderFilter({
-            orderStatus: 'ALL',
-            startDate: sub(new Date(), { weeks: 1 }),
-            endDate: new Date(),
-            searchType: 'ORDER_NUMBER',
-            keyword: '',
-        })
-    }
 
     const handleSearch = () => {
-        if (!orderFilter.keyword) {
-            setModalType('noKeyword')
-            return
-        }
-
         // TODO :: API 요청 함수 할당 필요
     }
 
@@ -394,34 +349,11 @@ const OrderCompleted = () => {
             </BgrTabs>
             <div className="flex flex-col gap-2.5 pt-5">
                 <OrderFilter
-                    filterValue={orderFilter}
-                    onChangeDate={({ startDate, endDate }) => {
-                        setOrderFilter((prev) => ({
-                            ...prev,
-                            startDate,
-                            endDate,
-                        }))
-                    }}
-                    onChangeSearchType={(nextSearchType) => {
-                        // setOrderFilter((prev) => ({
-                        //     ...prev,
-                        //     searchType: nextSearchType,
-                        // }))
-                    }}
-                    onChangeOrderStatus={(nextOrderStatus) => {
-                        // setOrderFilter((prev) => ({
-                        //     ...prev,
-                        //     orderStatus: nextOrderStatus,
-                        // }))
-                    }}
-                    onChangeKeyword={(nextKeyword) => {
-                        setOrderFilter((prev) => ({
-                            ...prev,
-                            keyword: nextKeyword,
-                        }))
-                    }}
+                    key={activeTab}
+                    initialFilterValue={getInitialFilterValue()}
+                    orderStatusOptions={ORDER_STATUS_OPTIONS}
+                    searchOptions={SEARCH_OPTIONS}
                     onSearch={handleSearch}
-                    onReset={handleResetFilter}
                 />
                 <div className="w-full rounded-lg border border-gray-300 bg-white">
                     <div className="flex items-center justify-between px-6 pt-4 pb-3">
@@ -467,16 +399,6 @@ const OrderCompleted = () => {
                     {/* TODO :: checkbox에 대한 MESSAGE UI */}
                 </div>
             </div>
-            {modalType && (
-                <BgrDialog
-                    open={modalType === 'noKeyword'}
-                    type="alert"
-                    title="상세 검색 내용을 입력해주세요."
-                    onOpenChange={() => {
-                        setModalType(null)
-                    }}
-                />
-            )}
         </>
     )
 }

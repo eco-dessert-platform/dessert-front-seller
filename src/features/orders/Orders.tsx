@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { createColumnHelper, type ColumnDef } from '@tanstack/react-table'
 import { format, sub } from 'date-fns'
 
@@ -15,11 +15,12 @@ import OrderFilter from './components/OrderFilter'
 import TrackingNumberModal from './components/TrackingNumberModal'
 import RejectModal from './components/RejectModal'
 import OrderDetailModal from './components/OrderDetailModal'
+import OrderControlButtons from './components/OrderControlButtons'
 import { MOCK_ORDER_LIST } from './data/ordersMockData'
 import type { TabCategory, DeliveryStatus } from './type/orderStatusType'
 import type { OrderTableRow } from './type/orderTableType'
 import type { OrderSearchFilter } from './type/orderFilterType'
-import OrderControlButtons from './components/OrderControlButtons'
+import type { SelectOption } from './type/orderModalType'
 
 const DELIVERY_STATUS_MAP: Record<DeliveryStatus, string> = {
     NONE: '-',
@@ -44,7 +45,31 @@ const TABS: Array<{ key: TabCategory; title: string }> = [
     { key: 'CHANGE', title: '교환' }, // unknown key
 ]
 
+const ORDER_STATUS_OPTIONS = [
+    { value: 'ALL', label: '전체' },
+    { value: 'PAID', label: '결제완료' },
+    // TODO :: 해당 value가 없어, 담당자에게 문의 필요
+    { value: 'nnnnn', label: '상품준비' },
+    { value: 'SHIPPED', label: '상품발송' },
+    { value: 'DELIVERED', label: '배송완료' },
+] as const satisfies SelectOption[]
+
+const SEARCH_OPTIONS = [
+    { value: 'ORDER_NUMBER', label: '주문번호' },
+    { value: 'RECEIVER_NAME', label: '수취인명' },
+    { value: 'PRODUCT_NAME', label: '상품명' },
+    { value: 'TRACKING_NUMBER', label: '송장번호' },
+] as const satisfies SelectOption[]
+
 const columnHelper = createColumnHelper<OrderTableRow>()
+
+const getInitialFilterValue = (): OrderSearchFilter => ({
+    orderStatus: 'ALL',
+    startDate: sub(new Date(), { weeks: 1 }),
+    endDate: new Date(),
+    searchType: 'ORDER_NUMBER',
+    keyword: '',
+})
 
 const Orders = () => {
     const [activeTab, setActiveTab] = useState<TabCategory>('ALL')
@@ -54,13 +79,6 @@ const Orders = () => {
     }>({
         orders: new Set(),
         items: new Set(),
-    })
-    const [orderFilter, setOrderFilter] = useState<OrderSearchFilter>({
-        orderStatus: 'ALL',
-        startDate: sub(new Date(), { weeks: 1 }),
-        endDate: new Date(),
-        searchType: 'ORDER_NUMBER',
-        keyword: '',
     })
 
     const [response] = useState(MOCK_ORDER_LIST)
@@ -83,17 +101,6 @@ const Orders = () => {
         })),
     )
 
-  
-    const handleResetFilter = () => {
-        setOrderFilter({
-            orderStatus: 'ALL',
-            startDate: sub(new Date(), { weeks: 1 }),
-            endDate: new Date(),
-            searchType: 'ORDER_NUMBER',
-            keyword: '',
-        })
-    }
-
     const handleClickDetail = () => {
         if (selections.orders.size === 0) {
             setModalType('noSelect')
@@ -104,11 +111,6 @@ const Orders = () => {
     }
 
     const handleSearch = () => {
-        if (!orderFilter.keyword) {
-            setModalType('noKeyword')
-            return
-        }
-
         // TODO :: API 요청 함수 할당 필요
     }
 
@@ -204,13 +206,21 @@ const Orders = () => {
                         type="checkbox"
                         checked={isAllSelected}
                         onChange={() => {
-                            if (selections.orders.size === allOrderNumbers.length) {
-                                setSelections({ orders: new Set(), items: new Set() })
+                            if (
+                                selections.orders.size ===
+                                allOrderNumbers.length
+                            ) {
+                                setSelections({
+                                    orders: new Set(),
+                                    items: new Set(),
+                                })
                             } else {
                                 setSelections({
                                     orders: new Set(allOrderNumbers),
                                     items: new Set(
-                                        Array.from(tableData, (_, idx) => idx.toString()),
+                                        Array.from(tableData, (_, idx) =>
+                                            idx.toString(),
+                                        ),
                                     ),
                                 })
                             }
@@ -432,10 +442,6 @@ const Orders = () => {
         }),
     ]
 
-    useEffect(() => {
-        handleResetFilter()
-    }, [activeTab])
-
     return (
         <>
             <BgrTabs
@@ -456,34 +462,11 @@ const Orders = () => {
             </BgrTabs>
             <div className="flex flex-col gap-2.5 pt-5">
                 <OrderFilter
-                    filterValue={orderFilter}
-                    onChangeDate={({ startDate, endDate }) => {
-                        setOrderFilter((prev) => ({
-                            ...prev,
-                            startDate,
-                            endDate,
-                        }))
-                    }}
-                    onChangeSearchType={(nextSearchType) => {
-                        setOrderFilter((prev) => ({
-                            ...prev,
-                            searchType: nextSearchType,
-                        }))
-                    }}
-                    onChangeOrderStatus={(nextOrderStatus) => {
-                        setOrderFilter((prev) => ({
-                            ...prev,
-                            orderStatus: nextOrderStatus,
-                        }))
-                    }}
-                    onChangeKeyword={(nextKeyword) => {
-                        setOrderFilter((prev) => ({
-                            ...prev,
-                            keyword: nextKeyword,
-                        }))
-                    }}
+                    key={activeTab}
+                    initialFilterValue={getInitialFilterValue()}
+                    orderStatusOptions={ORDER_STATUS_OPTIONS}
+                    searchOptions={SEARCH_OPTIONS}
                     onSearch={handleSearch}
-                    onReset={handleResetFilter}
                 />
                 <div className="w-full rounded-lg border border-gray-300 bg-white">
                     <div className="flex items-center justify-between px-6 pt-4 pb-3">

@@ -1,3 +1,5 @@
+import type { OrderSearchFilter } from './orderFilterType'
+
 // OrderDetailModal 관련 타입
 export interface OrderDetailModalProps {
     // TODO :: orderNum 배열 형태로 받은 뒤, 노출 처리
@@ -5,27 +7,23 @@ export interface OrderDetailModalProps {
     onClose: () => void
 }
 
+export interface SelectOption {
+    value: string | number
+    label: string
+}
+
 // OrderFilter 관련 타입
 export interface OrderFilterProps {
-    filterValue: {
+    initialFilterValue: {
         orderStatus: string // TODO :: enum type
         startDate: Date
         endDate: Date
         searchType: string // TODO :: enum type
         keyword: string
     }
-    onChangeDate: ({
-        startDate,
-        endDate,
-    }: {
-        startDate: Date
-        endDate: Date
-    }) => void
-    onChangeOrderStatus: (changedValue: string) => void
-    onChangeSearchType: (nextSearchType: string) => void
-    onChangeKeyword: (keyword: string) => void
-    onSearch: () => void
-    onReset: () => void
+    orderStatusOptions: SelectOption[]
+    searchOptions: SelectOption[]
+    onSearch: (searchCondition: OrderSearchFilter) => void
 }
 
 // RejectImageUploader 관련 타입
