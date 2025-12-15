@@ -9,6 +9,7 @@ import {
 } from 'src/shared/components/tab/BGRtab'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
+import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 import { MOCK_ORDER_COMPLETED } from './data/ordersMockData'
 import OrderFilter from './components/OrderFilter'
 import OrderStatusLabel from './components/OrderStatusLabel'
@@ -17,6 +18,7 @@ import type { DeliveryStatus, OrderStatus } from './type/orderStatusType'
 import type { OrderSearchFilter } from './type/orderFilterType'
 import type { SelectOption } from './type/orderModalType'
 import { DELIVERY_STATUS_LABEL_MAP } from './data/orderStatusMap'
+import OrderDetailModal from './components/OrderDetailModal'
 
 type TabCategory = 'PURCHASED' | 'CANCELED' | 'RETURNED' | 'EXCHANGED'
 
@@ -61,9 +63,79 @@ const columnHelper = createColumnHelper<OrderTableRow>()
 const OrderCompleted = () => {
     const [activeTab, setActiveTab] = useState<TabCategory>('PURCHASED')
     const [orderContent, setOrderContent] = useState(MOCK_ORDER_COMPLETED)
+    const [modalType, setModalType] = useState<string | null>(null)
+    const [selections, setSelections] = useState<{
+        orders: Set<string>
+        items: Set<string>
+    }>({
+        orders: new Set(),
+        items: new Set(),
+    })
 
     const handleSearch = () => {
         // TODO :: API 요청 함수 할당 필요
+    }
+
+    const handleSelectOrder = (targetOrderNumber: string) => {
+        setSelections((prev) => {
+            const isOrderSelected = prev.orders.has(targetOrderNumber)
+            const nextSelectedOrders = new Set(prev.orders)
+            const nextSelectedItems = new Set(prev.items)
+
+            if (isOrderSelected) {
+                nextSelectedOrders.delete(targetOrderNumber)
+            } else {
+                nextSelectedOrders.add(targetOrderNumber)
+            }
+
+            tableData.forEach((row, index) => {
+                if (row.orderNumber === targetOrderNumber) {
+                    if (isOrderSelected) {
+                        nextSelectedItems.delete(index.toString())
+                    } else {
+                        nextSelectedItems.add(index.toString())
+                    }
+                }
+            })
+
+            return { orders: nextSelectedOrders, items: nextSelectedItems }
+        })
+    }
+
+    const handleSelectItem = (rowId: string, targetOrderNumber: string) => {
+        setSelections((prev) => {
+            const nextSelectedOrders = new Set(prev.orders)
+            const nextSelectedItems = new Set(prev.items)
+
+            if (nextSelectedItems.has(rowId)) {
+                nextSelectedItems.delete(rowId)
+            } else {
+                nextSelectedItems.add(rowId)
+            }
+
+            const targetOrderItemIndicies = tableData
+                .map((item, index) =>
+                    item.orderNumber === targetOrderNumber
+                        ? index.toString()
+                        : null,
+                )
+                .filter((idx) => idx !== null) as string[]
+
+            const isAllItemsSelected = targetOrderItemIndicies.every((idx) =>
+                nextSelectedItems.has(idx),
+            )
+
+            if (isAllItemsSelected) {
+                nextSelectedOrders.add(targetOrderNumber)
+            } else {
+                nextSelectedOrders.delete(targetOrderNumber)
+            }
+
+            return {
+                orders: nextSelectedOrders,
+                items: nextSelectedItems,
+            }
+        })
     }
 
     const tableData: OrderTableRow[] = orderContent.content.flatMap((order) =>
@@ -83,48 +155,51 @@ const OrderCompleted = () => {
         })),
     )
 
+    const allOrderNumbers = Array.from(
+        new Set(orderContent.content.map((order) => order.orderNumber)),
+    )
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const columns: ColumnDef<OrderTableRow, any>[] = [
         {
             id: 'select',
             header: () => {
-                // const isAllSelected =
-                //     selections.orders.size === allOrderNumbers.length &&
-                //     allOrderNumbers.length > 0
-                // const isSomeSelected =
-                //     selections.orders.size > 0 &&
-                //     selections.orders.size < allOrderNumbers.length
+                const isAllSelected =
+                    selections.orders.size === allOrderNumbers.length &&
+                    allOrderNumbers.length > 0
+                const isSomeSelected =
+                    selections.orders.size > 0 &&
+                    selections.orders.size < allOrderNumbers.length
 
                 return (
                     <input
                         ref={(el) => {
-                            // if (el) {
-                            //     el.indeterminate = isSomeSelected
-                            // }
+                            if (el) {
+                                el.indeterminate = isSomeSelected
+                            }
                         }}
                         type="checkbox"
-                        // checked={isAllSelected}
-                        disabled
-                        // onChange={() => {
-                        //     if (
-                        //         selections.orders.size ===
-                        //         allOrderNumbers.length
-                        //     ) {
-                        //         setSelections({
-                        //             orders: new Set(),
-                        //             items: new Set(),
-                        //         })
-                        //     } else {
-                        //         setSelections({
-                        //             orders: new Set(allOrderNumbers),
-                        //             items: new Set(
-                        //                 Array.from(tableData, (_, idx) =>
-                        //                     idx.toString(),
-                        //                 ),
-                        //             ),
-                        //         })
-                        //     }
-                        // }}
+                        checked={isAllSelected}
+                        onChange={() => {
+                            if (
+                                selections.orders.size ===
+                                allOrderNumbers.length
+                            ) {
+                                setSelections({
+                                    orders: new Set(),
+                                    items: new Set(),
+                                })
+                            } else {
+                                setSelections({
+                                    orders: new Set(allOrderNumbers),
+                                    items: new Set(
+                                        Array.from(tableData, (_, idx) =>
+                                            idx.toString(),
+                                        ),
+                                    ),
+                                })
+                            }
+                        }}
                         className="cursor-pointer"
                     />
                 )
@@ -136,16 +211,14 @@ const OrderCompleted = () => {
                 row: { original: OrderTableRow; id: string }
             }) => {
                 const orderNumber = row.original.orderNumber
-                // const isOrderSelected = selections.orders.has(orderNumber)
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
-                    // <div className={isOrderSelected ? 'bg-gray-100' : ''}>
-                    <div>
+                    <div className={isOrderSelected ? 'bg-gray-100' : ''}>
                         <input
                             type="checkbox"
-                            disabled
-                            // checked={isOrderSelected}
-                            // onChange={() => handleSelectOrder(orderNumber)}
+                            checked={isOrderSelected}
+                            onChange={() => handleSelectOrder(orderNumber)}
                             className="cursor-pointer"
                         />
                     </div>
@@ -156,11 +229,13 @@ const OrderCompleted = () => {
         columnHelper.accessor('recipientName', {
             header: '수취인명/주문번호',
             cell: ({ row }) => {
-                // const orderNumber = row.original.orderNumber
-                // const isOrderSelected = selections.orders.has(orderNumber)
+                const orderNumber = row.original.orderNumber
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
-                    <div className="flex flex-col">
+                    <div
+                        className={`flex flex-col ${isOrderSelected ? 'bg-gray-100' : ''}`}
+                    >
                         <span>{row.original.recipientName}</span>
                         <span className="text-12 font-medium text-gray-500">
                             {row.original.orderNumber}
@@ -175,18 +250,17 @@ const OrderCompleted = () => {
             header: () => <div />,
             cell: ({ row }) => {
                 const rowId = row.id
-                // const orderNumber = row.original.orderNumber
-                // const isOrderSelected = selections.orders.has(orderNumber)
+                const orderNumber = row.original.orderNumber
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
-                    <div>
+                    <div className={isOrderSelected ? 'bg-gray-100' : ''}>
                         <input
                             type="checkbox"
-                            disabled
-                            // checked={selections.items.has(rowId)}
-                            // onChange={() =>
-                            //     handleSelectItem(rowId, orderNumber)
-                            // }
+                            checked={selections.items.has(rowId)}
+                            onChange={() =>
+                                handleSelectItem(rowId, orderNumber)
+                            }
                             className="cursor-pointer"
                         />
                     </div>
@@ -198,11 +272,17 @@ const OrderCompleted = () => {
             cell: ({ row }) => {
                 const rowId = row.id
                 const orderNumber = row.original.orderNumber
-                // const isItemSelected = selections.items.has(rowId)
-                // const isOrderSelected = selections.orders.has(orderNumber)
+                const isItemSelected = selections.items.has(rowId)
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
-                    <div>
+                    <div
+                        className={
+                            isOrderSelected || isItemSelected
+                                ? 'bg-gray-100'
+                                : ''
+                        }
+                    >
                         <p className="text-14 text-gray-900">
                             {row.original.productName}
                         </p>
@@ -222,13 +302,19 @@ const OrderCompleted = () => {
         columnHelper.accessor('orderStatus', {
             header: '주문상태',
             cell: ({ row }) => {
-                // const rowId = row.id
-                // const orderNumber = row.original.orderNumber
-                // const isItemSelected = selections.items.has(rowId)
-                // const isOrderSelected = selections.orders.has(orderNumber)
+                const rowId = row.id
+                const orderNumber = row.original.orderNumber
+                const isItemSelected = selections.items.has(rowId)
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
-                    <div>
+                    <div
+                        className={
+                            isOrderSelected || isItemSelected
+                                ? 'bg-gray-100'
+                                : ''
+                        }
+                    >
                         <OrderStatusLabel
                             type={row.original.orderStatus as OrderStatus}
                         />
@@ -239,11 +325,13 @@ const OrderCompleted = () => {
         columnHelper.accessor('paymentAt', {
             header: '결제수단/결제일',
             cell: ({ row }) => {
-                // const orderNumber = row.original.orderNumber
-                // const isOrderSelected = selections.orders.has(orderNumber)
+                const orderNumber = row.original.orderNumber
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
-                    <div>{format(row.original.paymentAt, 'yyyy. MM. dd')}</div>
+                    <div className={isOrderSelected ? 'bg-gray-100' : ''}>
+                        {format(row.original.paymentAt, 'yyyy. MM. dd')}
+                    </div>
                 )
             },
             meta: { merge: true },
@@ -251,11 +339,11 @@ const OrderCompleted = () => {
         columnHelper.accessor('totalPaid', {
             header: '총 주문금액',
             cell: ({ row }) => {
-                // const orderNumber = row.original.orderNumber
-                // const isOrderSelected = selections.orders.has(orderNumber)
+                const orderNumber = row.original.orderNumber
+                const isOrderSelected = selections.orders.has(orderNumber)
 
                 return (
-                    <div>
+                    <div className={isOrderSelected ? 'bg-gray-100' : ''}>
                         {Number(row.original.totalPaid).toLocaleString()}원
                     </div>
                 )
@@ -265,14 +353,14 @@ const OrderCompleted = () => {
         columnHelper.accessor('deliveryStatus', {
             header: '배송상태',
             cell: ({ row }) => {
-                // const orderNumber = row.original.orderNumber
-                // const isOrderSelected = selections.orders.has(orderNumber)
+                const orderNumber = row.original.orderNumber
+                const isOrderSelected = selections.orders.has(orderNumber)
                 const deliveryStatus = row.original.deliveryStatus
                 const isValidDeliveryStatus =
                     deliveryStatus in DELIVERY_STATUS_LABEL_MAP
 
                 return (
-                    <div>
+                    <div className={isOrderSelected ? 'bg-gray-100' : ''}>
                         {isValidDeliveryStatus
                             ? DELIVERY_STATUS_LABEL_MAP[
                                   deliveryStatus as DeliveryStatus
@@ -286,44 +374,42 @@ const OrderCompleted = () => {
         columnHelper.accessor('courierCompany', {
             header: '택배사',
             cell: ({ row }) => {
-                // const orderNumber = row.original.orderNumber
-                // const isOrderSelected = selections.orders.has(orderNumber)
+                const orderNumber = row.original.orderNumber
+                const isOrderSelected = selections.orders.has(orderNumber)
 
-                return <div>{row.original.courierCompany || '-'}</div>
+                return (
+                    <div className={isOrderSelected ? 'bg-gray-100' : ''}>
+                        {row.original.courierCompany || '-'}
+                    </div>
+                )
             },
             meta: { merge: true },
         }),
         columnHelper.accessor('trackingNumber', {
             header: '운송장 번호',
             cell: ({ row }) => {
-                // const orderNumber = row.original.orderNumber
-                // const isOrderSelected = selections.orders.has(orderNumber)
+                const orderNumber = row.original.orderNumber
+                const isOrderSelected = selections.orders.has(orderNumber)
                 const trackingNumber = row.original.trackingNumber
 
                 return (
-                    <div>
-                        {trackingNumber ? (
-                            <div className="flex flex-col gap-1">
-                                <span>{trackingNumber}</span>
-                                <button
-                                    className="text-12 h-[30px] w-[56px] rounded-lg border border-gray-200 text-gray-800"
-                                    // onClick={() =>
-                                    //     setModalType('modifyTrackingNumber')
-                                    // }
-                                    // TODO :: 수정이 필요한가?
-                                >
-                                    수정
-                                </button>
-                            </div>
-                        ) : (
-                            <span>-</span>
-                        )}
+                    <div className={isOrderSelected ? 'bg-gray-100' : ''}>
+                        <span>{trackingNumber ?? '-'}</span>
                     </div>
                 )
             },
             meta: { merge: true },
         }),
     ]
+
+    const handleClickDetail = () => {
+        if (selections.orders.size === 0) {
+            setModalType('noSelect')
+            return
+        }
+
+        setModalType('orderDetail')
+    }
 
     return (
         <>
@@ -356,9 +442,7 @@ const OrderCompleted = () => {
                             <Button
                                 variant="outline"
                                 className="text-primary-500 text-12 border-primary-500 h-[30px] w-[61px] cursor-pointer rounded-md border p-0"
-                                onClick={() => {}}
-                                // TODO :: 체크박스가 모두 disabled이면 필요 없음
-                                // onClick={handleClickDetail}
+                                onClick={handleClickDetail}
                             >
                                 상세보기
                             </Button>
@@ -366,8 +450,7 @@ const OrderCompleted = () => {
                                 <p className="text-14 font-normal text-gray-700">
                                     선택
                                     <span className="text-primary-500 font-medium">
-                                        {/* TODO :: 완전 disabled인건지 확실하지 않음 */}
-                                        {0}개
+                                        {selections.orders.size}개
                                     </span>
                                 </p>
                                 <div className="h-3 w-0.5 bg-gray-400" />
@@ -380,6 +463,17 @@ const OrderCompleted = () => {
                             </div>
                         </div>
                     </div>
+                    {selections.orders.size > 0 && (
+                        <div className="px-6 py-2.5">
+                            <p className="text-14 rounded-md bg-[#FEF4F2] py-2.5 text-center text-gray-700">
+                                이 페이지에 있는 주문{' '}
+                                <span className="text-primary-500 font-medium">
+                                    {selections.orders.size}개
+                                </span>
+                                가 모두 선택되었습니다.
+                            </p>
+                        </div>
+                    )}
                     <SSdataTable
                         columns={columns}
                         data={tableData}
@@ -390,10 +484,27 @@ const OrderCompleted = () => {
                         }}
                     />
                     {/* TODO :: empty UI */}
-
-                    {/* TODO :: checkbox에 대한 MESSAGE UI */}
                 </div>
             </div>
+            {modalType && modalType === 'orderDetail' && (
+                <OrderDetailModal
+                    orderList={Array.from(selections.orders)}
+                    onClose={() => {
+                        setModalType(null)
+                    }}
+                />
+            )}
+            {modalType && (
+                <BgrDialog
+                    open={modalType === 'noSelect'}
+                    type="alert"
+                    title="주문을 선택해주세요."
+                    description="상세 주문정보를 확인하려면 주문 체크박스를 선택해주세요."
+                    onOpenChange={() => {
+                        setModalType(null)
+                    }}
+                />
+            )}
         </>
     )
 }

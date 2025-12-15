@@ -515,8 +515,6 @@ const Orders = () => {
                         }}
                     />
                     {/* TODO :: empty UI */}
-
-                    {/* TODO :: checkbox에 대한 MESSAGE UI */}
                 </div>
             </div>
             {/* TODO :: 협의 후, 전역 모달로 분리 & REFACTORING */}
