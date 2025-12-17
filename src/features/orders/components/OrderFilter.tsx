@@ -118,16 +118,16 @@ const OrderFilter = ({
                                             'w-[28px] h-[28px] text-12 font-normal text-[#71717A]',
                                         chevron: 'fill-gray-800',
                                         button_next:
-                                            'w-[30px] h-[30px] border border-gray-200 rounded-md',
+                                            'w-[30px] h-[30px] border border-gray-200 rounded-md flex items-center justify-center',
                                         button_previous:
-                                            'w-[30px] h-[30px] border border-gray-200 rounded-md',
+                                            'w-[30px] h-[30px] border border-gray-200 rounded-md flex items-center justify-center',
                                         caption_label:
                                             'text-18 font-bold text-gray-800',
                                         range_start:
-                                            'text-white bg-primary-500 rounded-l-md',
+                                            'text-white [&>button]:bg-primary-500! rounded-l-md',
                                         range_end:
-                                            'text-white bg-primary-500 rounded-r-md',
-                                        range_middle: 'bg-gray-50',
+                                            'text-white [&>button]:bg-primary-500! rounded-r-md',
+                                        range_middle: '[&>button]:bg-gray-50!',
                                     }}
                                 />
                             </div>
