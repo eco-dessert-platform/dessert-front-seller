@@ -10,6 +10,7 @@ import {
 } from 'src/pages/url/register/store/storeReducer'
 import { authSaga, authSlice } from 'src/features/auth/authReducer.ts'
 import { ordersSaga, ordersSlice } from 'src/features/orders/ordersReducer.ts'
+import { productsSaga, productsSlice } from 'src/features/products/productsReducer.ts'
 
 const reducers = {
     routerReducer: routerSlice.reducer,
@@ -18,6 +19,7 @@ const reducers = {
     storeReducer: storeSlice.reducer,
     auth: authSlice.reducer,
     ordersReducer: ordersSlice.reducer,
+    productsReducer: productsSlice.reducer,
 }
 
 export function* rootSaga() {
@@ -27,6 +29,7 @@ export function* rootSaga() {
         storeSaga(),
         authSaga(),
         ordersSaga(),
+        productsSaga(),
     ])
 }
 
