@@ -1,5 +1,5 @@
 import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
-import OrderDetailModal from './OrderDetailModal'
+import OrderDetailModal from './orderModals/components/OrderDetailModal'
 import TrackingNumberModal from './TrackingNumberModal'
 import RejectModal from './RejectModal'
 import { MODAL_TYPE, UI_TEXT } from '../constants/orderConstants'
