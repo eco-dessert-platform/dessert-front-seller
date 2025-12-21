@@ -12,24 +12,22 @@ import {
     BgrTabsTrigger,
 } from 'src/shared/components/tab/BGRtab'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
-import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 import OrderFilter from './components/OrderFilter'
 import OrderTable from './components/OrderTable'
-import OrderDetailModal from './components/OrderDetailModal'
+import OrderCompletedModals from './components/OrderCompletedModals'
 import { ordersAction } from './ordersReducer'
 import { useOrderSelection } from './hooks/useOrderSelection'
+import { useOrderModal } from './hooks/useOrderModal'
 import {
     transformOrderToTableRows,
     extractAllOrderNumbers,
 } from './utils/orderUtils'
 import type { OrderSearchFilter } from './type/orderFilterType'
-import type { SelectOption } from './type/orderModalType'
 import {
     DATE_RANGE,
     MODAL_TYPE,
     TAB_CATEGORY,
     FILTER_DEFAULTS,
-    UI_TEXT,
 } from './constants/orderConstants'
 import { SearchType } from './constants/orderEnums'
 import { ORDER_COMPLETED_TABS } from './constants/orderTabs'
@@ -60,7 +58,7 @@ const OrderCompleted = () => {
     const [activeTab, setActiveTab] = useState<TabCategory>(
         TAB_CATEGORY.PURCHASED,
     )
-    const [modalType, setModalType] = useState<string | null>(null)
+    const { modalState, openModal, closeModal } = useOrderModal()
 
     useEffect(() => {
         const filterValue = getInitialFilterValue()
@@ -104,11 +102,14 @@ const OrderCompleted = () => {
 
     const handleClickDetail = () => {
         if (selections.orders.size === 0) {
-            setModalType(MODAL_TYPE.NO_SELECT)
+            openModal({ type: MODAL_TYPE.NO_SELECT })
             return
         }
 
-        setModalType(MODAL_TYPE.ORDER_DETAIL)
+        openModal({
+            type: MODAL_TYPE.ORDER_DETAIL,
+            orderList: Array.from(selections.orders),
+        })
     }
 
     return (
@@ -185,25 +186,7 @@ const OrderCompleted = () => {
                     />
                 </div>
             </div>
-            {modalType === MODAL_TYPE.ORDER_DETAIL && (
-                <OrderDetailModal
-                    orderList={Array.from(selections.orders)}
-                    onClose={() => {
-                        setModalType(null)
-                    }}
-                />
-            )}
-            {modalType === MODAL_TYPE.NO_SELECT && (
-                <BgrDialog
-                    open
-                    type="alert"
-                    title={UI_TEXT.VALIDATION.NO_SELECT}
-                    description={UI_TEXT.VALIDATION.NO_SELECT_DESCRIPTION}
-                    onOpenChange={() => {
-                        setModalType(null)
-                    }}
-                />
-            )}
+            <OrderCompletedModals modalState={modalState} onClose={closeModal} />
         </>
     )
 }

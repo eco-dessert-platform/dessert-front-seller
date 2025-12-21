@@ -11,16 +11,14 @@ import {
     BgrTabsList,
     BgrTabsTrigger,
 } from 'src/shared/components/tab/BGRtab.tsx'
-import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
 import OrderFilter from './components/OrderFilter'
-import TrackingNumberModal from './components/TrackingNumberModal'
-import RejectModal from './components/RejectModal'
-import OrderDetailModal from './components/OrderDetailModal'
 import OrderControlButtons from './components/OrderControlButtons'
+import OrderModals from './components/orderModals/OrderModals.tsx'
 import OrderTable from './components/OrderTable'
 import { ordersAction } from './ordersReducer'
 import { useOrderSelection } from './hooks/useOrderSelection'
+import { useOrderModal } from './hooks/useOrderModal'
 import {
     extractAllOrderNumbers,
     transformOrderToTableRows,
@@ -32,7 +30,6 @@ import {
     FILTER_DEFAULTS,
     MODAL_TYPE,
     TAB_CATEGORY,
-    UI_TEXT,
 } from './constants/orderConstants'
 import { SearchType } from './constants/orderEnums'
 import { ORDER_TABS } from './constants/orderTabs'
@@ -59,12 +56,7 @@ const Orders = () => {
     )
 
     const [activeTab, setActiveTab] = useState<TabCategory>(TAB_CATEGORY.ALL)
-    const [modalType, setModalType] = useState<string | null>(null)
-    const [selectedOrderForTracking, setSelectedOrderForTracking] = useState<{
-        orderNumber: string
-        trackingNumber?: string
-        courierCompany?: string
-    } | null>(null)
+    const { modalState, openModal, closeModal } = useOrderModal()
 
     useEffect(() => {
         const filterValue = getInitialFilterValue()
@@ -94,11 +86,14 @@ const Orders = () => {
 
     const handleClickDetail = () => {
         if (selections.orders.size === 0) {
-            setModalType(MODAL_TYPE.NO_SELECT)
+            openModal({ type: MODAL_TYPE.NO_SELECT })
             return
         }
 
-        setModalType(MODAL_TYPE.ORDER_DETAIL)
+        openModal({
+            type: MODAL_TYPE.ORDER_DETAIL,
+            orderList: Array.from(selections.orders),
+        })
     }
 
     const handleSearch = useCallback(() => {
@@ -106,7 +101,7 @@ const Orders = () => {
         dispatch(ordersAction.getOrderList(filterValue))
     }, [dispatch])
 
-    const handleOrderAction = useCallback((_actionType: string) => {
+    const handleOrderAction = useCallback((actionType: string) => {
         // TODO :: 주문 상태 변경 API 작업 완료되면 작업 필요
     }, [])
 
@@ -116,15 +111,15 @@ const Orders = () => {
                 (o: { orderNumber: string }) => o.orderNumber === orderNumber,
             )
             if (order) {
-                setSelectedOrderForTracking({
+                openModal({
+                    type: MODAL_TYPE.MODIFY_TRACKING_NUMBER,
                     orderNumber,
                     trackingNumber: order.trackingNumber || undefined,
                     courierCompany: order.courierCompany || undefined,
                 })
-                setModalType(MODAL_TYPE.MODIFY_TRACKING_NUMBER)
             }
         },
-        [response],
+        [response, openModal],
     )
 
     const handleSelectAll = useCallback(() => {
@@ -214,76 +209,7 @@ const Orders = () => {
                     />
                 </div>
             </div>
-            {modalType === MODAL_TYPE.NO_SELECT && (
-                <BgrDialog
-                    open
-                    type="alert"
-                    title={UI_TEXT.VALIDATION.NO_SELECT}
-                    description={UI_TEXT.VALIDATION.NO_SELECT_DESCRIPTION}
-                    onOpenChange={() => {
-                        setModalType(null)
-                    }}
-                />
-            )}
-            {modalType === MODAL_TYPE.ORDER_DETAIL && (
-                <OrderDetailModal
-                    orderList={Array.from(selections.orders)}
-                    onClose={() => {
-                        setModalType(null)
-                    }}
-                />
-            )}
-            {modalType === MODAL_TYPE.REGIST_TRACKING_NUMBER && (
-                <TrackingNumberModal
-                    type="register"
-                    onCancel={() => {
-                        setModalType(null)
-                    }}
-                    onConfirm={() => {
-                        setModalType(null)
-                    }}
-                />
-            )}
-            {modalType === MODAL_TYPE.MODIFY_TRACKING_NUMBER &&
-                selectedOrderForTracking && (
-                    <TrackingNumberModal
-                        type="modify"
-                        trackingNumber={selectedOrderForTracking.trackingNumber}
-                        courierCompany={selectedOrderForTracking.courierCompany}
-                        onCancel={() => {
-                            setModalType(null)
-                            setSelectedOrderForTracking(null)
-                        }}
-                        onConfirm={() => {
-                            setModalType(null)
-                            setSelectedOrderForTracking(null)
-                        }}
-                    />
-                )}
-            {modalType === MODAL_TYPE.REFUND && (
-                <RejectModal
-                    rejectType="CANCEL"
-                    title="주문취소 사유"
-                    onConfirm={() => {
-                        setModalType(null)
-                    }}
-                    onCancel={() => {
-                        setModalType(null)
-                    }}
-                />
-            )}
-            {modalType === MODAL_TYPE.CANCEL_REFUSE && (
-                <RejectModal
-                    rejectType="CANCEL_REFUSE"
-                    title="교환 거절 사유"
-                    onConfirm={() => {
-                        setModalType(null)
-                    }}
-                    onCancel={() => {
-                        setModalType(null)
-                    }}
-                />
-            )}
+            {modalState && <OrderModals modalState={modalState} onClose={closeModal} />}
         </>
     )
 }

@@ -1,16 +1,16 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
 
-import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
+import { BgrDialog } from 'src/shared/components/dialog/BgrDialog.tsx'
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
-} from 'src/shared/lib/shadcn/components/ui/accordion'
-import { MOCK_ORDER_DETAIL_LIST } from '../data/ordersMockData'
-import type { OrderDetailModalProps } from '../type/orderModalType'
-import { DATE_FORMAT } from '../constants/orderConstants'
+} from 'src/shared/lib/shadcn/components/ui/accordion.tsx'
+import { MOCK_ORDER_DETAIL_LIST } from '../../../data/ordersMockData.ts'
+import type { OrderDetailModalProps } from '../../../type/orderModalType.ts'
+import { DATE_FORMAT } from '../../../constants/orderConstants.ts'
 
 const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
     const [orderDetailList, setOrderDetailList] = useState(
