@@ -1,74 +1,69 @@
 import { useState } from 'react'
-import { createColumnHelper, type ColumnDef } from '@tanstack/react-table'
 import { format, sub } from 'date-fns'
+import { ColumnDef, createColumnHelper } from '@tanstack/react-table'
 
 import {
     BgrTabs,
     BgrTabsList,
     BgrTabsTrigger,
-} from 'src/shared/components/tab/BGRtab.tsx'
+} from 'src/shared/components/tab/BGRtab'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
-import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
-import OrderStatusLabel from './components/OrderStatusLabel'
+import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
+import { MOCK_ORDER_COMPLETED } from './data/ordersMockData'
 import OrderFilter from './components/OrderFilter'
-import TrackingNumberModal from './components/TrackingNumberModal'
-import RejectModal from './components/RejectModal'
-import OrderDetailModal from './components/OrderDetailModal'
-import OrderControlButtons from './components/OrderControlButtons'
-import { MOCK_ORDER_LIST } from './data/ordersMockData'
-import type {
-    TabCategory,
-    DeliveryStatus,
-    OrderStatus,
-} from './type/orderStatusType'
+import OrderStatusLabel from './components/OrderStatusLabel'
 import type { OrderTableRow } from './type/orderTableType'
+import type { DeliveryStatus, OrderStatus } from './type/orderStatusType'
 import type { OrderSearchFilter } from './type/orderFilterType'
 import type { SelectOption } from './type/orderModalType'
 import { DELIVERY_STATUS_LABEL_MAP } from './data/orderStatusMap'
+import OrderDetailModal from './components/OrderDetailModal'
 
-/**
- * TODO :: 탭 카운트 조회 API 확정 시, 해당 key를 할당
- */
+type TabCategory = 'PURCHASED' | 'CANCELED' | 'RETURNED' | 'EXCHANGED'
+
 const TABS: Array<{ key: TabCategory; title: string }> = [
-    { key: 'ALL', title: '전체' },
-    { key: 'PAID', title: '결제완료' }, // unknown key
-    { key: 'CHECKED', title: '발주확인' }, // unknown key
-    { key: 'SHIPPED', title: '상품발송' },
-    { key: 'DELIVERED', title: '배송완료' },
-    { key: 'PAYMENT_COMPLETED', title: '취소' },
-    { key: 'REFUND', title: '반품' }, //  unknown key
-    { key: 'CHANGE', title: '교환' }, // unknown key
+    { key: 'PURCHASED', title: '완료' },
+    { key: 'CANCELED', title: '취소' },
+    { key: 'RETURNED', title: '반품' },
+    { key: 'EXCHANGED', title: '교환' },
 ]
 
 const ORDER_STATUS_OPTIONS = [
     { value: 'ALL', label: '전체' },
-    { value: 'PAID', label: '결제완료' },
-    // TODO :: 해당 value가 없어, 담당자에게 문의 필요
-    { value: 'nnnnn', label: '상품준비' },
-    { value: 'SHIPPED', label: '상품발송' },
-    { value: 'DELIVERED', label: '배송완료' },
+    { value: 'PURCHASE_CONFIRMED', label: '구매확정' },
+    // TODO :: 취소 완료라는 상태가 없어, 확인 필요
+    { value: 'CANCEL_COMPLETED', label: '취소 완료' },
+    { value: 'CANCEL_REJECTED', label: '취소 거절' },
+    { value: 'RETURN_REJECTED', label: '반품 거절' },
+    { value: 'RETURN_COMPLETED', label: '반품 완료' },
+    { value: 'RETURN_RETURNED', label: '반품 반려' },
+    { value: 'EXCHANGE_REJECTED', label: '교환 거절' },
+    { value: 'EXCHANGE_COMPLETED', label: '교환 완료' },
+    { value: 'EXCHANGE_RETURNED', label: '교환 반려' },
 ] as const satisfies SelectOption[]
 
 const SEARCH_OPTIONS = [
     { value: 'ORDER_NUMBER', label: '주문번호' },
-    { value: 'RECEIVER_NAME', label: '수취인명' },
+    { value: 'BUYER_NAME', label: '수취인명' },
     { value: 'PRODUCT_NAME', label: '상품명' },
     { value: 'TRACKING_NUMBER', label: '송장번호' },
 ] as const satisfies SelectOption[]
 
-const columnHelper = createColumnHelper<OrderTableRow>()
-
 const getInitialFilterValue = (): OrderSearchFilter => ({
     orderStatus: 'ALL',
-    startDate: sub(new Date(), { weeks: 1 }),
+    startDate: sub(new Date(), { months: 1 }),
     endDate: new Date(),
     searchType: 'ORDER_NUMBER',
     keyword: '',
 })
 
-const Orders = () => {
-    const [activeTab, setActiveTab] = useState<TabCategory>('ALL')
+const columnHelper = createColumnHelper<OrderTableRow>()
+
+const OrderCompleted = () => {
+    const [activeTab, setActiveTab] = useState<TabCategory>('PURCHASED')
+    const [orderContent, setOrderContent] = useState(MOCK_ORDER_COMPLETED)
+    const [modalType, setModalType] = useState<string | null>(null)
     const [selections, setSelections] = useState<{
         orders: Set<string>
         items: Set<string>
@@ -76,35 +71,6 @@ const Orders = () => {
         orders: new Set(),
         items: new Set(),
     })
-
-    const [response] = useState(MOCK_ORDER_LIST)
-    const [modalType, setModalType] = useState<string | null>(null)
-
-    const tableData: OrderTableRow[] = response.content.flatMap((order) =>
-        order.orderItems.map((item) => ({
-            recipientName: order.recipientName,
-            productName: item.boardTitle,
-            itemName: item.itemName,
-            itemQuantity: item.quantity,
-            itemPrice: item.totalPrice,
-            orderStatus: item.orderStatus,
-            orderNumber: order.orderNumber,
-            paymentAt: order.paymentAt,
-            totalPaid: order.totalPaid.toString(),
-            deliveryStatus: order.deliveryStatus,
-            courierCompany: order.courierCompany,
-            trackingNumber: order.trackingNumber,
-        })),
-    )
-
-    const handleClickDetail = () => {
-        if (selections.orders.size === 0) {
-            setModalType('noSelect')
-            return
-        }
-
-        setModalType('orderDetail')
-    }
 
     const handleSearch = () => {
         // TODO :: API 요청 함수 할당 필요
@@ -172,13 +138,26 @@ const Orders = () => {
         })
     }
 
-    const allOrderNumbers = Array.from(
-        new Set(response.content.map((order) => order.orderNumber)),
+    const tableData: OrderTableRow[] = orderContent.content.flatMap((order) =>
+        order.orderItems.map((item) => ({
+            recipientName: order.recipientName,
+            productName: item.boardTitle,
+            itemName: item.itemName,
+            itemQuantity: item.quantity,
+            itemPrice: item.totalPrice,
+            orderStatus: item.orderStatus,
+            orderNumber: order.orderNumber,
+            paymentAt: order.paymentAt,
+            totalPaid: order.totalPaid.toString(),
+            deliveryStatus: order.deliveryStatus,
+            courierCompany: order.courierCompany,
+            trackingNumber: order.trackingNumber,
+        })),
     )
 
-    const handleOrderAction = (actionType: string) => {
-        // TODO :: 주문 상태 변경 API 작업 완료되면 작업 필요
-    }
+    const allOrderNumbers = Array.from(
+        new Set(orderContent.content.map((order) => order.orderNumber)),
+    )
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const columns: ColumnDef<OrderTableRow, any>[] = [
@@ -415,21 +394,7 @@ const Orders = () => {
 
                 return (
                     <div className={isOrderSelected ? 'bg-gray-100' : ''}>
-                        {trackingNumber ? (
-                            <div className="flex flex-col gap-1">
-                                <span>{trackingNumber}</span>
-                                <button
-                                    className="text-12 h-[30px] w-[56px] rounded-lg border border-gray-200 text-gray-800"
-                                    onClick={() =>
-                                        setModalType('modifyTrackingNumber')
-                                    }
-                                >
-                                    수정
-                                </button>
-                            </div>
-                        ) : (
-                            <span>-</span>
-                        )}
+                        <span>{trackingNumber ?? '-'}</span>
                     </div>
                 )
             },
@@ -437,12 +402,20 @@ const Orders = () => {
         }),
     ]
 
+    const handleClickDetail = () => {
+        if (selections.orders.size === 0) {
+            setModalType('noSelect')
+            return
+        }
+
+        setModalType('orderDetail')
+    }
+
     return (
         <>
             <BgrTabs
                 value={activeTab}
                 onValueChange={(changedTab) => {
-                    // type 에러
                     setActiveTab(changedTab as TabCategory)
                 }}
             >
@@ -473,10 +446,6 @@ const Orders = () => {
                             >
                                 상세보기
                             </Button>
-                            <OrderControlButtons
-                                activeTab={activeTab}
-                                onClick={handleOrderAction}
-                            />
                             <div className="flex items-center gap-1">
                                 <p className="text-14 font-normal text-gray-700">
                                     선택
@@ -488,7 +457,7 @@ const Orders = () => {
                                 <p className="text-14 font-normal text-gray-700">
                                     전체
                                     <span className="font-medium">
-                                        {response.content.length ?? 0}개
+                                        {orderContent.content.length ?? 0}개
                                     </span>
                                 </p>
                             </div>
@@ -517,7 +486,14 @@ const Orders = () => {
                     {/* TODO :: empty UI */}
                 </div>
             </div>
-            {/* TODO :: 협의 후, 전역 모달로 분리 & REFACTORING */}
+            {modalType && modalType === 'orderDetail' && (
+                <OrderDetailModal
+                    orderList={Array.from(selections.orders)}
+                    onClose={() => {
+                        setModalType(null)
+                    }}
+                />
+            )}
             {modalType && (
                 <BgrDialog
                     open={modalType === 'noSelect'}
@@ -529,72 +505,8 @@ const Orders = () => {
                     }}
                 />
             )}
-            {modalType && (
-                <BgrDialog
-                    open={modalType === 'noKeyword'}
-                    type="alert"
-                    title="상세 검색 내용을 입력해주세요."
-                    onOpenChange={() => {
-                        setModalType(null)
-                    }}
-                />
-            )}
-            {
-                // TODO :: onConfirm에 API 추가
-                modalType && modalType === 'registTrackingNumber' && (
-                    <TrackingNumberModal
-                        type="register"
-                        onCancel={() => {
-                            setModalType(null)
-                        }}
-                        onConfirm={() => {
-                            setModalType(null)
-                        }}
-                    />
-                )
-            }
-            {
-                // TODO :: 모달 open 시, trackingNumber와 courierCompany 넘겨야 함
-                modalType && modalType === 'modifyTrackingNumber' && (
-                    <TrackingNumberModal
-                        type="modify"
-                        trackingNumber={'123'}
-                        courierCompany={'321312'}
-                        onCancel={() => {
-                            setModalType(null)
-                        }}
-                        onConfirm={() => {
-                            setModalType(null)
-                        }}
-                    />
-                )
-            }
-            {modalType && modalType === 'refund' && (
-                <RejectModal
-                    // TODO :: 임시
-                    rejectType="CANCEL"
-                    title="주문취소 사유"
-                    onConfirm={() => {}}
-                />
-            )}
-            {modalType && modalType === 'cancelRefuse' && (
-                <RejectModal
-                    // TODO :: 임시
-                    rejectType="CANCEL_REFUSE"
-                    title="교환 거절 사유"
-                    onConfirm={() => {}}
-                />
-            )}
-            {modalType && modalType === 'orderDetail' && (
-                <OrderDetailModal
-                    orderList={Array.from(selections.orders)}
-                    onClose={() => {
-                        setModalType(null)
-                    }}
-                />
-            )}
         </>
     )
 }
 
-export default Orders
+export default OrderCompleted

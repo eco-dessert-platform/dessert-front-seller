@@ -1,7 +1,7 @@
 export const MOCK_ORDER_LIST = {
     content: [
         {
-            deliveryStatus: 'PREPARING_PRODUCT',
+            deliveryStatus: 'PREPARING',
             courierCompany: 'CJ 대한통운',
             trackingNumber: '1234567890',
             orderNumber: 'ORDER-20240921-00001',
@@ -15,7 +15,7 @@ export const MOCK_ORDER_LIST = {
                     quantity: 2,
                     unitPrice: 50000,
                     totalPrice: 100000,
-                    orderStatus: 'PAID',
+                    orderStatus: 'PAYMENT_COMPLETED',
                 },
                 {
                     boardTitle: '쿠키 1',
@@ -23,12 +23,12 @@ export const MOCK_ORDER_LIST = {
                     quantity: 1,
                     unitPrice: 50000,
                     totalPrice: 100000,
-                    orderStatus: 'PAID',
+                    orderStatus: 'PAYMENT_COMPLETED',
                 },
             ],
         },
         {
-            deliveryStatus: 'SHIPPING',
+            deliveryStatus: 'DELIVERING',
             courierCompany: '우체국 택배',
             trackingNumber: '0987654321',
             totalPaid: 100000,
@@ -42,12 +42,12 @@ export const MOCK_ORDER_LIST = {
                     quantity: 2,
                     unitPrice: 50000,
                     totalPrice: 100000,
-                    orderStatus: 'PAID',
+                    orderStatus: 'PAYMENT_COMPLETED',
                 },
             ],
         },
         {
-            deliveryStatus: 'PREPARING_PRODUCT',
+            deliveryStatus: 'PREPARING',
             courierCompany: null,
             trackingNumber: null,
             totalPaid: 150000,
@@ -61,7 +61,7 @@ export const MOCK_ORDER_LIST = {
                     quantity: 1,
                     unitPrice: 150000,
                     totalPrice: 150000,
-                    orderStatus: 'PAID',
+                    orderStatus: 'PAYMENT_COMPLETED',
                 },
             ],
         },
@@ -171,3 +171,46 @@ export const MOCK_ORDER_DETAIL_LIST = [
         ],
     },
 ]
+
+// TODO :: 데이터 구조 미확정
+export const MOCK_ORDER_COMPLETED = {
+    content: [
+        {
+            deliveryStatus: 'DELIVERED',
+            orderId: 1,
+            orderNumber: '000-123',
+            paymentAt: '2024-01-01',
+            paidDayOfWeek: 'MONDAY',
+            recipientName: '홍길동',
+            courierCompany: 'CJ대한통운',
+            trackingNumber: '123-123',
+            totalPaid: 200000,
+            orderItems: [
+                {
+                    orderItemId: 1,
+                    orderStatus: 'PAYMENT_COMPLETED',
+                    courierCompany: 'CJ대한통운',
+                    trackingNumber: '123-123',
+                    boardTitle: '베이글',
+                    itemName: '저칼로리 베이글',
+                    quantity: 5,
+                    totalPrice: 10000,
+                },
+                {
+                    orderItemId: 2,
+                    orderStatus: 'CANCEL_APPROVED',
+                    courierCompany: '롯데택배',
+                    trackingNumber: '123-456',
+                    boardTitle: '초콜릿',
+                    itemName: '저당 초콜릿',
+                    quantity: 10,
+                    totalPrice: 10000,
+                },
+            ],
+        },
+    ],
+    page: 0,
+    size: 10,
+    totalPages: 1,
+    totalElements: 10,
+}

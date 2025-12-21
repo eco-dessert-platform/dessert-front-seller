@@ -1,5 +1,7 @@
+import OrderCompleted from 'src/features/orders/OrderCompleted'
+
 const OrderCompletePage = () => {
-    return <div>vvvvvvvvvvv</div>
+    return <OrderCompleted />
 }
 
 export default OrderCompletePage

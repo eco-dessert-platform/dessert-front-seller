@@ -8,27 +8,12 @@ export type TabCategory =
     | 'REFUND'
     | 'CHANGE'
 
-export type DeliveryStatus =
-    | 'NONE'
-    | 'PREPARING'
-    | 'PICKING_UP'
-    | 'PICKED_UP'
-    | 'DELIVERING'
-    | 'DELIVERED'
-
-export type OrderStatus =
-    | 'PAYMENT_COMPLETED'
-    | 'ORDER_CONFIRMED'
-    | 'IN_PRODUCTION'
-    | 'SHIPPED'
-    | 'PURCHASE_CONFIRMED'
-
-export type CancelStatus =
+export type CancelOrderStatus =
     | 'CANCEL_REQUESTED'
     | 'CANCEL_APPROVED'
     | 'CANCEL_REJECTED'
 
-export type ReturnStatus =
+export type ReturnOrderStatus =
     | 'RETURN_REQUESTED'
     | 'RETURN_APPROVED'
     | 'RETURN_REJECTED'
@@ -39,7 +24,7 @@ export type ReturnStatus =
     | 'RETURN_ON_HOLD'
     | 'RETURN_COMPLETED'
 
-export type ExchangeStatus =
+export type ExchangeOrderStatus =
     | 'EXCHANGE_REQUEST'
     | 'EXCHANGE_APPROVED'
     | 'EXCHANGE_REJECTED'
@@ -51,6 +36,16 @@ export type ExchangeStatus =
     | 'EXCHANGE_ITEM_SHIPPED'
     | 'EXCHANGE_COMPLETED'
 
+export type OrderStatus =
+    | 'PAYMENT_COMPLETED'
+    | 'ORDER_CONFIRMED'
+    | 'IN_PRODUCTION'
+    | 'SHIPPED'
+    | 'PURCHASE_CONFIRMED'
+    | CancelOrderStatus
+    | ReturnOrderStatus
+    | ExchangeOrderStatus
+
 export type PaymentStatus =
     | 'PENDING'
     | 'IN_PROGRESS'
@@ -58,3 +53,11 @@ export type PaymentStatus =
     | 'FAILED'
     | 'CANCELED'
     | 'REFUNDED'
+
+export type DeliveryStatus =
+    | 'NONE'
+    | 'PREPARING'
+    | 'PICKING_UP'
+    | 'PICKED_UP'
+    | 'DELIVERING'
+    | 'DELIVERED'

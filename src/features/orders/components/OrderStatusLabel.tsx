@@ -1,26 +1,20 @@
-import clsx from "clsx";
+import clsx from 'clsx'
+import type { OrderStatus } from '../type/orderStatusType'
+import { ORDER_STATUS_LABEL_MAP } from '../data/orderStatusMap'
 
-// TODO :: 타입 확정 후, index의 타입 OrderStatus로 변경
-const STYLE_BY_TYPE: Record<string, string> = {
-    // 결제완료
-    PAID: 'text-gray-600 border-gray-600 text-gray-200',
-    // 발주확인
-    CHECKED: 'text-yellow-800 bg-yellow-50 border-yello-800',
-    // 상품준비
-    READY_PRODUCT: 'text-yellow-800 bg-yellow-50 border-yello-800',
-    // 상품회수
-    WITHDRAW: 'bg-green-50 border-green-800 text-green-800',
-    // 상품확인
-    CONFIRMED: 'bg-green-50 border-green-800 text-green-800',
-    // 구매확정
-    DECIDE: 'text-gray-800 bg-gray-300 border-gray-600',
-    // 취소요청
-    CANCEL_REQUEST: 'text-[#DE4525] bg-red-50 border-[#DE4525]',
-    // 반품 요청
-    REFUND_REQUEST: 'text-gray-600 bg-gray-600 text-white',
+/** TODO :: 아래 주석은 디자인 파일에서의 명칭이 백엔드의 enum에서 확인되지 않아, 확인 필요 */
+const STYLE_BY_TYPE: Partial<Record<OrderStatus, string>> = {
+    PAYMENT_COMPLETED: 'text-gray-600 border-gray-600 text-gray-200',
+    // CHECKED: 'text-yellow-800 bg-yellow-50 border-yello-800',
+    // READY_PRODUCT: 'text-yellow-800 bg-yellow-50 border-yello-800',
+    EXCHANGE_ITEM_COLLECTED: 'bg-green-50 border-green-800 text-green-800',
+    EXCHANGE_ITEM_INSPECTING: 'bg-green-50 border-green-800 text-green-800',
+    PURCHASE_CONFIRMED: 'text-gray-800 bg-gray-300 border-gray-600',
+    CANCEL_REQUESTED: 'text-[#DE4525] bg-red-50 border-[#DE4525]',
+    RETURN_REQUESTED: 'text-gray-600 bg-gray-600 text-white',
 }
 
-const OrderStatusLabel = ({ type, text }: { type: string; text: string }) => {
+const OrderStatusLabel = ({ type }: { type: OrderStatus }) => {
     return (
         <div
             className={clsx(
@@ -28,7 +22,7 @@ const OrderStatusLabel = ({ type, text }: { type: string; text: string }) => {
                 type in STYLE_BY_TYPE && STYLE_BY_TYPE[type],
             )}
         >
-            {text}
+            {ORDER_STATUS_LABEL_MAP[type] ?? type}
         </div>
     )
 }
