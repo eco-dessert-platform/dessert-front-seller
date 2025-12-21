@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import {
-    getKakaoPopup,
-    getGooglePopup,
-    clearKakaoPopup,
     clearGooglePopup,
+    clearKakaoPopup,
+    getGooglePopup,
+    getKakaoPopup,
 } from 'src/features/auth/utils/popupManager'
 import { RootState } from 'src/global/store/redux/reduxStore'
 import { authAction } from '../authReducer.ts'

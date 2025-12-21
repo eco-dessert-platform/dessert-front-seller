@@ -1,4 +1,11 @@
-import { ChangeEvent, useEffect, useMemo, useState, useCallback, useRef } from 'react'
+import {
+    ChangeEvent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react'
 import { Label } from 'src/shared/lib/shadcn/components/ui/label.tsx'
 import { hexToOklch, oklchToHex } from 'src/shared/utils/colorUtils.tsx'
 import { useDispatch } from 'react-redux'
@@ -24,7 +31,9 @@ const ColorPicker = ({
     }, [color])
 
     const dispatch = useDispatch()
-    const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+        undefined,
+    )
 
     const debouncedUpdate = useCallback(
         (key: string, value: string) => {

@@ -1,10 +1,11 @@
-import { type DateRange } from "react-day-picker"
+import { type DateRange } from 'react-day-picker'
+import type { OrderStatusFilter, SearchType } from '../constants/orderEnums'
 
 export interface OrderSearchFilter {
-    orderStatus: string // TODO :: enum type 할당 후, 주석 제거
+    orderStatus: OrderStatusFilter | string
     startDate: Date
     endDate: Date
-    searchType: string // TODO :: enum type 할당 후, 주석 제거
+    searchType: SearchType | string
     keyword: string
 }
 

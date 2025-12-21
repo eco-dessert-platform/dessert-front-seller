@@ -10,7 +10,7 @@ import {
 } from 'src/shared/lib/shadcn/components/ui/accordion'
 import { MOCK_ORDER_DETAIL_LIST } from '../data/ordersMockData'
 import type { OrderDetailModalProps } from '../type/orderModalType'
-
+import { DATE_FORMAT } from '../constants/orderConstants'
 
 const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
     const [orderDetailList, setOrderDetailList] = useState(
@@ -37,8 +37,8 @@ const OrderDetailModal = ({ orderList, onClose }: OrderDetailModalProps) => {
                                     </p>
                                     <p className="text-16 pr-[30px] pl-2.5 text-gray-800">
                                         {format(
-                                            orderInfo.orderDate,
-                                            'yyyy.MM.dd',
+                                            new Date(orderInfo.orderDate),
+                                            DATE_FORMAT.STANDARD,
                                         )}
                                     </p>
                                     <p className="text-14 rounded-[4px] border border-gray-300 bg-white px-2 py-0.5 font-medium text-gray-800">

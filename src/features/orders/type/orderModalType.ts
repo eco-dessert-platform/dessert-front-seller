@@ -1,8 +1,10 @@
 import type { OrderSearchFilter } from './orderFilterType'
+// OrderControlButtons 관련 타입
+import type { TabCategory } from './orderStatusType'
+import type { ActionType } from './orderActionType'
 
 // OrderDetailModal 관련 타입
 export interface OrderDetailModalProps {
-    // TODO :: orderNum 배열 형태로 받은 뒤, 노출 처리
     orderList: string[]
     onClose: () => void
 }
@@ -14,13 +16,7 @@ export interface SelectOption {
 
 // OrderFilter 관련 타입
 export interface OrderFilterProps {
-    initialFilterValue: {
-        orderStatus: string // TODO :: enum type
-        startDate: Date
-        endDate: Date
-        searchType: string // TODO :: enum type
-        keyword: string
-    }
+    initialFilterValue: OrderSearchFilter
     orderStatusOptions: SelectOption[]
     searchOptions: SelectOption[]
     onSearch: (searchCondition: OrderSearchFilter) => void
@@ -69,10 +65,6 @@ export interface TrackingNumberModalProps {
     onConfirm: () => void
     onCancel: () => void
 }
-
-// OrderControlButtons 관련 타입
-import type { TabCategory } from './orderStatusType'
-import type { ActionType } from './orderActionType'
 
 export interface OrderControlButtonsProps {
     activeTab: TabCategory

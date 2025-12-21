@@ -9,6 +9,7 @@ import {
     storeSlice,
 } from 'src/pages/url/register/store/storeReducer'
 import { authSaga, authSlice } from 'src/features/auth/authReducer.ts'
+import { ordersSaga, ordersSlice } from 'src/features/orders/ordersReducer.ts'
 
 const reducers = {
     routerReducer: routerSlice.reducer,
@@ -16,10 +17,17 @@ const reducers = {
     themeReducer: themeSlice.reducer,
     storeReducer: storeSlice.reducer,
     auth: authSlice.reducer,
+    ordersReducer: ordersSlice.reducer,
 }
 
 export function* rootSaga() {
-    yield all([sampleSaga(), routerSaga(), storeSaga(), authSaga()])
+    yield all([
+        sampleSaga(),
+        routerSaga(),
+        storeSaga(),
+        authSaga(),
+        ordersSaga(),
+    ])
 }
 
 const sagaMiddleware = createSagaMiddleware()

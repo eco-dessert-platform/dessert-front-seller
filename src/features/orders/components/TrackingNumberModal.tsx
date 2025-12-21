@@ -4,6 +4,7 @@ import * as SelectPrimitive from '@radix-ui/react-select'
 
 import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 import type { TrackingNumberModalProps } from '../type/orderModalType'
+import { UI_TEXT } from '../constants/orderConstants'
 
 const CARRIER_LIST = [
     'CJ대한통운',
@@ -85,7 +86,7 @@ const TrackingNumberModal = ({
                         <p className="text-12 text-gray-800">운송장 번호</p>
                         <input
                             type="text"
-                            placeholder="운송장 번호를 입력해주세요."
+                            placeholder={UI_TEXT.PLACEHOLDER.TRACKING_NUMBER}
                             value={inputValues.trackingNumber}
                             onChange={(event) => {
                                 setInputValues((prev) => ({

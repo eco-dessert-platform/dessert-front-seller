@@ -12,6 +12,7 @@ import type {
     FilterValueHandler,
     OrderSearchFilter,
 } from '../type/orderFilterType'
+import { MODAL_TYPE, UI_TEXT } from '../constants/orderConstants'
 
 const OrderFilter = ({
     initialFilterValue,
@@ -31,7 +32,7 @@ const OrderFilter = ({
 
     const handleSearchWithKeyword = (nextFilterValue: OrderSearchFilter) => {
         if (!nextFilterValue.keyword) {
-            setModalType('noKeyword')
+            setModalType(MODAL_TYPE.NO_KEYWORD)
             return
         }
 
@@ -216,7 +217,7 @@ const OrderFilter = ({
                             >
                                 <input
                                     type="text"
-                                    placeholder="1~50자로 입력해주세요."
+                                    placeholder={UI_TEXT.PLACEHOLDER.KEYWORD}
                                     className="grow"
                                     value={filterValue.keyword}
                                     onChange={(event) => {
@@ -234,12 +235,11 @@ const OrderFilter = ({
                     </div>
                 </div>
             </div>
-            {/* TODO :: 전역 모달 생성 후, 제거 예정 */}
             {modalType && (
                 <BgrDialog
-                    open={modalType === 'noKeyword'}
+                    open={modalType === MODAL_TYPE.NO_KEYWORD}
                     type="alert"
-                    title="상세 검색 내용을 입력해주세요."
+                    title={UI_TEXT.VALIDATION.NO_KEYWORD}
                     onOpenChange={() => {
                         setModalType(null)
                     }}

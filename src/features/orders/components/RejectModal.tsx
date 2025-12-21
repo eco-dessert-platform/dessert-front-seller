@@ -4,13 +4,9 @@ import { ChevronDown } from 'lucide-react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 import RejectImageUploader from './RejectImageUploader'
-import type {
-    RejectModalProps,
-    RejectInputValue,
-} from '../type/orderModalType'
+import type { RejectInputValue, RejectModalProps } from '../type/orderModalType'
 import { REJECT_TYPE_LIST } from '../data/rejectTypeList'
-
-const MAX_REASON_LENGTH = 2000
+import { INPUT_LIMITS, UI_TEXT } from '../constants/orderConstants'
 
 const RejectModal = ({
     rejectType,
@@ -32,7 +28,7 @@ const RejectModal = ({
     }: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputValues((prev) => ({
             ...prev,
-            reason: target.value.slice(0, MAX_REASON_LENGTH),
+            reason: target.value.slice(0, INPUT_LIMITS.REASON_MAX_LENGTH),
         }))
     }
 
@@ -96,8 +92,8 @@ const RejectModal = ({
                     <div className="flex flex-col gap-1.5">
                         <div className="flex flex-col gap-2.5 rounded-lg border border-gray-300 px-3 py-2">
                             <textarea
-                                placeholder="내용을 자세하게 입력해주세요."
-                                maxLength={MAX_REASON_LENGTH}
+                                placeholder={UI_TEXT.PLACEHOLDER.REASON}
+                                maxLength={INPUT_LIMITS.REASON_MAX_LENGTH}
                                 value={inputValues.reason}
                                 className="resize-none focus:outline-none"
                                 onChange={handleChangeReason}
@@ -107,11 +103,13 @@ const RejectModal = ({
                                 <span className="text-primary-500 font-bold">
                                     {inputValues.reason.length}
                                 </span>
-                                /{MAX_REASON_LENGTH.toLocaleString()})
+                                /
+                                {INPUT_LIMITS.REASON_MAX_LENGTH.toLocaleString()}
+                                )
                             </p>
                         </div>
                         <p className="text-12 text-gray-500">
-                            10자 이상 사유를 작성해주세요
+                            {UI_TEXT.VALIDATION.REASON_MIN_LENGTH}
                         </p>
                     </div>
                 </div>
@@ -130,7 +128,9 @@ const RejectModal = ({
                     </button>
                     <button
                         disabled={
-                            !inputValues.type || inputValues.reason.length < 1
+                            !inputValues.type ||
+                            inputValues.reason.length <
+                                INPUT_LIMITS.REASON_MIN_LENGTH
                         }
                         onClick={onConfirm}
                         className="h-[42px] w-[90px] cursor-pointer rounded-lg bg-gray-900 text-white disabled:cursor-not-allowed disabled:bg-gray-300"
