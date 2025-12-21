@@ -1,7 +1,7 @@
 import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 import OrderDetailModal from './orderModals/components/OrderDetailModal'
 import { MODAL_TYPE, UI_TEXT } from '../constants/orderConstants'
-import type { OrderModalState } from '../hooks/useOrderModal'
+import type { OrderModalState } from '../type/orderModalState'
 
 interface OrderCompletedModalsProps {
     modalState: OrderModalState | null

@@ -1,9 +1,9 @@
-import { BgrDialog } from 'src/shared/components/dialog/BgrDialog.tsx'
-import OrderDetailModal from './components/OrderDetailModal.tsx'
-import TrackingNumberModal from '../TrackingNumberModal.tsx'
-import RejectModal from '../RejectModal.tsx'
-import { MODAL_TYPE, UI_TEXT } from '../../constants/orderConstants.ts'
-import type { OrderModalState } from '../../hooks/useOrderModal.ts'
+import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
+import OrderDetailModal from './components/OrderDetailModal'
+import TrackingNumberModal from '../TrackingNumberModal'
+import RejectModal from '../RejectModal'
+import { MODAL_TYPE, UI_TEXT } from '../../constants/orderConstants'
+import type { OrderModalState } from '../../type/orderModalState'
 
 interface OrderModalsProps {
     modalState: OrderModalState
