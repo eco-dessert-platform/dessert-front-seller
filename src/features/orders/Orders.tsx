@@ -27,7 +27,6 @@ import {
 } from './utils/orderUtils'
 import type { TabCategory } from './type/orderStatusType'
 import type { OrderSearchFilter } from './type/orderFilterType'
-import type { SelectOption } from './type/orderModalType'
 import {
     DATE_RANGE,
     FILTER_DEFAULTS,
@@ -36,32 +35,11 @@ import {
     UI_TEXT,
 } from './constants/orderConstants'
 import { SearchType } from './constants/orderEnums'
-
-const TABS: Array<{ key: TabCategory; title: string }> = [
-    { key: TAB_CATEGORY.ALL, title: '전체' },
-    { key: TAB_CATEGORY.PAID, title: '결제완료' },
-    { key: TAB_CATEGORY.CHECKED, title: '발주확인' },
-    { key: TAB_CATEGORY.SHIPPED, title: '상품발송' },
-    { key: TAB_CATEGORY.DELIVERED, title: '배송완료' },
-    { key: TAB_CATEGORY.PAYMENT_COMPLETED, title: '취소' },
-    { key: TAB_CATEGORY.REFUND, title: '반품' },
-    { key: TAB_CATEGORY.CHANGE, title: '교환' },
-]
-
-const ORDER_STATUS_OPTIONS: SelectOption[] = [
-    { value: FILTER_DEFAULTS.ORDER_STATUS, label: '전체' },
-    { value: TAB_CATEGORY.PAID, label: '결제완료' },
-    { value: 'nnnnn', label: '상품준비' },
-    { value: TAB_CATEGORY.SHIPPED, label: '상품발송' },
-    { value: TAB_CATEGORY.DELIVERED, label: '배송완료' },
-]
-
-const SEARCH_OPTIONS: SelectOption[] = [
-    { value: SearchType.ORDER_NUMBER, label: '주문번호' },
-    { value: SearchType.RECEIVER_NAME, label: '수취인명' },
-    { value: SearchType.PRODUCT_NAME, label: '상품명' },
-    { value: SearchType.TRACKING_NUMBER, label: '송장번호' },
-]
+import { ORDER_TABS } from './constants/orderTabs'
+import {
+    ORDER_STATUS_OPTIONS,
+    SEARCH_OPTIONS,
+} from './constants/orderFilterOptions'
 
 const getInitialFilterValue = (): OrderSearchFilter => ({
     orderStatus: FILTER_DEFAULTS.ORDER_STATUS,
@@ -166,7 +144,7 @@ const Orders = () => {
                 }}
             >
                 <BgrTabsList>
-                    {TABS.map(({ key, title }) => (
+                    {ORDER_TABS.map(({ key, title }) => (
                         // TODO :: number value API 응답으로 받아야 함
                         <BgrTabsTrigger key={key} value={key} number={12}>
                             <p>{title}</p>

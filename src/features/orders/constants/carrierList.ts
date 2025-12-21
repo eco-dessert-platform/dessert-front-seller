@@ -16,4 +16,3 @@ export const CARRIER_LIST = [
     'GSPostbox택배',
     '기타',
 ] as const
-

@@ -32,35 +32,13 @@ import {
     UI_TEXT,
 } from './constants/orderConstants'
 import { SearchType } from './constants/orderEnums'
+import { ORDER_COMPLETED_TABS } from './constants/orderTabs'
+import {
+    ORDER_COMPLETED_STATUS_OPTIONS,
+    ORDER_COMPLETED_SEARCH_OPTIONS,
+} from './constants/orderFilterOptions'
 
 type TabCategory = 'PURCHASED' | 'CANCELED' | 'RETURNED' | 'EXCHANGED'
-
-const TABS: Array<{ key: TabCategory; title: string }> = [
-    { key: TAB_CATEGORY.PURCHASED, title: '완료' },
-    { key: TAB_CATEGORY.CANCELED, title: '취소' },
-    { key: TAB_CATEGORY.RETURNED, title: '반품' },
-    { key: TAB_CATEGORY.EXCHANGED, title: '교환' },
-]
-
-const ORDER_STATUS_OPTIONS: SelectOption[] = [
-    { value: FILTER_DEFAULTS.ORDER_STATUS, label: '전체' },
-    { value: 'PURCHASE_CONFIRMED', label: '구매확정' },
-    { value: 'CANCEL_COMPLETED', label: '취소 완료' },
-    { value: 'CANCEL_REJECTED', label: '취소 거절' },
-    { value: 'RETURN_REJECTED', label: '반품 거절' },
-    { value: 'RETURN_COMPLETED', label: '반품 완료' },
-    { value: 'RETURN_RETURNED', label: '반품 반려' },
-    { value: 'EXCHANGE_REJECTED', label: '교환 거절' },
-    { value: 'EXCHANGE_COMPLETED', label: '교환 완료' },
-    { value: 'EXCHANGE_RETURNED', label: '교환 반려' },
-]
-
-const SEARCH_OPTIONS: SelectOption[] = [
-    { value: SearchType.ORDER_NUMBER, label: '주문번호' },
-    { value: SearchType.BUYER_NAME, label: '수취인명' },
-    { value: SearchType.PRODUCT_NAME, label: '상품명' },
-    { value: SearchType.TRACKING_NUMBER, label: '송장번호' },
-]
 
 const getInitialFilterValue = (): OrderSearchFilter => ({
     orderStatus: FILTER_DEFAULTS.ORDER_STATUS,
@@ -92,12 +70,14 @@ const OrderCompleted = () => {
     const orderContent = orderCompletedList?.data
 
     const tableData = useMemo(
-        () => (orderContent ? transformOrderToTableRows(orderContent.content) : []),
+        () =>
+            orderContent ? transformOrderToTableRows(orderContent.content) : [],
         [orderContent],
     )
 
     const allOrderNumbers = useMemo(
-        () => (orderContent ? extractAllOrderNumbers(orderContent.content) : []),
+        () =>
+            orderContent ? extractAllOrderNumbers(orderContent.content) : [],
         [orderContent],
     )
 
@@ -140,7 +120,7 @@ const OrderCompleted = () => {
                 }}
             >
                 <BgrTabsList>
-                    {TABS.map(({ key, title }) => (
+                    {ORDER_COMPLETED_TABS.map(({ key, title }) => (
                         // TODO :: number value API 응답으로 받아야 함
                         <BgrTabsTrigger key={key} value={key} number={12}>
                             <p>{title}</p>
@@ -152,8 +132,8 @@ const OrderCompleted = () => {
                 <OrderFilter
                     key={activeTab}
                     initialFilterValue={getInitialFilterValue()}
-                    orderStatusOptions={ORDER_STATUS_OPTIONS}
-                    searchOptions={SEARCH_OPTIONS}
+                    orderStatusOptions={ORDER_COMPLETED_STATUS_OPTIONS}
+                    searchOptions={ORDER_COMPLETED_SEARCH_OPTIONS}
                     onSearch={handleSearch}
                 />
                 <div className="w-full rounded-lg border border-gray-300 bg-white">
