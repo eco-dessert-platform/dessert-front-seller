@@ -1,8 +1,22 @@
 import { reduxMaker } from 'src/global/store/redux/reduxUtils.ts'
+import { getOrderList, getOrderCompletedList } from './ordersAPI'
 
 const prefix = 'orders'
 
-const asyncRequests = [] as const
+const asyncRequests = [
+    {
+        action: 'getOrderList',
+        state: 'orderList',
+        initialState: null,
+        api: getOrderList,
+    },
+    {
+        action: 'getOrderCompletedList',
+        state: 'orderCompletedList',
+        initialState: null,
+        api: getOrderCompletedList,
+    },
+] as const
 
 const localState = {}
 

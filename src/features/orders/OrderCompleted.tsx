@@ -1,5 +1,10 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { sub } from 'date-fns'
+import {
+    useAppDispatch,
+    useAppSelector,
+} from 'src/global/store/redux/reduxHooks.tsx'
+import { shallowEqual } from 'react-redux'
 
 import {
     BgrTabs,
@@ -8,22 +13,22 @@ import {
 } from 'src/shared/components/tab/BGRtab'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
 import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
-import { MOCK_ORDER_COMPLETED } from './data/ordersMockData'
 import OrderFilter from './components/OrderFilter'
 import OrderTable from './components/OrderTable'
 import OrderDetailModal from './components/OrderDetailModal'
+import { ordersAction } from './ordersReducer'
 import { useOrderSelection } from './hooks/useOrderSelection'
 import {
-    extractAllOrderNumbers,
     transformOrderToTableRows,
+    extractAllOrderNumbers,
 } from './utils/orderUtils'
 import type { OrderSearchFilter } from './type/orderFilterType'
 import type { SelectOption } from './type/orderModalType'
 import {
     DATE_RANGE,
-    FILTER_DEFAULTS,
     MODAL_TYPE,
     TAB_CATEGORY,
+    FILTER_DEFAULTS,
     UI_TEXT,
 } from './constants/orderConstants'
 import { SearchType } from './constants/orderEnums'
@@ -66,20 +71,34 @@ const getInitialFilterValue = (): OrderSearchFilter => ({
 })
 
 const OrderCompleted = () => {
+    const dispatch = useAppDispatch()
+    const { orderCompletedList } = useAppSelector(
+        ({ ordersReducer }) => ({
+            orderCompletedList: ordersReducer.orderCompletedList,
+        }),
+        shallowEqual,
+    )
+
     const [activeTab, setActiveTab] = useState<TabCategory>(
         TAB_CATEGORY.PURCHASED,
     )
-    const [orderContent] = useState(MOCK_ORDER_COMPLETED)
     const [modalType, setModalType] = useState<string | null>(null)
 
+    useEffect(() => {
+        const filterValue = getInitialFilterValue()
+        dispatch(ordersAction.getOrderCompletedList(filterValue))
+    }, [dispatch])
+
+    const orderContent = orderCompletedList?.data
+
     const tableData = useMemo(
-        () => transformOrderToTableRows(orderContent.content),
-        [orderContent.content],
+        () => (orderContent ? transformOrderToTableRows(orderContent.content) : []),
+        [orderContent],
     )
 
     const allOrderNumbers = useMemo(
-        () => extractAllOrderNumbers(orderContent.content),
-        [orderContent.content],
+        () => (orderContent ? extractAllOrderNumbers(orderContent.content) : []),
+        [orderContent],
     )
 
     const {
@@ -92,8 +111,9 @@ const OrderCompleted = () => {
     } = useOrderSelection(tableData)
 
     const handleSearch = useCallback(() => {
-        // TODO :: API 요청 함수 할당 필요
-    }, [])
+        const filterValue = getInitialFilterValue()
+        dispatch(ordersAction.getOrderCompletedList(filterValue))
+    }, [dispatch])
 
     const handleSelectAll = useCallback(() => {
         handleSelectAllOrders(allOrderNumbers, tableData)
@@ -157,7 +177,7 @@ const OrderCompleted = () => {
                                 <p className="text-14 font-normal text-gray-700">
                                     전체
                                     <span className="font-medium">
-                                        {orderContent.content.length ?? 0}개
+                                        {orderContent?.content.length ?? 0}개
                                     </span>
                                 </p>
                             </div>

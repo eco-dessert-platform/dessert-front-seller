@@ -1,5 +1,10 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { sub } from 'date-fns'
+import {
+    useAppDispatch,
+    useAppSelector,
+} from 'src/global/store/redux/reduxHooks.tsx'
+import { shallowEqual } from 'react-redux'
 
 import {
     BgrTabs,
@@ -14,7 +19,7 @@ import RejectModal from './components/RejectModal'
 import OrderDetailModal from './components/OrderDetailModal'
 import OrderControlButtons from './components/OrderControlButtons'
 import OrderTable from './components/OrderTable'
-import { MOCK_ORDER_LIST } from './data/ordersMockData'
+import { ordersAction } from './ordersReducer'
 import { useOrderSelection } from './hooks/useOrderSelection'
 import {
     extractAllOrderNumbers,
@@ -67,8 +72,15 @@ const getInitialFilterValue = (): OrderSearchFilter => ({
 })
 
 const Orders = () => {
+    const dispatch = useAppDispatch()
+    const { orderList } = useAppSelector(
+        ({ ordersReducer }) => ({
+            orderList: ordersReducer.orderList,
+        }),
+        shallowEqual,
+    )
+
     const [activeTab, setActiveTab] = useState<TabCategory>(TAB_CATEGORY.ALL)
-    const [response] = useState(MOCK_ORDER_LIST)
     const [modalType, setModalType] = useState<string | null>(null)
     const [selectedOrderForTracking, setSelectedOrderForTracking] = useState<{
         orderNumber: string
@@ -76,14 +88,21 @@ const Orders = () => {
         courierCompany?: string
     } | null>(null)
 
+    useEffect(() => {
+        const filterValue = getInitialFilterValue()
+        dispatch(ordersAction.getOrderList(filterValue))
+    }, [dispatch])
+
+    const response = orderList?.data
+
     const tableData = useMemo(
-        () => transformOrderToTableRows(response.content),
-        [response.content],
+        () => (response ? transformOrderToTableRows(response.content) : []),
+        [response],
     )
 
     const allOrderNumbers = useMemo(
-        () => extractAllOrderNumbers(response.content),
-        [response.content],
+        () => (response ? extractAllOrderNumbers(response.content) : []),
+        [response],
     )
 
     const {
@@ -104,9 +123,10 @@ const Orders = () => {
         setModalType(MODAL_TYPE.ORDER_DETAIL)
     }
 
-    const handleSearch = () => {
-        // TODO :: API 요청 함수 할당 필요
-    }
+    const handleSearch = useCallback(() => {
+        const filterValue = getInitialFilterValue()
+        dispatch(ordersAction.getOrderList(filterValue))
+    }, [dispatch])
 
     const handleOrderAction = useCallback((_actionType: string) => {
         // TODO :: 주문 상태 변경 API 작업 완료되면 작업 필요
@@ -114,8 +134,8 @@ const Orders = () => {
 
     const handleModifyTrackingNumber = useCallback(
         (orderNumber: string) => {
-            const order = response.content.find(
-                (o) => o.orderNumber === orderNumber,
+            const order = response?.content.find(
+                (o: { orderNumber: string }) => o.orderNumber === orderNumber,
             )
             if (order) {
                 setSelectedOrderForTracking({
@@ -126,7 +146,7 @@ const Orders = () => {
                 setModalType(MODAL_TYPE.MODIFY_TRACKING_NUMBER)
             }
         },
-        [response.content],
+        [response],
     )
 
     const handleSelectAll = useCallback(() => {
@@ -187,7 +207,7 @@ const Orders = () => {
                                 <p className="text-14 font-normal text-gray-700">
                                     전체
                                     <span className="font-medium">
-                                        {response.content.length ?? 0}개
+                                        {response?.content.length ?? 0}개
                                     </span>
                                 </p>
                             </div>

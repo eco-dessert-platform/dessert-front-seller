@@ -5,25 +5,7 @@ import * as SelectPrimitive from '@radix-ui/react-select'
 import { BgrDialog } from 'src/shared/components/dialog/BgrDialog'
 import type { TrackingNumberModalProps } from '../type/orderModalType'
 import { UI_TEXT } from '../constants/orderConstants'
-
-const CARRIER_LIST = [
-    'CJ대한통운',
-    '롯데택배',
-    '한진택배',
-    '로젠택배',
-    '우체국택배',
-    'CJ대한통운(국제택배)',
-    'CU편의점택배',
-    'GOP당일택배',
-    'GOS당일택배',
-    'GPSLOGIX',
-    'GSFresh',
-    'GSI익스프레스',
-    'GSMNTON',
-    'GSPostbox퀵',
-    'GSPostbox택배',
-    '기타',
-]
+import { CARRIER_LIST } from '../constants/carrierList'
 
 const TrackingNumberModal = ({
     type,
