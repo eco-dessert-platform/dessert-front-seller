@@ -100,6 +100,13 @@ export interface DataTableProps<TData, TValue> {
      * 검색 관련 옵션입니다.
      */
     search?: SearchOptions
+    /**
+     * 테이블 스타일 관련 옵션입니다.
+     */
+    styles?: {
+        headerClassName?: string
+        containerClassName?: string
+    }
 }
 
 /**

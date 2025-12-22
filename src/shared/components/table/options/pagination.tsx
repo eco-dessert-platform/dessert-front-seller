@@ -51,13 +51,22 @@ export const renderPagination = <TData,>(
               ? 'justify-start'
               : 'justify-end'
 
+    const paginationJustifyClass =
+        align === 'center'
+            ? 'justify-center'
+            : align === 'left'
+              ? 'justify-start'
+              : 'justify-end'
+
     const currentPage = table.getState().pagination.pageIndex + 1
     const totalPages = table.getPageCount()
     const pageNumbers = generatePageNumbers()
 
     return (
-        <div className={`flex items-center py-4 ${justifyClass}`}>
-            <Pagination>
+        <div className={`flex w-full items-center py-4 ${justifyClass}`}>
+            <Pagination
+                className={`mx-auto flex w-full ${paginationJustifyClass}`}
+            >
                 <PaginationContent>
                     <PaginationItem>
                         <PaginationPrevious
