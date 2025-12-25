@@ -1,5 +1,6 @@
-import { useMemo, useState, useCallback } from 'react'
+import { useMemo, useState, useCallback, useEffect } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
+import { Button } from 'src/shared/lib/shadcn/components/ui/button'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
 import { MOCK_PRODUCT_LIST } from '../data/productsMockData'
 
@@ -24,7 +25,14 @@ type RowT = {
 
 const columnHelper = createColumnHelper<RowT>()
 
-export default function ProductTable() {
+interface ProductTableProps {
+    onSelectionChange?: (data: {
+        selectedProductIds: string[]
+        selectedOptionIds: string[]
+    }) => void
+}
+
+export default function ProductTable({ onSelectionChange }: ProductTableProps) {
     const [selections, setSelections] = useState<{
         products: Set<string>
         options: Set<string>
@@ -62,71 +70,42 @@ export default function ProductTable() {
             setSelections((prev) => {
                 const isProductSelected = prev.products.has(targetProductId)
                 const nextSelectedProducts = new Set(prev.products)
-                const nextSelectedOptions = new Set(prev.options)
 
+                // 상품 선택/해제만 처리 (옵션 선택과 독립적)
                 if (isProductSelected) {
                     nextSelectedProducts.delete(targetProductId)
                 } else {
                     nextSelectedProducts.add(targetProductId)
                 }
 
-                rows.forEach((row, index) => {
-                    if (row.productId === targetProductId) {
-                        if (isProductSelected) {
-                            nextSelectedOptions.delete(index.toString())
-                        } else {
-                            nextSelectedOptions.add(index.toString())
-                        }
-                    }
-                })
-
                 return {
                     products: nextSelectedProducts,
-                    options: nextSelectedOptions,
+                    options: prev.options, // 옵션 선택은 변경하지 않음
                 }
             })
         },
-        [rows],
+        [],
     )
 
     const handleSelectOption = useCallback(
         (rowId: string, targetProductId: string) => {
             setSelections((prev) => {
                 const nextSelectedOptions = new Set(prev.options)
-                const nextSelectedProducts = new Set(prev.products)
 
-                // 옵션 선택/해제
+                // 옵션 선택/해제만 처리 (상품 선택과 독립적)
                 if (nextSelectedOptions.has(rowId)) {
                     nextSelectedOptions.delete(rowId)
                 } else {
                     nextSelectedOptions.add(rowId)
                 }
 
-                // 해당 상품의 모든 옵션이 선택되었는지 확인
-                const productRowIds = rows
-                    .map((_, index) => index.toString())
-                    .filter(
-                        (idx) =>
-                            rows[Number(idx)].productId === targetProductId,
-                    )
-
-                const isAllOptionsSelected = productRowIds.every((idx) =>
-                    nextSelectedOptions.has(idx),
-                )
-
-                if (isAllOptionsSelected) {
-                    nextSelectedProducts.add(targetProductId)
-                } else {
-                    nextSelectedProducts.delete(targetProductId)
-                }
-
                 return {
-                    products: nextSelectedProducts,
+                    products: prev.products, // 상품 선택은 변경하지 않음
                     options: nextSelectedOptions,
                 }
             })
         },
-        [rows],
+        [],
     )
 
     const handleSelectAll = useCallback(() => {
@@ -352,12 +331,15 @@ export default function ProductTable() {
 
                     return (
                         <div className="text-center">
-                            <a
-                                className="rounded bg-gray-200 px-4 py-2"
-                                href={String(getValue())}
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => {
+                                    window.open(String(getValue()), '_blank')
+                                }}
                             >
                                 이동
-                            </a>
+                            </Button>
                         </div>
                     )
                 },
@@ -372,6 +354,26 @@ export default function ProductTable() {
         isSomeSelected,
     ])
 
+    // 선택된 상품 ID 목록
+    const selectedProductIds = useMemo(() => {
+        return Array.from(selections.products)
+    }, [selections.products])
+
+    // 선택된 옵션 ID 목록 (row index를 문자열로 저장)
+    const selectedOptionIds = useMemo(() => {
+        return Array.from(selections.options)
+    }, [selections.options])
+
+    // 선택 상태 변경 시 콜백 호출
+    useEffect(() => {
+        if (onSelectionChange) {
+            onSelectionChange({
+                selectedProductIds,
+                selectedOptionIds,
+            })
+        }
+    }, [selectedProductIds, selectedOptionIds, onSelectionChange])
+
     return (
         <SSdataTable<RowT, unknown>
             columns={columns as never}
@@ -384,9 +386,8 @@ export default function ProductTable() {
             }}
             styles={{
                 headerClassName: 'bg-[#eee]',
-                containerClassName: 'rounded-none border-0',
+                containerClassName: 'rounded-none border border-gray-200',
             }}
         />
     )
 }
-
