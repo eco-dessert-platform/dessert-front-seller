@@ -8,8 +8,9 @@ export const getProductList = (): Promise<
     AxiosResponse<typeof MOCK_PRODUCT_LIST>
 > => {
     // TODO: 실제 API 연동 시 아래 주석 해제
-    // return client.get('/products', { params: payload })
+    // return client.get('/admin/products', { params: payload })
 
     // 더미데이터 반환 (실제 API 연동 전까지 사용)
     return createMockResponse(MOCK_PRODUCT_LIST)
 }
+

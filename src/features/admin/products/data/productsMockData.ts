@@ -58,3 +58,4 @@ export const MOCK_PRODUCT_LIST = {
     size: 10,
     number: 0,
 }
+

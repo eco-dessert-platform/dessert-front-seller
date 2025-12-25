@@ -17,8 +17,8 @@ const getInitialFilterValue = (): ProductSearchFilter => ({
 const Products = () => {
     const dispatch = useAppDispatch()
     const { productList } = useAppSelector(
-        ({ productsReducer }) => ({
-            productList: productsReducer.productList,
+        ({ adminProductsReducer }) => ({
+            productList: adminProductsReducer.productList,
         }),
         shallowEqual,
     )
@@ -36,3 +36,4 @@ const Products = () => {
 }
 
 export default Products
+

@@ -7,3 +7,4 @@ export interface ProductSearchFilter {
     endDate?: Date
     searchType?: string
 }
+
