@@ -2,12 +2,15 @@ import {
     Pagination,
     PaginationContent,
     PaginationEllipsis,
+    PaginationFirst,
     PaginationItem,
+    PaginationLast,
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
 } from 'src/shared/lib/shadcn/components/ui/pagination.tsx'
 import { Table } from '@tanstack/react-table'
+import clsx from 'clsx'
 
 export const renderPagination = <TData,>(
     table: Table<TData>,
@@ -69,6 +72,17 @@ export const renderPagination = <TData,>(
             >
                 <PaginationContent>
                     <PaginationItem>
+                        <PaginationFirst
+                            onClick={() => table.firstPage()}
+                            className={
+                                !table.getCanPreviousPage()
+                                    ? 'pointer-events-none opacity-50'
+                                    : 'cursor-pointer'
+                            }
+                        />
+                    </PaginationItem>
+
+                    <PaginationItem>
                         <PaginationPrevious
                             onClick={() => table.previousPage()}
                             className={
@@ -109,7 +123,7 @@ export const renderPagination = <TData,>(
                                             table.setPageIndex(pageNum - 1)
                                         }
                                         isActive={currentPage === pageNum}
-                                        className="cursor-pointer"
+                                        className={`cursor-pointer ${clsx(currentPage === pageNum ? 'bg-primary-50 text-primary-500 border-0' : 'text-gray-800')}`}
                                     >
                                         {pageNum}
                                     </PaginationLink>
@@ -148,6 +162,16 @@ export const renderPagination = <TData,>(
                     <PaginationItem>
                         <PaginationNext
                             onClick={() => table.nextPage()}
+                            className={
+                                !table.getCanNextPage()
+                                    ? 'pointer-events-none opacity-50'
+                                    : 'cursor-pointer'
+                            }
+                        />
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationLast
+                            onClick={() => table.lastPage()}
                             className={
                                 !table.getCanNextPage()
                                     ? 'pointer-events-none opacity-50'

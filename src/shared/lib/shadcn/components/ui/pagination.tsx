@@ -1,5 +1,7 @@
 import * as React from 'react'
 import {
+    ChevronsLeft,
+    ChevronsRight,
     ChevronLeftIcon,
     ChevronRightIcon,
     MoreHorizontalIcon,
@@ -68,6 +70,22 @@ function PaginationLink({
     )
 }
 
+function PaginationFirst({
+    className,
+    ...props
+}: React.ComponentProps<typeof PaginationLink>) {
+    return (
+        <PaginationLink
+            aria-label="Go to First page"
+            size="default"
+            className={cn('gap-1 px-2.5 sm:pl-2.5', className)}
+            {...props}
+        >
+            <ChevronsLeft />
+        </PaginationLink>
+    )
+}
+
 function PaginationPrevious({
     className,
     ...props
@@ -80,7 +98,22 @@ function PaginationPrevious({
             {...props}
         >
             <ChevronLeftIcon />
-            <span className="hidden sm:block">Previous</span>
+        </PaginationLink>
+    )
+}
+
+function PaginationLast({
+    className,
+    ...props
+}: React.ComponentProps<typeof PaginationLink>) {
+    return (
+        <PaginationLink
+            aria-label="Go to Last page"
+            size="default"
+            className={cn('gap-1 px-2.5 sm:pl-2.5', className)}
+            {...props}
+        >
+            <ChevronsRight />
         </PaginationLink>
     )
 }
@@ -96,7 +129,6 @@ function PaginationNext({
             className={cn('gap-1 px-2.5 sm:pr-2.5', className)}
             {...props}
         >
-            <span className="hidden sm:block">Next</span>
             <ChevronRightIcon />
         </PaginationLink>
     )
@@ -127,4 +159,6 @@ export {
     PaginationPrevious,
     PaginationNext,
     PaginationEllipsis,
+    PaginationFirst,
+    PaginationLast,
 }

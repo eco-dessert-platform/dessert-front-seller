@@ -1,5 +1,7 @@
 import { useMemo } from 'react'
 import { format } from 'date-fns'
+import clsx from 'clsx'
+
 import { createColumnHelper } from '@tanstack/react-table'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
 import type { OrderTableRow } from '../type/orderTableType'
@@ -50,7 +52,7 @@ const OrderTable = ({
                             type="checkbox"
                             checked={isAllSelected}
                             onChange={handleSelectAll}
-                            className="cursor-pointer"
+                            className="accent-primary-500 cursor-pointer"
                         />
                     )
                 },
@@ -64,17 +66,19 @@ const OrderTable = ({
                     const isOrderSelected = selections.orders.has(orderNumber)
 
                     return (
-                        <div className={isOrderSelected ? 'bg-gray-100' : ''}>
+                        <div
+                            className={`flex items-center justify-center ${clsx(isOrderSelected && 'bg-gray-100')}`}
+                        >
                             <input
                                 type="checkbox"
                                 checked={isOrderSelected}
                                 onChange={() => handleSelectOrder(orderNumber)}
-                                className="cursor-pointer"
+                                className="accent-primary-500 cursor-pointer"
                             />
                         </div>
                     )
                 },
-                meta: { merge: true },
+                meta: { merge: true, width: 40 },
             },
             columnHelper.accessor('recipientName', {
                 header: '수취인명/주문번호',
@@ -84,34 +88,38 @@ const OrderTable = ({
 
                     return (
                         <div
-                            className={`flex flex-col ${isOrderSelected ? 'bg-gray-100' : ''}`}
+                            className={`text-12 flex h-full w-full flex-col justify-center text-center ${clsx(isOrderSelected && 'bg-gray-100')}`}
                         >
-                            <span>{row.original.recipientName}</span>
-                            <span className="text-12 font-medium text-gray-500">
+                            <p>{row.original.recipientName}</p>
+                            <p className="font-medium whitespace-normal text-gray-500">
                                 {row.original.orderNumber}
-                            </span>
+                            </p>
                         </div>
                     )
                 },
-                meta: { merge: true },
+                meta: { merge: true, width: 100 },
             }),
             columnHelper.display({
                 id: 'select-item',
                 header: () => <div />,
+                meta: { width: 40 },
                 cell: ({ row }) => {
                     const rowId = row.id
                     const orderNumber = row.original.orderNumber
+                    const isItemSelected = selections.items.has(rowId)
                     const isOrderSelected = selections.orders.has(orderNumber)
 
                     return (
-                        <div className={isOrderSelected ? 'bg-gray-100' : ''}>
+                        <div
+                            className={`flex items-center justify-center ${clsx((isItemSelected || isOrderSelected) && 'bg-gray-100')}`}
+                        >
                             <input
                                 type="checkbox"
                                 checked={selections.items.has(rowId)}
                                 onChange={() =>
                                     handleSelectItem(rowId, orderNumber)
                                 }
-                                className="cursor-pointer"
+                                className="accent-primary-500 cursor-pointer"
                             />
                         </div>
                     )
@@ -127,11 +135,10 @@ const OrderTable = ({
 
                     return (
                         <div
-                            className={
-                                isOrderSelected || isItemSelected
-                                    ? 'bg-gray-100'
-                                    : ''
-                            }
+                            className={clsx(
+                                (isOrderSelected || isItemSelected) &&
+                                    'bg-gray-100',
+                            )}
                         >
                             <p className="text-14 text-gray-900">
                                 {row.original.productName}
@@ -151,6 +158,7 @@ const OrderTable = ({
             }),
             columnHelper.accessor('orderStatus', {
                 header: '주문상태',
+                meta: { width: 66 },
                 cell: ({ row }) => {
                     const rowId = row.id
                     const orderNumber = row.original.orderNumber
@@ -159,11 +167,7 @@ const OrderTable = ({
 
                     return (
                         <div
-                            className={
-                                isOrderSelected || isItemSelected
-                                    ? 'bg-gray-100'
-                                    : ''
-                            }
+                            className={`flex items-center justify-center ${clsx((isOrderSelected || isItemSelected) && 'bg-gray-100')}`}
                         >
                             <OrderStatusLabel
                                 type={row.original.orderStatus as OrderStatus}
@@ -174,37 +178,47 @@ const OrderTable = ({
             }),
             columnHelper.accessor('paymentAt', {
                 header: '결제수단/결제일',
+                meta: { merge: true, width: 86 },
                 cell: ({ row }) => {
                     const orderNumber = row.original.orderNumber
                     const isOrderSelected = selections.orders.has(orderNumber)
 
                     return (
-                        <div className={isOrderSelected ? 'bg-gray-100' : ''}>
-                            {format(
-                                new Date(row.original.paymentAt),
-                                DATE_FORMAT.WITH_SPACE,
-                            )}
+                        <div
+                            className={`flex flex-col items-center justify-center ${clsx(isOrderSelected && 'bg-gray-100')}`}
+                        >
+                            <p className="text-[10px] text-gray-600">
+                                신용카드
+                            </p>
+                            <p className="text-12 text-gray-800">
+                                {format(
+                                    new Date(row.original.paymentAt),
+                                    DATE_FORMAT.WITH_SPACE,
+                                )}
+                            </p>
                         </div>
                     )
                 },
-                meta: { merge: true },
             }),
             columnHelper.accessor('totalPaid', {
                 header: '총 주문금액',
+                meta: { merge: true, width: 80 },
                 cell: ({ row }) => {
                     const orderNumber = row.original.orderNumber
                     const isOrderSelected = selections.orders.has(orderNumber)
 
                     return (
-                        <div className={isOrderSelected ? 'bg-gray-100' : ''}>
+                        <div
+                            className={`text-12 flex items-center justify-center ${clsx(isOrderSelected && 'bg-gray-100')}`}
+                        >
                             {formatPrice(Number(row.original.totalPaid))}
                         </div>
                     )
                 },
-                meta: { merge: true },
             }),
             columnHelper.accessor('deliveryStatus', {
                 header: '배송상태',
+                meta: { merge: true, width: 64 },
                 cell: ({ row }) => {
                     const orderNumber = row.original.orderNumber
                     const isOrderSelected = selections.orders.has(orderNumber)
@@ -213,7 +227,9 @@ const OrderTable = ({
                         deliveryStatus in DELIVERY_STATUS_LABEL_MAP
 
                     return (
-                        <div className={isOrderSelected ? 'bg-gray-100' : ''}>
+                        <div
+                            className={`text-12 flex items-center justify-center ${clsx(isOrderSelected && 'bg-gray-100')}`}
+                        >
                             {isValidDeliveryStatus
                                 ? DELIVERY_STATUS_LABEL_MAP[
                                       deliveryStatus as DeliveryStatus
@@ -222,37 +238,43 @@ const OrderTable = ({
                         </div>
                     )
                 },
-                meta: { merge: true },
             }),
             columnHelper.accessor('courierCompany', {
                 header: '택배사',
+                meta: { merge: true, width: 76 },
                 cell: ({ row }) => {
                     const orderNumber = row.original.orderNumber
                     const isOrderSelected = selections.orders.has(orderNumber)
 
                     return (
-                        <div className={isOrderSelected ? 'bg-gray-100' : ''}>
+                        <div
+                            className={`text-12 flex items-center justify-center ${clsx(isOrderSelected && 'bg-gray-100')}`}
+                        >
                             {row.original.courierCompany || '-'}
                         </div>
                     )
                 },
-                meta: { merge: true },
             }),
             columnHelper.accessor('trackingNumber', {
                 header: '운송장 번호',
+                meta: { merge: true, width: 90 },
                 cell: ({ row }) => {
                     const orderNumber = row.original.orderNumber
                     const isOrderSelected = selections.orders.has(orderNumber)
                     const trackingNumber = row.original.trackingNumber
 
                     return (
-                        <div className={isOrderSelected ? 'bg-gray-100' : ''}>
+                        <div
+                            className={`text-12 flex flex-col items-center justify-center gap-1 ${clsx(isOrderSelected && 'bg-gray-100')}`}
+                        >
                             {trackingNumber ? (
-                                <div className="flex flex-col gap-1">
-                                    <span>{trackingNumber}</span>
+                                <>
+                                    <p className="max-w-full break-all whitespace-normal">
+                                        {trackingNumber}
+                                    </p>
                                     {onModifyTrackingNumber && (
                                         <button
-                                            className="text-12 h-[30px] w-[56px] rounded-lg border border-gray-200 text-gray-800"
+                                            className="h-[30px] w-[56px] rounded-lg border border-gray-200 text-gray-800"
                                             onClick={() =>
                                                 onModifyTrackingNumber(
                                                     orderNumber,
@@ -262,14 +284,13 @@ const OrderTable = ({
                                             수정
                                         </button>
                                     )}
-                                </div>
+                                </>
                             ) : (
-                                <span>-</span>
+                                <p>-</p>
                             )}
                         </div>
                     )
                 },
-                meta: { merge: true },
             }),
         ]
     }, [
@@ -286,9 +307,13 @@ const OrderTable = ({
         <SSdataTable
             columns={columns as never}
             data={data}
+            styles={{
+                headerClassName: 'text-12 tracking-tight px-[5px] bg-gray-200',
+            }}
             pagination={{
                 enabled: true,
                 position: 'top',
+                align: 'right',
                 pageSize: PAGINATION.PAGE_SIZE,
             }}
         />
