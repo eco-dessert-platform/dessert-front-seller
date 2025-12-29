@@ -218,6 +218,7 @@ const OrderFilter = ({
                                 <input
                                     type="text"
                                     placeholder={UI_TEXT.PLACEHOLDER.KEYWORD}
+                                    maxLength={50}
                                     className="grow"
                                     value={filterValue.keyword}
                                     onChange={(event) => {

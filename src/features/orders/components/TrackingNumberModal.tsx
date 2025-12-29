@@ -47,7 +47,7 @@ const TrackingNumberModal = ({
                             </SelectPrimitive.Trigger>
                             <SelectPrimitive.Content
                                 position="popper"
-                                className="top-full z-50 w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg"
+                                className="top-full z-50 max-h-(--radix-select-content-available-height) w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg"
                             >
                                 <SelectPrimitive.Viewport className="p-1">
                                     {CARRIER_LIST.map((carrierName) => (
@@ -69,6 +69,7 @@ const TrackingNumberModal = ({
                         <input
                             type="text"
                             placeholder={UI_TEXT.PLACEHOLDER.TRACKING_NUMBER}
+                            maxLength={20}
                             value={inputValues.trackingNumber}
                             onChange={(event) => {
                                 setInputValues((prev) => ({

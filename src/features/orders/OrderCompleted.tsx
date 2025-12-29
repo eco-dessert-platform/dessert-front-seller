@@ -148,14 +148,14 @@ const OrderCompleted = () => {
                             </Button>
                             <div className="flex items-center gap-1">
                                 <p className="text-14 font-normal text-gray-700">
-                                    선택
+                                    선택&nbsp;
                                     <span className="text-primary-500 font-medium">
                                         {selections.orders.size}개
                                     </span>
                                 </p>
                                 <div className="h-3 w-0.5 bg-gray-400" />
                                 <p className="text-14 font-normal text-gray-700">
-                                    전체
+                                    전체&nbsp;
                                     <span className="font-medium">
                                         {orderContent?.content.length ?? 0}개
                                     </span>
