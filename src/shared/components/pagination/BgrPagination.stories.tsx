@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { useState } from 'react'
 import BgrPagination from './BgrPagination'
+import type { BgrPaginationProps } from './BgrPagination'
 
 const meta = {
     title: 'Components/BgrPagination',
@@ -18,24 +19,40 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+const DefaultComponent = (args: BgrPaginationProps) => {
+    const [currentPage, setCurrentPage] = useState(args.currentPage)
+    return (
+        <BgrPagination
+            {...args}
+            currentPage={currentPage}
+            onPageChange={(page) => {
+                setCurrentPage(page)
+                args.onPageChange?.(page)
+            }}
+        />
+    )
+}
+
 export const Default: Story = {
     args: {
         currentPage: 1,
         totalPages: 10,
     },
-    render: (args) => {
-        const [currentPage, setCurrentPage] = useState(args.currentPage)
-        return (
-            <BgrPagination
-                {...args}
-                currentPage={currentPage}
-                onPageChange={(page) => {
-                    setCurrentPage(page)
-                    args.onPageChange?.(page)
-                }}
-            />
-        )
-    },
+    render: DefaultComponent,
+}
+
+const MiddlePageComponent = (args: BgrPaginationProps) => {
+    const [currentPage, setCurrentPage] = useState(args.currentPage)
+    return (
+        <BgrPagination
+            {...args}
+            currentPage={currentPage}
+            onPageChange={(page) => {
+                setCurrentPage(page)
+                args.onPageChange?.(page)
+            }}
+        />
+    )
 }
 
 export const MiddlePage: Story = {
@@ -43,19 +60,21 @@ export const MiddlePage: Story = {
         currentPage: 5,
         totalPages: 10,
     },
-    render: (args) => {
-        const [currentPage, setCurrentPage] = useState(args.currentPage)
-        return (
-            <BgrPagination
-                {...args}
-                currentPage={currentPage}
-                onPageChange={(page) => {
-                    setCurrentPage(page)
-                    args.onPageChange?.(page)
-                }}
-            />
-        )
-    },
+    render: MiddlePageComponent,
+}
+
+const LastPageComponent = (args: BgrPaginationProps) => {
+    const [currentPage, setCurrentPage] = useState(args.currentPage)
+    return (
+        <BgrPagination
+            {...args}
+            currentPage={currentPage}
+            onPageChange={(page) => {
+                setCurrentPage(page)
+                args.onPageChange?.(page)
+            }}
+        />
+    )
 }
 
 export const LastPage: Story = {
@@ -63,19 +82,21 @@ export const LastPage: Story = {
         currentPage: 10,
         totalPages: 10,
     },
-    render: (args) => {
-        const [currentPage, setCurrentPage] = useState(args.currentPage)
-        return (
-            <BgrPagination
-                {...args}
-                currentPage={currentPage}
-                onPageChange={(page) => {
-                    setCurrentPage(page)
-                    args.onPageChange?.(page)
-                }}
-            />
-        )
-    },
+    render: LastPageComponent,
+}
+
+const FewPagesComponent = (args: BgrPaginationProps) => {
+    const [currentPage, setCurrentPage] = useState(args.currentPage)
+    return (
+        <BgrPagination
+            {...args}
+            currentPage={currentPage}
+            onPageChange={(page) => {
+                setCurrentPage(page)
+                args.onPageChange?.(page)
+            }}
+        />
+    )
 }
 
 export const FewPages: Story = {
@@ -83,19 +104,21 @@ export const FewPages: Story = {
         currentPage: 2,
         totalPages: 5,
     },
-    render: (args) => {
-        const [currentPage, setCurrentPage] = useState(args.currentPage)
-        return (
-            <BgrPagination
-                {...args}
-                currentPage={currentPage}
-                onPageChange={(page) => {
-                    setCurrentPage(page)
-                    args.onPageChange?.(page)
-                }}
-            />
-        )
-    },
+    render: FewPagesComponent,
+}
+
+const ManyPagesComponent = (args: BgrPaginationProps) => {
+    const [currentPage, setCurrentPage] = useState(args.currentPage)
+    return (
+        <BgrPagination
+            {...args}
+            currentPage={currentPage}
+            onPageChange={(page) => {
+                setCurrentPage(page)
+                args.onPageChange?.(page)
+            }}
+        />
+    )
 }
 
 export const ManyPages: Story = {
@@ -103,18 +126,5 @@ export const ManyPages: Story = {
         currentPage: 50,
         totalPages: 100,
     },
-    render: (args) => {
-        const [currentPage, setCurrentPage] = useState(args.currentPage)
-        return (
-            <BgrPagination
-                {...args}
-                currentPage={currentPage}
-                onPageChange={(page) => {
-                    setCurrentPage(page)
-                    args.onPageChange?.(page)
-                }}
-            />
-        )
-    },
+    render: ManyPagesComponent,
 }
-

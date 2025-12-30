@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { useState } from 'react'
 import BgrTextarea from './BgrTextarea'
+import type { BgrTextareaProps } from './BgrTextarea'
 
 const meta = {
     title: 'Components/BgrTextarea',
@@ -32,25 +33,43 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+const DefaultComponent = (args: BgrTextareaProps) => {
+    const [value, setValue] = useState(args.value || '')
+    return (
+        <div className="w-[400px]">
+            <BgrTextarea
+                {...args}
+                value={value}
+                onChange={(e) => {
+                    setValue(e.target.value)
+                    args.onChange?.(e)
+                }}
+            />
+        </div>
+    )
+}
+
 export const Default: Story = {
     args: {
         placeholder: '텍스트를 입력하세요',
     },
-    render: (args) => {
-        const [value, setValue] = useState(args.value || '')
-        return (
-            <div className="w-[400px]">
-                <BgrTextarea
-                    {...args}
-                    value={value}
-                    onChange={(e) => {
-                        setValue(e.target.value)
-                        args.onChange?.(e)
-                    }}
-                />
-            </div>
-        )
-    },
+    render: DefaultComponent,
+}
+
+const WithLabelComponent = (args: BgrTextareaProps) => {
+    const [value, setValue] = useState(args.value || '')
+    return (
+        <div className="w-[400px]">
+            <BgrTextarea
+                {...args}
+                value={value}
+                onChange={(e) => {
+                    setValue(e.target.value)
+                    args.onChange?.(e)
+                }}
+            />
+        </div>
+    )
 }
 
 export const WithLabel: Story = {
@@ -58,21 +77,23 @@ export const WithLabel: Story = {
         label: '설명',
         placeholder: '텍스트를 입력하세요',
     },
-    render: (args) => {
-        const [value, setValue] = useState(args.value || '')
-        return (
-            <div className="w-[400px]">
-                <BgrTextarea
-                    {...args}
-                    value={value}
-                    onChange={(e) => {
-                        setValue(e.target.value)
-                        args.onChange?.(e)
-                    }}
-                />
-            </div>
-        )
-    },
+    render: WithLabelComponent,
+}
+
+const RequiredComponent = (args: BgrTextareaProps) => {
+    const [value, setValue] = useState(args.value || '')
+    return (
+        <div className="w-[400px]">
+            <BgrTextarea
+                {...args}
+                value={value}
+                onChange={(e) => {
+                    setValue(e.target.value)
+                    args.onChange?.(e)
+                }}
+            />
+        </div>
+    )
 }
 
 export const Required: Story = {
@@ -81,21 +102,23 @@ export const Required: Story = {
         required: true,
         placeholder: '텍스트를 입력하세요',
     },
-    render: (args) => {
-        const [value, setValue] = useState(args.value || '')
-        return (
-            <div className="w-[400px]">
-                <BgrTextarea
-                    {...args}
-                    value={value}
-                    onChange={(e) => {
-                        setValue(e.target.value)
-                        args.onChange?.(e)
-                    }}
-                />
-            </div>
-        )
-    },
+    render: RequiredComponent,
+}
+
+const WithErrorComponent = (args: BgrTextareaProps) => {
+    const [value, setValue] = useState(args.value || '')
+    return (
+        <div className="w-[400px]">
+            <BgrTextarea
+                {...args}
+                value={value}
+                onChange={(e) => {
+                    setValue(e.target.value)
+                    args.onChange?.(e)
+                }}
+            />
+        </div>
+    )
 }
 
 export const WithError: Story = {
@@ -105,21 +128,23 @@ export const WithError: Story = {
         errorMessage: '오류 메시지입니다',
         placeholder: '텍스트를 입력하세요',
     },
-    render: (args) => {
-        const [value, setValue] = useState(args.value || '')
-        return (
-            <div className="w-[400px]">
-                <BgrTextarea
-                    {...args}
-                    value={value}
-                    onChange={(e) => {
-                        setValue(e.target.value)
-                        args.onChange?.(e)
-                    }}
-                />
-            </div>
-        )
-    },
+    render: WithErrorComponent,
+}
+
+const WithHelperTextComponent = (args: BgrTextareaProps) => {
+    const [value, setValue] = useState(args.value || '')
+    return (
+        <div className="w-[400px]">
+            <BgrTextarea
+                {...args}
+                value={value}
+                onChange={(e) => {
+                    setValue(e.target.value)
+                    args.onChange?.(e)
+                }}
+            />
+        </div>
+    )
 }
 
 export const WithHelperText: Story = {
@@ -128,21 +153,23 @@ export const WithHelperText: Story = {
         helperText: '도움말 텍스트입니다',
         placeholder: '텍스트를 입력하세요',
     },
-    render: (args) => {
-        const [value, setValue] = useState(args.value || '')
-        return (
-            <div className="w-[400px]">
-                <BgrTextarea
-                    {...args}
-                    value={value}
-                    onChange={(e) => {
-                        setValue(e.target.value)
-                        args.onChange?.(e)
-                    }}
-                />
-            </div>
-        )
-    },
+    render: WithHelperTextComponent,
+}
+
+const WithMaxLengthComponent = (args: BgrTextareaProps) => {
+    const [value, setValue] = useState(args.value || '')
+    return (
+        <div className="w-[400px]">
+            <BgrTextarea
+                {...args}
+                value={value}
+                onChange={(e) => {
+                    setValue(e.target.value)
+                    args.onChange?.(e)
+                }}
+            />
+        </div>
+    )
 }
 
 export const WithMaxLength: Story = {
@@ -152,21 +179,7 @@ export const WithMaxLength: Story = {
         showCount: true,
         placeholder: '최대 100자까지 입력 가능합니다',
     },
-    render: (args) => {
-        const [value, setValue] = useState(args.value || '')
-        return (
-            <div className="w-[400px]">
-                <BgrTextarea
-                    {...args}
-                    value={value}
-                    onChange={(e) => {
-                        setValue(e.target.value)
-                        args.onChange?.(e)
-                    }}
-                />
-            </div>
-        )
-    },
+    render: WithMaxLengthComponent,
 }
 
 export const Disabled: Story = {
@@ -184,4 +197,3 @@ export const Disabled: Story = {
         )
     },
 }
-

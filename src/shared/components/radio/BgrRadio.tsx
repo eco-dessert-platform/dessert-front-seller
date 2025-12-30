@@ -6,7 +6,7 @@ interface BgrRadioOption {
     disabled?: boolean
 }
 
-interface BgrRadioProps {
+export interface BgrRadioProps {
     options: BgrRadioOption[]
     value?: string
     name: string

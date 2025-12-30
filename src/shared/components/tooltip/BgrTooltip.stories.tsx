@@ -84,6 +84,11 @@ export const WithReactNode: Story = {
 }
 
 export const AllPositions: Story = {
+    args: {
+        content: 'All Positions',
+        position: 'top',
+        children: <BgrButton title="Hover me" />,
+    },
     render: () => (
         <div className="flex flex-col gap-8 items-center p-8">
             <BgrTooltip content="Top tooltip" position="top">

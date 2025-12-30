@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { ChevronLeft, ChevronsLeft, ChevronRight, ChevronsRight } from 'lucide-react'
 
-interface BgrPaginationProps {
+export interface BgrPaginationProps {
     currentPage: number
     totalPages: number
     onPageChange?: (page: number) => void

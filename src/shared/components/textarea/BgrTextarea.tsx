@@ -1,7 +1,7 @@
 import BgrLabel from '../label/BgrLabel'
 import { cn } from 'src/shared/lib/shadcn/lib/utils'
 
-interface BgrTextareaProps
+export interface BgrTextareaProps
     extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
     label?: string
     required?: boolean

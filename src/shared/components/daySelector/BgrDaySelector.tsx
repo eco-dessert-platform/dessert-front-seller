@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 
-interface BgrDaySelectorProps {
+export interface BgrDaySelectorProps {
     selectedDays?: string[]
     onDayChange?: (days: string[]) => void
     className?: string

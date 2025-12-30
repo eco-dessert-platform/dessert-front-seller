@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { useState } from 'react'
 import BgrSelect from './BgrSelect'
+import type { BgrSelectProps } from './BgrSelect'
 
 const meta = {
     title: 'Components/BgrSelect',
@@ -36,26 +37,44 @@ const defaultOptions = [
     { label: 'Option 4', value: 'option4' },
 ]
 
+const DefaultComponent = (args: BgrSelectProps) => {
+    const [value, setValue] = useState<string | undefined>(args.value)
+    return (
+        <div className="w-[300px]">
+            <BgrSelect
+                {...args}
+                value={value}
+                onValueChange={(val) => {
+                    setValue(val)
+                    args.onValueChange?.(val)
+                }}
+            />
+        </div>
+    )
+}
+
 export const Default: Story = {
     args: {
         options: defaultOptions,
         placeholder: '선택하세요',
     },
-    render: (args) => {
-        const [value, setValue] = useState<string | undefined>(args.value)
-        return (
-            <div className="w-[300px]">
-                <BgrSelect
-                    {...args}
-                    value={value}
-                    onValueChange={(val) => {
-                        setValue(val)
-                        args.onValueChange?.(val)
-                    }}
-                />
-            </div>
-        )
-    },
+    render: DefaultComponent,
+}
+
+const WithLabelComponent = (args: BgrSelectProps) => {
+    const [value, setValue] = useState<string | undefined>(args.value)
+    return (
+        <div className="w-[300px]">
+            <BgrSelect
+                {...args}
+                value={value}
+                onValueChange={(val) => {
+                    setValue(val)
+                    args.onValueChange?.(val)
+                }}
+            />
+        </div>
+    )
 }
 
 export const WithLabel: Story = {
@@ -64,21 +83,23 @@ export const WithLabel: Story = {
         label: '선택 항목',
         placeholder: '선택하세요',
     },
-    render: (args) => {
-        const [value, setValue] = useState<string | undefined>(args.value)
-        return (
-            <div className="w-[300px]">
-                <BgrSelect
-                    {...args}
-                    value={value}
-                    onValueChange={(val) => {
-                        setValue(val)
-                        args.onValueChange?.(val)
-                    }}
-                />
-            </div>
-        )
-    },
+    render: WithLabelComponent,
+}
+
+const RequiredComponent = (args: BgrSelectProps) => {
+    const [value, setValue] = useState<string | undefined>(args.value)
+    return (
+        <div className="w-[300px]">
+            <BgrSelect
+                {...args}
+                value={value}
+                onValueChange={(val) => {
+                    setValue(val)
+                    args.onValueChange?.(val)
+                }}
+            />
+        </div>
+    )
 }
 
 export const Required: Story = {
@@ -88,21 +109,23 @@ export const Required: Story = {
         required: true,
         placeholder: '선택하세요',
     },
-    render: (args) => {
-        const [value, setValue] = useState<string | undefined>(args.value)
-        return (
-            <div className="w-[300px]">
-                <BgrSelect
-                    {...args}
-                    value={value}
-                    onValueChange={(val) => {
-                        setValue(val)
-                        args.onValueChange?.(val)
-                    }}
-                />
-            </div>
-        )
-    },
+    render: RequiredComponent,
+}
+
+const WithErrorComponent = (args: BgrSelectProps) => {
+    const [value, setValue] = useState<string | undefined>(args.value)
+    return (
+        <div className="w-[300px]">
+            <BgrSelect
+                {...args}
+                value={value}
+                onValueChange={(val) => {
+                    setValue(val)
+                    args.onValueChange?.(val)
+                }}
+            />
+        </div>
+    )
 }
 
 export const WithError: Story = {
@@ -113,21 +136,23 @@ export const WithError: Story = {
         errorMessage: '필수 항목입니다',
         placeholder: '선택하세요',
     },
-    render: (args) => {
-        const [value, setValue] = useState<string | undefined>(args.value)
-        return (
-            <div className="w-[300px]">
-                <BgrSelect
-                    {...args}
-                    value={value}
-                    onValueChange={(val) => {
-                        setValue(val)
-                        args.onValueChange?.(val)
-                    }}
-                />
-            </div>
-        )
-    },
+    render: WithErrorComponent,
+}
+
+const WithHelperTextComponent = (args: BgrSelectProps) => {
+    const [value, setValue] = useState<string | undefined>(args.value)
+    return (
+        <div className="w-[300px]">
+            <BgrSelect
+                {...args}
+                value={value}
+                onValueChange={(val) => {
+                    setValue(val)
+                    args.onValueChange?.(val)
+                }}
+            />
+        </div>
+    )
 }
 
 export const WithHelperText: Story = {
@@ -137,21 +162,23 @@ export const WithHelperText: Story = {
         helperText: '도움말 텍스트입니다',
         placeholder: '선택하세요',
     },
-    render: (args) => {
-        const [value, setValue] = useState<string | undefined>(args.value)
-        return (
-            <div className="w-[300px]">
-                <BgrSelect
-                    {...args}
-                    value={value}
-                    onValueChange={(val) => {
-                        setValue(val)
-                        args.onValueChange?.(val)
-                    }}
-                />
-            </div>
-        )
-    },
+    render: WithHelperTextComponent,
+}
+
+const DisabledComponent = (args: BgrSelectProps) => {
+    const [value, setValue] = useState<string | undefined>(args.value)
+    return (
+        <div className="w-[300px]">
+            <BgrSelect
+                {...args}
+                value={value}
+                onValueChange={(val) => {
+                    setValue(val)
+                    args.onValueChange?.(val)
+                }}
+            />
+        </div>
+    )
 }
 
 export const Disabled: Story = {
@@ -161,21 +188,23 @@ export const Disabled: Story = {
         disabled: true,
         placeholder: '선택하세요',
     },
-    render: (args) => {
-        const [value, setValue] = useState<string | undefined>(args.value)
-        return (
-            <div className="w-[300px]">
-                <BgrSelect
-                    {...args}
-                    value={value}
-                    onValueChange={(val) => {
-                        setValue(val)
-                        args.onValueChange?.(val)
-                    }}
-                />
-            </div>
-        )
-    },
+    render: DisabledComponent,
+}
+
+const WithDisabledOptionComponent = (args: BgrSelectProps) => {
+    const [value, setValue] = useState<string | undefined>(args.value)
+    return (
+        <div className="w-[300px]">
+            <BgrSelect
+                {...args}
+                value={value}
+                onValueChange={(val) => {
+                    setValue(val)
+                    args.onValueChange?.(val)
+                }}
+            />
+        </div>
+    )
 }
 
 export const WithDisabledOption: Story = {
@@ -188,20 +217,5 @@ export const WithDisabledOption: Story = {
         label: '선택 항목',
         placeholder: '선택하세요',
     },
-    render: (args) => {
-        const [value, setValue] = useState<string | undefined>(args.value)
-        return (
-            <div className="w-[300px]">
-                <BgrSelect
-                    {...args}
-                    value={value}
-                    onValueChange={(val) => {
-                        setValue(val)
-                        args.onValueChange?.(val)
-                    }}
-                />
-            </div>
-        )
-    },
+    render: WithDisabledOptionComponent,
 }
-

@@ -36,7 +36,6 @@ const meta = {
                     pauseOnHover
                     theme="light"
                     toastClassName="!p-0 !bg-transparent !shadow-none !min-w-0"
-                    bodyClassName="!p-0"
                 />
             </div>
         ),
@@ -95,6 +94,10 @@ export const LongMessage: Story = {
 }
 
 export const AllVariants: Story = {
+    args: {
+        message: 'All Variants',
+        variant: 'success',
+    },
     render: () => (
         <div className="flex flex-col gap-4">
             <BgrToast message="Success" variant="success" onClose={fn()} />
@@ -106,6 +109,10 @@ export const AllVariants: Story = {
 }
 
 export const WithHelperFunctions: Story = {
+    args: {
+        message: 'Helper Functions',
+        variant: 'success',
+    },
     render: () => (
         <div className="flex flex-col gap-4">
             <button

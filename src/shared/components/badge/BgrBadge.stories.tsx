@@ -72,6 +72,10 @@ export const Small: Story = {
 }
 
 export const AllVariants: Story = {
+    args: {
+        children: 'All Variants',
+        variant: 'default',
+    },
     render: () => (
         <div className="flex flex-col gap-4">
             <div className="flex gap-2 items-center">

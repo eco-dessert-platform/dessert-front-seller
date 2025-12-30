@@ -41,7 +41,6 @@ function App() {
                 theme="light"
                 transition={Bounce}
                 toastClassName="!p-0 !bg-transparent !shadow-none !min-w-0"
-                bodyClassName="!p-0"
             />
         </ThemeProvider>
     )

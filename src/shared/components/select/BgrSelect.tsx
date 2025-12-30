@@ -10,7 +10,7 @@ interface BgrSelectOption {
     disabled?: boolean
 }
 
-interface BgrSelectProps {
+export interface BgrSelectProps {
     options: BgrSelectOption[]
     value?: string
     placeholder?: string

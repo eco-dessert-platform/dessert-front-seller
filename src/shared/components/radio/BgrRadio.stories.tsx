@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { useState } from 'react'
 import BgrRadio from './BgrRadio'
+import type { BgrRadioProps } from './BgrRadio'
 
 const meta = {
     title: 'Components/BgrRadio',
@@ -30,6 +31,20 @@ const defaultOptions = [
     { label: 'Option 3', value: 'option3' },
 ]
 
+const DefaultComponent = (args: BgrRadioProps) => {
+    const [value, setValue] = useState(args.value)
+    return (
+        <BgrRadio
+            {...args}
+            value={value}
+            onChange={(val) => {
+                setValue(val)
+                args.onChange?.(val)
+            }}
+        />
+    )
+}
+
 export const Default: Story = {
     args: {
         options: defaultOptions,
@@ -37,19 +52,21 @@ export const Default: Story = {
         value: 'option1',
         direction: 'horizontal',
     },
-    render: (args) => {
-        const [value, setValue] = useState(args.value)
-        return (
-            <BgrRadio
-                {...args}
-                value={value}
-                onChange={(val) => {
-                    setValue(val)
-                    args.onChange?.(val)
-                }}
-            />
-        )
-    },
+    render: DefaultComponent,
+}
+
+const VerticalComponent = (args: BgrRadioProps) => {
+    const [value, setValue] = useState(args.value)
+    return (
+        <BgrRadio
+            {...args}
+            value={value}
+            onChange={(val) => {
+                setValue(val)
+                args.onChange?.(val)
+            }}
+        />
+    )
 }
 
 export const Vertical: Story = {
@@ -59,19 +76,21 @@ export const Vertical: Story = {
         value: 'option1',
         direction: 'vertical',
     },
-    render: (args) => {
-        const [value, setValue] = useState(args.value)
-        return (
-            <BgrRadio
-                {...args}
-                value={value}
-                onChange={(val) => {
-                    setValue(val)
-                    args.onChange?.(val)
-                }}
-            />
-        )
-    },
+    render: VerticalComponent,
+}
+
+const WithDisabledComponent = (args: BgrRadioProps) => {
+    const [value, setValue] = useState(args.value)
+    return (
+        <BgrRadio
+            {...args}
+            value={value}
+            onChange={(val) => {
+                setValue(val)
+                args.onChange?.(val)
+            }}
+        />
+    )
 }
 
 export const WithDisabled: Story = {
@@ -85,19 +104,21 @@ export const WithDisabled: Story = {
         value: 'option1',
         direction: 'horizontal',
     },
-    render: (args) => {
-        const [value, setValue] = useState(args.value)
-        return (
-            <BgrRadio
-                {...args}
-                value={value}
-                onChange={(val) => {
-                    setValue(val)
-                    args.onChange?.(val)
-                }}
-            />
-        )
-    },
+    render: WithDisabledComponent,
+}
+
+const ManyOptionsComponent = (args: BgrRadioProps) => {
+    const [value, setValue] = useState(args.value)
+    return (
+        <BgrRadio
+            {...args}
+            value={value}
+            onChange={(val) => {
+                setValue(val)
+                args.onChange?.(val)
+            }}
+        />
+    )
 }
 
 export const ManyOptions: Story = {
@@ -113,18 +134,6 @@ export const ManyOptions: Story = {
         value: 'option3',
         direction: 'horizontal',
     },
-    render: (args) => {
-        const [value, setValue] = useState(args.value)
-        return (
-            <BgrRadio
-                {...args}
-                value={value}
-                onChange={(val) => {
-                    setValue(val)
-                    args.onChange?.(val)
-                }}
-            />
-        )
-    },
+    render: ManyOptionsComponent,
 }
 
