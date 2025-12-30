@@ -1,4 +1,6 @@
 import type { StorybookConfig } from '@storybook/react-vite'
+import tailwindcss from '@tailwindcss/vite'
+import path from 'path'
 
 const config: StorybookConfig = {
     stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
@@ -12,6 +14,20 @@ const config: StorybookConfig = {
     framework: {
         name: '@storybook/react-vite',
         options: {},
+    },
+    async viteFinal(config) {
+        // Tailwind CSS 플러그인 추가
+        config.plugins = config.plugins || []
+        config.plugins.push(tailwindcss())
+
+        // 경로 별칭 설정
+        config.resolve = config.resolve || {}
+        config.resolve.alias = {
+            ...config.resolve.alias,
+            src: path.resolve(__dirname, '../src'),
+        }
+
+        return config
     },
 }
 export default config
