@@ -6,7 +6,7 @@ import {
     CardTitle,
 } from 'src/shared/lib/shadcn/components/ui/card'
 import { Star } from 'lucide-react'
-import { Button } from 'src/stories/Button.tsx'
+import { Button } from 'src/shared/components/button/Button.tsx'
 import { Badge } from 'src/shared/lib/shadcn/components/ui/badge'
 import { Separator } from 'src/shared/lib/shadcn/components/ui/separator'
 import { useNavigate } from 'react-router'
@@ -33,7 +33,7 @@ const SampleId = ({ product }: { product: Product }) => {
     return (
         <div className="mx-auto grid max-w-6xl gap-10 py-10 md:grid-cols-2">
             <div className="flex flex-col items-center space-y-4">
-                <Button onClick={() => navigate(-1)} label={'<'}></Button>
+                <Button onClick={() => navigate(-1)} label={'<'} />
 
                 <img
                     src={product.images[0]}
@@ -149,7 +149,7 @@ const SampleId = ({ product }: { product: Product }) => {
                         </div>
                     </div>
 
-                    <Button label={'Add to Cart'}></Button>
+                    <Button label={'Add to Cart'} />
 
                     <Separator />
 
