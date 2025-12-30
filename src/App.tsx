@@ -31,8 +31,8 @@ function App() {
             <ToastContainer
                 position="top-right"
                 autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
+                hideProgressBar={true}
+                newestOnTop={true}
                 closeOnClick={false}
                 rtl={false}
                 pauseOnFocusLoss
@@ -40,6 +40,8 @@ function App() {
                 pauseOnHover
                 theme="light"
                 transition={Bounce}
+                toastClassName="!p-0 !bg-transparent !shadow-none !min-w-0"
+                bodyClassName="!p-0"
             />
         </ThemeProvider>
     )
