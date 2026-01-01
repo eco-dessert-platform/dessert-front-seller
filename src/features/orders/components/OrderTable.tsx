@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { format } from 'date-fns'
-import clsx from 'clsx'
 
 import { createColumnHelper } from '@tanstack/react-table'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
@@ -66,9 +65,7 @@ const OrderTable = ({
                     const isOrderSelected = selections.orders.has(orderNumber)
 
                     return (
-                        <div
-                            className={`flex items-center justify-center ${clsx(isOrderSelected && 'bg-gray-100')}`}
-                        >
+                        <div className="flex items-center justify-center">
                             <input
                                 type="checkbox"
                                 checked={isOrderSelected}
@@ -83,13 +80,8 @@ const OrderTable = ({
             columnHelper.accessor('recipientName', {
                 header: '수취인명/주문번호',
                 cell: ({ row }) => {
-                    const orderNumber = row.original.orderNumber
-                    const isOrderSelected = selections.orders.has(orderNumber)
-
                     return (
-                        <div
-                            className={`text-12 flex h-full w-full flex-col justify-center text-center ${clsx(isOrderSelected && 'bg-gray-100')}`}
-                        >
+                        <div className="text-12 flex h-full w-full flex-col justify-center text-center">
                             <p>{row.original.recipientName}</p>
                             <p className="font-medium whitespace-normal text-gray-500">
                                 {row.original.orderNumber}
@@ -106,13 +98,9 @@ const OrderTable = ({
                 cell: ({ row }) => {
                     const rowId = row.id
                     const orderNumber = row.original.orderNumber
-                    const isItemSelected = selections.items.has(rowId)
-                    const isOrderSelected = selections.orders.has(orderNumber)
 
                     return (
-                        <div
-                            className={`flex items-center justify-center ${clsx((isItemSelected || isOrderSelected) && 'bg-gray-100')}`}
-                        >
+                        <div className="flex items-center justify-center">
                             <input
                                 type="checkbox"
                                 checked={selections.items.has(rowId)}
@@ -128,18 +116,8 @@ const OrderTable = ({
             columnHelper.accessor('itemName', {
                 header: '상품명',
                 cell: ({ row }) => {
-                    const rowId = row.id
-                    const orderNumber = row.original.orderNumber
-                    const isItemSelected = selections.items.has(rowId)
-                    const isOrderSelected = selections.orders.has(orderNumber)
-
                     return (
-                        <div
-                            className={clsx(
-                                (isOrderSelected || isItemSelected) &&
-                                    'bg-gray-100',
-                            )}
-                        >
+                        <div>
                             <p className="text-14 text-gray-900">
                                 {row.original.productName}
                             </p>
@@ -160,15 +138,8 @@ const OrderTable = ({
                 header: '주문상태',
                 meta: { width: 66 },
                 cell: ({ row }) => {
-                    const rowId = row.id
-                    const orderNumber = row.original.orderNumber
-                    const isItemSelected = selections.items.has(rowId)
-                    const isOrderSelected = selections.orders.has(orderNumber)
-
                     return (
-                        <div
-                            className={`flex items-center justify-center ${clsx((isOrderSelected || isItemSelected) && 'bg-gray-100')}`}
-                        >
+                        <div className="flex items-center justify-center">
                             <OrderStatusLabel
                                 type={row.original.orderStatus as OrderStatus}
                             />
@@ -180,13 +151,8 @@ const OrderTable = ({
                 header: '결제수단/결제일',
                 meta: { merge: true, width: 86 },
                 cell: ({ row }) => {
-                    const orderNumber = row.original.orderNumber
-                    const isOrderSelected = selections.orders.has(orderNumber)
-
                     return (
-                        <div
-                            className={`flex flex-col items-center justify-center ${clsx(isOrderSelected && 'bg-gray-100')}`}
-                        >
+                        <div className="flex flex-col items-center justify-center">
                             <p className="text-[10px] text-gray-600">
                                 신용카드
                             </p>
@@ -204,13 +170,8 @@ const OrderTable = ({
                 header: '총 주문금액',
                 meta: { merge: true, width: 80 },
                 cell: ({ row }) => {
-                    const orderNumber = row.original.orderNumber
-                    const isOrderSelected = selections.orders.has(orderNumber)
-
                     return (
-                        <div
-                            className={`text-12 flex items-center justify-center ${clsx(isOrderSelected && 'bg-gray-100')}`}
-                        >
+                        <div className="text-12 flex items-center justify-center">
                             {formatPrice(Number(row.original.totalPaid))}
                         </div>
                     )
@@ -220,16 +181,12 @@ const OrderTable = ({
                 header: '배송상태',
                 meta: { merge: true, width: 64 },
                 cell: ({ row }) => {
-                    const orderNumber = row.original.orderNumber
-                    const isOrderSelected = selections.orders.has(orderNumber)
                     const deliveryStatus = row.original.deliveryStatus
                     const isValidDeliveryStatus =
                         deliveryStatus in DELIVERY_STATUS_LABEL_MAP
 
                     return (
-                        <div
-                            className={`text-12 flex items-center justify-center ${clsx(isOrderSelected && 'bg-gray-100')}`}
-                        >
+                        <div className="text-12 flex items-center justify-center">
                             {isValidDeliveryStatus
                                 ? DELIVERY_STATUS_LABEL_MAP[
                                       deliveryStatus as DeliveryStatus
@@ -243,13 +200,8 @@ const OrderTable = ({
                 header: '택배사',
                 meta: { merge: true, width: 76 },
                 cell: ({ row }) => {
-                    const orderNumber = row.original.orderNumber
-                    const isOrderSelected = selections.orders.has(orderNumber)
-
                     return (
-                        <div
-                            className={`text-12 flex items-center justify-center ${clsx(isOrderSelected && 'bg-gray-100')}`}
-                        >
+                        <div className="text-12 flex items-center justify-center">
                             {row.original.courierCompany || '-'}
                         </div>
                     )
@@ -260,13 +212,10 @@ const OrderTable = ({
                 meta: { merge: true, width: 90 },
                 cell: ({ row }) => {
                     const orderNumber = row.original.orderNumber
-                    const isOrderSelected = selections.orders.has(orderNumber)
                     const trackingNumber = row.original.trackingNumber
 
                     return (
-                        <div
-                            className={`text-12 flex flex-col items-center justify-center gap-1 ${clsx(isOrderSelected && 'bg-gray-100')}`}
-                        >
+                        <div className="text-12 flex flex-col items-center justify-center gap-1">
                             {trackingNumber ? (
                                 <>
                                     <p className="max-w-full break-all whitespace-normal">
@@ -303,10 +252,38 @@ const OrderTable = ({
         onModifyTrackingNumber,
     ])
 
+    const getBodyCellClassName = (row: OrderTableRow, columnId: string) => {
+                const orderNumber = row.orderNumber
+                const isOrderSelected = selections.orders.has(orderNumber)
+
+                const orderLevelColumns = [
+                    'select',
+                    'recipientName',
+                    'paymentAt',
+                    'totalPaid',
+                    'deliveryStatus',
+                    'courierCompany',
+                    'trackingNumber',
+                ]
+
+                if (isOrderSelected) {
+                    return 'bg-gray-100'
+                }
+
+                if (!orderLevelColumns.includes(columnId)) {
+                    const rowId = data.findIndex((item) => item === row)
+                    const isItemSelected = selections.items.has(String(rowId))
+                    return isItemSelected ? 'bg-gray-100' : ''
+                }
+
+                return ''
+            }
+
     return (
         <SSdataTable
             columns={columns as never}
             data={data}
+            getBodyCellClassName={getBodyCellClassName}
             styles={{
                 headerClassName: 'text-12 tracking-tight px-[5px] bg-gray-200',
             }}

@@ -107,6 +107,10 @@ export interface DataTableProps<TData, TValue> {
         headerClassName?: string
         containerClassName?: string
     }
+    /**
+     * 각 body 셀의 className을 동적으로 결정하는 함수입니다.
+     */
+    getBodyCellClassName?: (row: TData, columnId: string) => string
 }
 
 /**

@@ -22,6 +22,7 @@ import { renderPagination } from './options/pagination.tsx'
 import { VirtualizedTable } from './options/virtualized.tsx'
 import React from 'react'
 import { Input } from 'src/shared/lib/shadcn/components/ui/input.tsx'
+import clsx from 'clsx'
 
 declare module '@tanstack/react-table' {
     interface ColumnMeta<TData extends RowData, TValue> {
@@ -48,6 +49,7 @@ export function SSdataTable<TData, TValue>({
     virtualization = {},
     search = {},
     styles = {},
+    getBodyCellClassName,
 }: DataTableProps<TData, TValue>) {
     const {
         enabled: paginationEnabled = false,
@@ -240,11 +242,18 @@ export function SSdataTable<TData, TValue>({
                                         )
                                         const span = spans[row.id]
                                         if (span === 0) return null
+
                                         return (
                                             <TableCell
                                                 key={cell.id}
                                                 rowSpan={span}
-                                                className="truncate border-r border-b border-gray-200"
+                                                className={clsx(
+                                                    'truncate border-r border-b border-gray-200',
+                                                    getBodyCellClassName?.(
+                                                        row.original,
+                                                        cell.column.id,
+                                                    ),
+                                                )}
                                             >
                                                 {flexRender(
                                                     cell.column.columnDef.cell,
@@ -257,7 +266,13 @@ export function SSdataTable<TData, TValue>({
                                     return (
                                         <TableCell
                                             key={cell.id}
-                                            className="truncate border-r border-b border-gray-200 last:border-r-0"
+                                            className={clsx(
+                                                'truncate border-r border-b border-gray-200 last:border-r-0',
+                                                getBodyCellClassName?.(
+                                                    row.original,
+                                                    cell.column.id,
+                                                ),
+                                            )}
                                         >
                                             {flexRender(
                                                 cell.column.columnDef.cell,
