@@ -8,6 +8,7 @@ import {
     RowData,
     SortingState,
     useReactTable,
+    FilterFn,
 } from '@tanstack/react-table'
 import {
     Table,
@@ -29,7 +30,7 @@ declare module '@tanstack/react-table' {
     }
 }
 
-export function SSdataTable<TData, TValue>({
+export function SSdataTable<TData, TValue = any>({
     columns,
     data,
     pagination = {},
@@ -57,9 +58,40 @@ export function SSdataTable<TData, TValue>({
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [globalFilter, setGlobalFilter] = React.useState('')
 
+    // 특정 컬럼만 검색하는 경우를 위한 커스텀 필터 함수
+    const globalFilterFn: FilterFn<TData> = React.useCallback(
+        (row, _columnId, filterValue) => {
+            // 빈 문자열이면 모든 행 표시
+            if (!filterValue || String(filterValue).trim() === '') {
+                return true
+            }
+
+            const searchValue = String(filterValue).toLowerCase().trim()
+
+            // searchColumns가 지정된 경우 해당 컬럼만 검색
+            if (searchColumns.length > 0) {
+                return searchColumns.some((columnId) => {
+                    const value = row.getValue(columnId)
+                    if (value == null) return false
+                    const cellValue = String(value).toLowerCase()
+                    return cellValue.includes(searchValue)
+                })
+            }
+
+            // searchColumns가 없으면 모든 컬럼 검색 (기본 동작)
+            return Object.values(row.original as Record<string, unknown>).some(
+                (value) => {
+                    if (value == null) return false
+                    return String(value).toLowerCase().includes(searchValue)
+                },
+            )
+        },
+        [searchColumns],
+    )
+
     const table = useReactTable({
         data,
-        columns,
+        columns: columns as any, // 각 컬럼이 다른 타입을 가질 수 있으므로 any 허용
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         initialState: {
@@ -72,6 +104,7 @@ export function SSdataTable<TData, TValue>({
         getSortedRowModel: getSortedRowModel(),
         onGlobalFilterChange: setGlobalFilter,
         getFilteredRowModel: getFilteredRowModel(),
+        globalFilterFn,
         state: {
             sorting,
             globalFilter,
@@ -90,8 +123,11 @@ export function SSdataTable<TData, TValue>({
                 }`}
             >
                 <Input
-                    placeholder={placeholder}
-                    value={globalFilter ?? ''}
+                    placeholder={
+                        placeholder ||
+                        `${searchColumns.join(', ')}로 검색...`
+                    }
+                    value={globalFilter}
                     onChange={(event) => setGlobalFilter(event.target.value)}
                     className="max-w-sm"
                 />
@@ -121,32 +157,62 @@ export function SSdataTable<TData, TValue>({
         )
     }
 
-    function getRowSpans(
-        rows: Row<TData>[],
-        columnId: string,
-    ): Record<string, number> {
-        const spans: Record<string, number> = {}
-        let prevValue: unknown = null
-        let startRowId: string | null = null
-        let count = 0
+    /**
+     * 셀 병합을 위한 rowSpan 계산 함수
+     * useMemo로 최적화하여 불필요한 재계산 방지
+     */
+    const getRowSpans = React.useCallback(
+        (
+            rows: Row<TData>[],
+            columnId: string,
+        ): Record<string, number> => {
+            const spans: Record<string, number> = {}
+            let prevValue: TValue | null = null
+            let startRowId: string | null = null
+            let count = 0
 
-        rows.forEach((row) => {
-            const value = row.getValue(columnId)
+            rows.forEach((row) => {
+                const value = row.getValue(columnId) as TValue
 
-            if (value === prevValue) {
-                count++
-                spans[startRowId!] = count // 첫 행에 누적 rowSpan
-                spans[row.id] = 0 // 병합된 나머지는 숨김
-            } else {
-                prevValue = value
-                startRowId = row.id
-                count = 1
-                spans[row.id] = 1
+                // Object.is를 사용하여 NaN과 같은 엣지 케이스 처리
+                if (Object.is(value, prevValue) || value === prevValue) {
+                    count++
+                    if (startRowId) {
+                        spans[startRowId] = count // 첫 행에 누적 rowSpan
+                    }
+                    spans[row.id] = 0 // 병합된 나머지는 숨김
+                } else {
+                    prevValue = value
+                    startRowId = row.id
+                    count = 1
+                    spans[row.id] = 1
+                }
+            })
+
+            return spans
+        },
+        [],
+    )
+
+    /**
+     * 각 컬럼별 rowSpan 정보를 메모이제이션
+     * 병합이 활성화된 컬럼에 대해서만 계산
+     */
+    const rows = table.getRowModel().rows
+    const allColumns = table.getAllColumns()
+    const rowSpansCache = React.useMemo(() => {
+        const cache: Record<string, Record<string, number>> = {}
+
+        // 병합이 활성화된 컬럼만 찾아서 계산
+        allColumns.forEach((column) => {
+            const mergeEnabled = column.columnDef.meta?.merge
+            if (mergeEnabled && column.id) {
+                cache[column.id] = getRowSpans(rows, column.id)
             }
         })
 
-        return spans
-    }
+        return cache
+    }, [rows, getRowSpans, allColumns])
 
     return (
         <div>
@@ -188,17 +254,17 @@ export function SSdataTable<TData, TValue>({
                                     const colDef = cell.column.columnDef
                                     const mergeEnabled = colDef.meta?.merge
 
-                                    if (mergeEnabled) {
-                                        const spans = getRowSpans(
-                                            table.getRowModel().rows,
-                                            cell.column.id,
-                                        )
-                                        const span = spans[row.id]
+                                    if (mergeEnabled && cell.column.id) {
+                                        const spans = rowSpansCache[cell.column.id]
+                                        const span = spans?.[row.id]
+                                        
+                                        // span이 0이면 병합된 셀이므로 렌더링하지 않음
                                         if (span === 0) return null
+                                        
                                         return (
                                             <TableCell
                                                 key={cell.id}
-                                                rowSpan={span}
+                                                rowSpan={span ?? 1}
                                                 className="truncate"
                                             >
                                                 {flexRender(

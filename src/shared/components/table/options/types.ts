@@ -78,12 +78,13 @@ export interface SearchOptions {
  * @template TData - 테이블에 표시될 데이터의 타입입니다.
  * @template TValue - 각 셀의 값의 타입입니다.
  */
-export interface DataTableProps<TData, TValue> {
+export interface DataTableProps<TData, TValue = any> {
     /**
      * 테이블의 컬럼 정의 배열입니다.
      * TanStack Table의 ColumnDef 타입을 따릅니다.
+     * 각 컬럼이 다른 타입을 가질 수 있으므로 any를 허용합니다.
      */
-    columns: ColumnDef<TData, TValue>[]
+    columns: ColumnDef<TData, any>[]
     /**
      * 테이블에 표시될 데이터 배열입니다.
      */
@@ -166,3 +167,8 @@ export interface CellFormatOptions<T> {
      */
     customCell?: (value: T[keyof T], row: T) => React.ReactNode
 }
+
+/**
+ * ColumnOptions는 columnHelper.tsx에서 정의 및 export됩니다.
+ * @see columnHelper.tsx
+ */
