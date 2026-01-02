@@ -133,12 +133,13 @@ export type Region = 'kr' | 'us' | 'jp' | 'cn' | 'eu'
 /**
  * 셀 포맷팅에 사용될 옵션을 정의하는 인터페이스입니다.
  * @template T - 데이터 객체의 타입을 나타냅니다.
+ * @template K - key의 타입 (자동 추론됨)
  */
-export interface CellFormatOptions<T> {
+export interface CellFormatOptions<T, K extends keyof T = keyof T> {
     /**
      * 데이터 객체에서 값을 가져올 키를 지정합니다.
      */
-    key: keyof T
+    key: K
     /**
      * 셀 내용의 정렬 방향을 지정합니다. (기본값: 'left')
      */
@@ -161,11 +162,12 @@ export interface CellFormatOptions<T> {
     suffix?: string
     /**
      * 기본 포맷 대신 사용할 사용자 정의 렌더링 함수입니다.
+     * value의 타입은 key에 해당하는 값의 타입으로 자동 추론됩니다.
      * @param value - 현재 셀의 값
      * @param row - 현재 행의 전체 데이터 객체
      * @returns 렌더링할 React 노드
      */
-    customCell?: (value: T[keyof T], row: T) => React.ReactNode
+    customCell?: (value: T[K], row: T) => React.ReactNode
 }
 
 /**

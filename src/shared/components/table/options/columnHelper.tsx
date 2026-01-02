@@ -6,13 +6,15 @@ import {
     CellAlign,
     CellFormatType,
     Region,
+    CellFormatOptions,
 } from './types.ts'
 
 /**
  * 컬럼 생성을 위한 통합 옵션 인터페이스
  * @template T - 데이터 타입
+ * @template K - accessorKey의 타입 (자동 추론됨)
  */
-export interface ColumnOptions<T extends object> {
+export interface ColumnOptions<T extends object, K extends keyof T = keyof T> {
     /**
      * 컬럼 헤더에 표시될 라벨
      */
@@ -20,7 +22,7 @@ export interface ColumnOptions<T extends object> {
     /**
      * 데이터 객체에서 값을 가져올 키
      */
-    accessorKey: keyof T
+    accessorKey: K
     /**
      * 헤더 정렬 방향 (기본값: 'left')
      */
@@ -55,8 +57,9 @@ export interface ColumnOptions<T extends object> {
     merge?: boolean
     /**
      * 커스텀 셀 렌더링 함수
+     * value의 타입은 accessorKey에 해당하는 값의 타입으로 자동 추론됩니다.
      */
-    customCell?: (value: T[keyof T], row: T) => React.ReactNode
+    customCell?: (value: T[K], row: T) => React.ReactNode
     /**
      * 커스텀 헤더 렌더링 함수
      */
@@ -77,7 +80,7 @@ export interface ColumnOptions<T extends object> {
 export function createColumn<
     T extends object,
     K extends keyof T = keyof T,
->(options: ColumnOptions<T> & { accessorKey: K }): ColumnDef<T, T[K]> {
+>(options: ColumnOptions<T, K>): ColumnDef<T, T[K]> {
     const {
         header,
         accessorKey,
@@ -105,27 +108,35 @@ export function createColumn<
     })
 
     // 셀 포맷터 생성
-    const cellFormatter = createCellFormatter<T>({
+    const cellFormatterOptions = {
         key: accessorKey,
         align: cellAlign,
         format,
         region,
         prefix,
         suffix,
-        customCell,
-    })
+        customCell: customCell as ((value: T[K], row: T) => React.ReactNode) | undefined,
+    } as unknown as Parameters<typeof createCellFormatter>[0]
+    const cellFormatter = createCellFormatter(cellFormatterOptions)
 
     // 컬럼 정의 생성 - TanStack Table이 타입을 자동으로 추론함
-    // @ts-expect-error - TanStack Table의 복잡한 타입 시스템으로 인한 타입 에러 무시
-    const column = columnHelper.accessor(accessorKey as any, {
-        ...headerFormatter,
-        ...cellFormatter,
-        enableSorting,
-        size,
-        meta: {
-            merge,
+    const column = (
+        columnHelper.accessor as (
+            accessor: string,
+            options?: Record<string, unknown>,
+        ) => ColumnDef<T, T[K]>
+    )(
+        String(accessorKey),
+        {
+            ...headerFormatter,
+            ...cellFormatter,
+            enableSorting,
+            size,
+            meta: {
+                merge,
+            },
         },
-    })
+    )
 
     // 타입을 정확하게 추론하여 반환
     return column as ColumnDef<T, T[K]>
@@ -139,9 +150,9 @@ export function createColumn<
  * @returns ColumnDef 배열 (각 컬럼의 타입이 정확하게 추론됨)
  */
 export function createColumns<T extends object>(
-    columns: ColumnOptions<T>[],
+    columns: Array<ColumnOptions<T, keyof T>>,
 ): ColumnDef<T, any>[] {
-    return columns.map((options) => createColumn(options as any))
+    return columns.map((options) => createColumn<T, keyof T>(options as any))
 }
 
 /**
@@ -159,12 +170,12 @@ export function createSimpleColumn<
 >(
     accessorKey: K,
     header: string,
-    options?: Partial<ColumnOptions<T>>,
+    options?: Partial<ColumnOptions<T, K>>,
 ): ColumnDef<T, T[K]> {
     return createColumn<T, K>({
         header,
         accessorKey,
         ...options,
-    } as ColumnOptions<T> & { accessorKey: K })
+    } as ColumnOptions<T, K>)
 }
 

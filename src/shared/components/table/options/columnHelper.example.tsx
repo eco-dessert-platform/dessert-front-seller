@@ -227,10 +227,10 @@ export function CustomCellExample() {
             header: '이름',
             accessorKey: 'name',
         }),
-        createColumn<User>({
+        createColumn<User, 'status'>({
             header: '상태',
             accessorKey: 'status',
-            customCell: (value: User['status'], row: User) => {
+            customCell: (value, row) => {
                 return (
                     <span
                         className={`rounded-full px-2 py-1 text-xs ${

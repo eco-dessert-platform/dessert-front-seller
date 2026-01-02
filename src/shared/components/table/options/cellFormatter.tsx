@@ -13,9 +13,10 @@ const regionFormatMap: Record<Region, { locale: string; currency: string }> = {
 }
 
 // 셀 포맷터 생성기
-export const createCellFormatter = <T extends object>(
-    options: CellFormatOptions<T>,
-) => ({
+export const createCellFormatter = <
+    T extends object,
+    K extends keyof T = keyof T,
+>(options: CellFormatOptions<T, K>) => ({
     cell: ({
         row,
     }: {
