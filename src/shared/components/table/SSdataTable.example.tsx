@@ -1,4 +1,4 @@
-import { createColumnHelper } from '@tanstack/react-table'
+import { createColumnHelper, ColumnDef } from '@tanstack/react-table'
 import { SSdataTable } from './SSdataTable'
 
 // ============================================
@@ -38,22 +38,22 @@ interface Order {
 export function BasicExample() {
     const columnHelper = createColumnHelper<User>()
 
-    const columns = [
+    const columns: Array<ColumnDef<User, User[keyof User]>> = [
         columnHelper.accessor('id', {
             header: 'ID',
-        }),
+        }) as ColumnDef<User, User[keyof User]>,
         columnHelper.accessor('name', {
             header: '이름',
-        }),
+        }) as ColumnDef<User, User[keyof User]>,
         columnHelper.accessor('email', {
             header: '이메일',
-        }),
+        }) as ColumnDef<User, User[keyof User]>,
         columnHelper.accessor('age', {
             header: '나이',
-        }),
+        }) as ColumnDef<User, User[keyof User]>,
         columnHelper.accessor('role', {
             header: '역할',
-        }),
+        }) as ColumnDef<User, User[keyof User]>,
     ]
 
     const data: User[] = [
@@ -100,7 +100,7 @@ export function BasicExample() {
 export function PaginationExample() {
     const columnHelper = createColumnHelper<User>()
 
-    const columns = [
+    const columns: Array<ColumnDef<User, unknown>> = [
         columnHelper.accessor('id', {
             header: 'ID',
         }),
@@ -151,7 +151,7 @@ export function PaginationExample() {
 export function SearchExample() {
     const columnHelper = createColumnHelper<User>()
 
-    const columns = [
+    const columns: Array<ColumnDef<User, unknown>> = [
         columnHelper.accessor('id', {
             header: 'ID',
         }),
@@ -199,7 +199,7 @@ export function SearchExample() {
 export function PaginationAndSearchExample() {
     const columnHelper = createColumnHelper<Product>()
 
-    const columns = [
+    const columns: Array<ColumnDef<Product, unknown>> = [
         columnHelper.accessor('id', {
             header: '상품 ID',
         }),
@@ -263,7 +263,7 @@ export function PaginationAndSearchExample() {
 export function MergeCellExample() {
     const columnHelper = createColumnHelper<Order>()
 
-    const columns = [
+    const columns: Array<ColumnDef<Order, unknown>> = [
         columnHelper.accessor('orderNumber', {
             header: '주문번호',
             meta: { merge: true }, // 같은 값이 연속되면 병합
@@ -355,7 +355,7 @@ export function MergeCellExample() {
 export function VirtualizationExample() {
     const columnHelper = createColumnHelper<User>()
 
-    const columns = [
+    const columns: Array<ColumnDef<User, unknown>> = [
         columnHelper.accessor('id', {
             header: 'ID',
         }),
@@ -429,7 +429,7 @@ export function VirtualizationExample() {
 export function CustomCellExample() {
     const columnHelper = createColumnHelper<User>()
 
-    const columns = [
+    const columns: Array<ColumnDef<User, unknown>> = [
         columnHelper.accessor('id', {
             header: 'ID',
         }),
@@ -539,7 +539,7 @@ export function CustomCellExample() {
 export function SortingExample() {
     const columnHelper = createColumnHelper<User>()
 
-    const columns = [
+    const columns: Array<ColumnDef<User, unknown>> = [
         columnHelper.accessor('id', {
             header: 'ID',
             enableSorting: true, // 정렬 활성화
@@ -596,7 +596,7 @@ export function SortingExample() {
 export function FullFeatureExample() {
     const columnHelper = createColumnHelper<Order>()
 
-    const columns = [
+    const columns: Array<ColumnDef<Order, unknown>> = [
         columnHelper.accessor('orderNumber', {
             header: '주문번호',
             enableSorting: true,

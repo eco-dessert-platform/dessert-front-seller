@@ -30,7 +30,7 @@ declare module '@tanstack/react-table' {
     }
 }
 
-export function SSdataTable<TData, TValue = any>({
+export function SSdataTable<TData, TValue = unknown>({
     columns,
     data,
     pagination = {},
@@ -89,9 +89,9 @@ export function SSdataTable<TData, TValue = any>({
         [searchColumns],
     )
 
-    const table = useReactTable({
+    const table = useReactTable<TData>({
         data,
-        columns: columns as any, // 각 컬럼이 다른 타입을 가질 수 있으므로 any 허용
+        columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         initialState: {
@@ -138,25 +138,6 @@ export function SSdataTable<TData, TValue = any>({
         ? renderPagination(table, showPageNumbers, maxVisiblePages, align)
         : null
 
-    if (virtualEnabled) {
-        return (
-            <div>
-                {(searchPosition === 'top' || searchPosition === 'both') &&
-                    searchComponent}
-                {(position === 'top' || position === 'both') &&
-                    paginationComponent}
-                <VirtualizedTable
-                    table={table}
-                    virtualization={virtualization}
-                />
-                {(position === 'bottom' || position === 'both') &&
-                    paginationComponent}
-                {(searchPosition === 'bottom' || searchPosition === 'both') &&
-                    searchComponent}
-            </div>
-        )
-    }
-
     /**
      * 셀 병합을 위한 rowSpan 계산 함수
      * useMemo로 최적화하여 불필요한 재계산 방지
@@ -167,12 +148,12 @@ export function SSdataTable<TData, TValue = any>({
             columnId: string,
         ): Record<string, number> => {
             const spans: Record<string, number> = {}
-            let prevValue: TValue | null = null
+            let prevValue: unknown | null = null
             let startRowId: string | null = null
             let count = 0
 
             rows.forEach((row) => {
-                const value = row.getValue(columnId) as TValue
+                const value = row.getValue(columnId)
 
                 // Object.is를 사용하여 NaN과 같은 엣지 케이스 처리
                 if (Object.is(value, prevValue) || value === prevValue) {
@@ -213,6 +194,25 @@ export function SSdataTable<TData, TValue = any>({
 
         return cache
     }, [rows, getRowSpans, allColumns])
+
+    if (virtualEnabled) {
+        return (
+            <div>
+                {(searchPosition === 'top' || searchPosition === 'both') &&
+                    searchComponent}
+                {(position === 'top' || position === 'both') &&
+                    paginationComponent}
+                <VirtualizedTable
+                    table={table}
+                    virtualization={virtualization}
+                />
+                {(position === 'bottom' || position === 'both') &&
+                    paginationComponent}
+                {(searchPosition === 'bottom' || searchPosition === 'both') &&
+                    searchComponent}
+            </div>
+        )
+    }
 
     return (
         <div>

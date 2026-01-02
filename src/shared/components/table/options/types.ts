@@ -76,15 +76,15 @@ export interface SearchOptions {
 /**
  * SSdataTable 컴포넌트의 props를 정의합니다.
  * @template TData - 테이블에 표시될 데이터의 타입입니다.
- * @template TValue - 각 셀의 값의 타입입니다.
+ * @template TValue - 각 셀의 값의 타입입니다. (기본값: unknown)
  */
-export interface DataTableProps<TData, TValue = any> {
+export interface DataTableProps<TData, TValue = unknown> {
     /**
      * 테이블의 컬럼 정의 배열입니다.
      * TanStack Table의 ColumnDef 타입을 따릅니다.
-     * 각 컬럼이 다른 타입을 가질 수 있으므로 any를 허용합니다.
+     * 각 컬럼이 다른 타입을 가질 수 있으므로 유니온 타입을 허용합니다.
      */
-    columns: ColumnDef<TData, any>[]
+    columns: Array<ColumnDef<TData, TData[keyof TData]>>
     /**
      * 테이블에 표시될 데이터 배열입니다.
      */

@@ -151,8 +151,11 @@ export function createColumn<
  */
 export function createColumns<T extends object>(
     columns: Array<ColumnOptions<T, keyof T>>,
-): ColumnDef<T, any>[] {
-    return columns.map((options) => createColumn<T, keyof T>(options as any))
+): Array<ColumnDef<T, unknown>> {
+    return columns.map((options) => {
+        // 각 컬럼의 accessorKey 타입을 추론하여 createColumn 호출
+        return createColumn<T, typeof options.accessorKey>(options) as ColumnDef<T, unknown>
+    })
 }
 
 /**
