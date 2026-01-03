@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { CalendarDays, ChevronDown, RotateCw, Search } from 'lucide-react'
 import { ko } from 'date-fns/locale'
@@ -24,6 +24,10 @@ const OrderFilter = ({
     const [modalType, setModalType] = useState<string | null>(null)
     const [filterValue, setFilterValue] =
         useState<OrderSearchFilter>(initialFilterValue)
+    const [tempDateRange, setTempDateRange] = useState<Required<DateRange>>({
+        from: filterValue.startDate,
+        to: filterValue.endDate,
+    })
 
     const handleReset = () => {
         setFilterValue(initialFilterValue)
@@ -56,6 +60,13 @@ const OrderFilter = ({
             onSearch(nextFilterValue)
         }
     }
+
+    useEffect(() => {
+        setTempDateRange({
+            from: filterValue.startDate,
+            to: filterValue.endDate,
+        })
+    }, [filterValue.startDate, filterValue.endDate])
 
     return (
         <>
@@ -90,22 +101,16 @@ const OrderFilter = ({
                             </button>
                         </div>
                         {isOpenDayPicker && (
-                            <div className="absolute top-[calc(100%+4px)] z-50 rounded-lg border border-gray-200 bg-white px-4 py-5 shadow-[0px_3px_10px_0px_rgba(0,0,0,0.1),0px_2px_4px_0px_rgba(0,0,0,0.078)]">
+                            <div className="absolute top-[calc(100%+4px)] z-50 flex flex-col gap-[15px] rounded-lg border border-gray-200 bg-white px-4 py-5 shadow-[0px_3px_10px_0px_rgba(0,0,0,0.1),0px_2px_4px_0px_rgba(0,0,0,0.078)]">
                                 <Calendar
                                     mode="range"
                                     locale={ko}
-                                    selected={{
-                                        from: filterValue.startDate,
-                                        to: filterValue.endDate,
-                                    }}
+                                    selected={{ ...tempDateRange }}
                                     onSelect={(range) => {
                                         if (range && range.from && range.to) {
-                                            handleChangeFilter(
-                                                'date',
+                                            setTempDateRange(
                                                 range as Required<DateRange>,
                                             )
-
-                                            setIsOpenDayPicker(false)
                                         }
                                     }}
                                     classNames={{
@@ -131,6 +136,32 @@ const OrderFilter = ({
                                         range_middle: '[&>button]:bg-gray-50!',
                                     }}
                                 />
+                                <div className="flex items-center justify-between">
+                                    <button
+                                        className="text-12 h-[30px] w-[56px] cursor-pointer rounded-md border border-gray-200 bg-white text-center text-gray-800"
+                                        onClick={() => {
+                                            handleChangeFilter('date', {
+                                                from: initialFilterValue.startDate,
+                                                to: initialFilterValue.endDate,
+                                            })
+                                            setIsOpenDayPicker(false)
+                                        }}
+                                    >
+                                        초기화
+                                    </button>
+                                    <button
+                                        className="bg-primary-500 text-12 h-[30px] w-[56px] cursor-pointer rounded-md text-center text-white"
+                                        onClick={() => {
+                                            handleChangeFilter(
+                                                'date',
+                                                tempDateRange,
+                                            )
+                                            setIsOpenDayPicker(false)
+                                        }}
+                                    >
+                                        확인
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </div>
