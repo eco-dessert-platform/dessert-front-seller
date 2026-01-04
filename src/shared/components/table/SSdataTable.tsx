@@ -22,10 +22,23 @@ import { renderPagination } from './options/pagination.tsx'
 import { VirtualizedTable } from './options/virtualized.tsx'
 import React from 'react'
 import { Input } from 'src/shared/lib/shadcn/components/ui/input.tsx'
+import clsx from 'clsx'
 
 declare module '@tanstack/react-table' {
     interface ColumnMeta<TData extends RowData, TValue> {
+        /**
+         * 같은 값의 행들을 병합할지 여부를 결정합니다.
+         * true로 설정하면 동일한 값의 연속된 행들이 rowspan으로 병합됩니다.
+         */
         merge?: boolean
+        /**
+         * 컬럼의 너비를 픽셀(px) 단위로 지정합니다.
+         * 설정하면 colgroup의 col 요소에 해당 너비가 적용됩니다.
+         * table-fixed 레이아웃에서 일부 컬럼만 width를 설정하면,
+         * 나머지 컬럼은 남은 공간을 균등 분할합니다.
+         * 예: meta: { width: 50 } → <col style={{ width: '50px' }} />
+         */
+        width?: number
     }
 }
 
@@ -35,6 +48,8 @@ export function SSdataTable<TData, TValue>({
     pagination = {},
     virtualization = {},
     search = {},
+    styles = {},
+    getBodyCellClassName,
 }: DataTableProps<TData, TValue>) {
     const {
         enabled: paginationEnabled = false,
@@ -153,34 +168,66 @@ export function SSdataTable<TData, TValue>({
             {(searchPosition === 'top' || searchPosition === 'both') &&
                 searchComponent}
             {(position === 'top' || position === 'both') && paginationComponent}
-            <div className="overflow-hidden rounded-md border">
-                <Table className="w-full table-fixed">
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
-                                    <TableHead
-                                        key={header.id}
-                                        className="truncate"
-                                        style={{
-                                            width:
-                                                header.getSize() !== 150
-                                                    ? `${header.getSize()}px`
-                                                    : `${100 / headerGroup.headers.length}%`,
-                                        }}
-                                    >
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                  header.column.columnDef
-                                                      .header,
-                                                  header.getContext(),
-                                              )}
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
+            <div
+                className={`overflow-hidden rounded-md border ${styles?.containerClassName ?? ''}`}
+            >
+                <Table className="w-full table-fixed border-collapse">
+                    {table.getHeaderGroups().map((headerGroup) => {
+                        const hasWidth = headerGroup.headers.some(
+                            (header) =>
+                                header.column.columnDef.meta?.width !==
+                                undefined,
+                        )
+
+                        return (
+                            <React.Fragment key={headerGroup.id}>
+                                {hasWidth && (
+                                    <colgroup>
+                                        {headerGroup.headers.map((header) => {
+                                            const metaWidth =
+                                                header.column.columnDef.meta
+                                                    ?.width
+                                            const size = header.getSize()
+                                            const width = metaWidth
+                                                ? `${metaWidth}px`
+                                                : size !== 150
+                                                  ? `${size}px`
+                                                  : undefined
+
+                                            return (
+                                                <col
+                                                    key={header.id}
+                                                    style={
+                                                        width
+                                                            ? { width }
+                                                            : undefined
+                                                    }
+                                                />
+                                            )
+                                        })}
+                                    </colgroup>
+                                )}
+                                <TableHeader>
+                                    <TableRow>
+                                        {headerGroup.headers.map((header) => (
+                                            <TableHead
+                                                key={header.id}
+                                                className={`truncate border-r border-gray-200 text-center last:border-r-0 ${styles?.headerClassName ?? ''}`}
+                                            >
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(
+                                                          header.column
+                                                              .columnDef.header,
+                                                          header.getContext(),
+                                                      )}
+                                            </TableHead>
+                                        ))}
+                                    </TableRow>
+                                </TableHeader>
+                            </React.Fragment>
+                        )
+                    })}
                     <TableBody>
                         {table.getRowModel().rows.map((row) => (
                             <TableRow key={row.id}>
@@ -195,11 +242,18 @@ export function SSdataTable<TData, TValue>({
                                         )
                                         const span = spans[row.id]
                                         if (span === 0) return null
+
                                         return (
                                             <TableCell
                                                 key={cell.id}
                                                 rowSpan={span}
-                                                className="truncate"
+                                                className={clsx(
+                                                    'truncate border-r border-b border-gray-200',
+                                                    getBodyCellClassName?.(
+                                                        row.original,
+                                                        cell.column.id,
+                                                    ),
+                                                )}
                                             >
                                                 {flexRender(
                                                     cell.column.columnDef.cell,
@@ -212,7 +266,13 @@ export function SSdataTable<TData, TValue>({
                                     return (
                                         <TableCell
                                             key={cell.id}
-                                            className="truncate"
+                                            className={clsx(
+                                                'truncate border-r border-b border-gray-200 last:border-r-0',
+                                                getBodyCellClassName?.(
+                                                    row.original,
+                                                    cell.column.id,
+                                                ),
+                                            )}
                                         >
                                             {flexRender(
                                                 cell.column.columnDef.cell,

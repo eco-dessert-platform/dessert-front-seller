@@ -149,14 +149,14 @@ const OrderCompleted = () => {
                             </Button>
                             <div className="flex items-center gap-1">
                                 <p className="text-14 font-normal text-gray-700">
-                                    선택
+                                    선택&nbsp;
                                     <span className="text-primary-500 font-medium">
                                         {selections.orders.size}개
                                     </span>
                                 </p>
                                 <div className="h-3 w-0.5 bg-gray-400" />
                                 <p className="text-14 font-normal text-gray-700">
-                                    전체
+                                    전체&nbsp;
                                     <span className="font-medium">
                                         {orderContent?.content.length ?? 0}개
                                     </span>
@@ -164,17 +164,6 @@ const OrderCompleted = () => {
                             </div>
                         </div>
                     </div>
-                    {selections.orders.size > 0 && (
-                        <div className="px-6 py-2.5">
-                            <p className="text-14 rounded-md bg-[#FEF4F2] py-2.5 text-center text-gray-700">
-                                이 페이지에 있는 주문
-                                <span className="text-primary-500 font-medium">
-                                    {selections.orders.size}개
-                                </span>
-                                가 모두 선택되었습니다.
-                            </p>
-                        </div>
-                    )}
                     <OrderTable
                         data={tableData}
                         selections={selections}
