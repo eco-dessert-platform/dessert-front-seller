@@ -17,7 +17,7 @@ const SellerProfile = () => {
     )
 
     useEffect(() => {
-        dispatch(sellerAction.getSellerProfile())
+        dispatch(sellerAction.getSellerProfile({}))
     }, [dispatch])
 
     const handleSubmit = () => {

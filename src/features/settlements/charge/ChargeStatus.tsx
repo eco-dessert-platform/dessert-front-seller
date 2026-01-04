@@ -16,7 +16,7 @@ const ChargeStatus = () => {
     )
 
     useEffect(() => {
-        dispatch(settlementsAction.getChargeStatus())
+        dispatch(settlementsAction.getChargeStatus({}))
     }, [dispatch])
 
     return (
