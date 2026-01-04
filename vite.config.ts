@@ -29,11 +29,17 @@ export default defineConfig({
     },
 
     build: {
+        // 청크 크기 경고 임계값 설정 (개선 목표: 500KB 이하)
+        chunkSizeWarningLimit: 500,
         rollupOptions: {
             output: {
                 manualChunks(id) {
                     // node_modules의 큰 라이브러리들을 분리
                     if (id.includes('node_modules')) {
+                        // Recharts (매우 큰 라이브러리, 별도 분리)
+                        if (id.includes('recharts')) {
+                            return 'vendor-recharts'
+                        }
                         // React 관련 모듈
                         if (
                             id.includes('react') ||
@@ -49,12 +55,12 @@ export default defineConfig({
                         ) {
                             return 'vendor-redux'
                         }
-                        // TanStack Table (큰 라이브러리)
+                        // TanStack Table & Virtual (큰 라이브러리)
                         if (id.includes('@tanstack')) {
                             return 'vendor-tanstack'
                         }
                         // i18n 관련 모듈
-                        if (id.includes('i18next')) {
+                        if (id.includes('i18next') || id.includes('i18next-browser-languagedetector')) {
                             return 'vendor-i18n'
                         }
                         // 애니메이션 관련 모듈
@@ -65,7 +71,7 @@ export default defineConfig({
                         if (id.includes('lucide-react')) {
                             return 'vendor-icons'
                         }
-                        // Radix UI 관련 모듈
+                        // Radix UI 관련 모듈 (여러 패키지)
                         if (id.includes('@radix-ui')) {
                             return 'vendor-radix'
                         }
@@ -73,13 +79,17 @@ export default defineConfig({
                         if (id.includes('react-router')) {
                             return 'vendor-router'
                         }
-                        // 기타 큰 라이브러리들
-                        if (
-                            id.includes('axios') ||
-                            id.includes('date-fns') ||
-                            id.includes('react-toastify')
-                        ) {
-                            return 'vendor-utils'
+                        // 날짜 관련 라이브러리
+                        if (id.includes('date-fns') || id.includes('react-day-picker')) {
+                            return 'vendor-date'
+                        }
+                        // 차트/UI 유틸리티
+                        if (id.includes('culori') || id.includes('vaul')) {
+                            return 'vendor-ui-utils'
+                        }
+                        // HTTP 클라이언트 및 알림
+                        if (id.includes('axios') || id.includes('react-toastify')) {
+                            return 'vendor-http'
                         }
                         // 나머지 node_modules는 vendor로 묶기
                         return 'vendor'
