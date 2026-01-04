@@ -14,96 +14,97 @@ const BgrPagination = ({
     onPageChange,
     className = '',
 }: BgrPaginationProps) => {
+    const GROUP_SIZE = 5
+
     const handlePageChange = (page: number) => {
         if (page >= 1 && page <= totalPages && page !== currentPage) {
             onPageChange?.(page)
         }
     }
 
-    const getPageNumbers = () => {
-        const pages: (number | string)[] = []
-        const maxVisible = 5
+    // 현재 그룹 계산
+    const currentGroup = Math.ceil(currentPage / GROUP_SIZE)
+    const totalGroups = Math.ceil(totalPages / GROUP_SIZE)
 
-        if (totalPages <= maxVisible) {
-            for (let i = 1; i <= totalPages; i++) {
-                pages.push(i)
-            }
-        } else {
-            if (currentPage <= 3) {
-                for (let i = 1; i <= 4; i++) {
-                    pages.push(i)
-                }
-                pages.push('ellipsis')
-                pages.push(totalPages)
-            } else if (currentPage >= totalPages - 2) {
-                pages.push(1)
-                pages.push('ellipsis')
-                for (let i = totalPages - 3; i <= totalPages; i++) {
-                    pages.push(i)
-                }
-            } else {
-                pages.push(1)
-                pages.push('ellipsis')
-                for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-                    pages.push(i)
-                }
-                pages.push('ellipsis')
-                pages.push(totalPages)
-            }
+    // 현재 그룹의 시작 페이지와 끝 페이지
+    const groupStartPage = (currentGroup - 1) * GROUP_SIZE + 1
+    const groupEndPage = Math.min(currentGroup * GROUP_SIZE, totalPages)
+
+    // 현재 그룹의 페이지 번호들
+    const getCurrentGroupPages = () => {
+        const pages: number[] = []
+        for (let i = groupStartPage; i <= groupEndPage; i++) {
+            pages.push(i)
         }
-
         return pages
     }
 
+    // 첫 번째 그룹인지 확인
+    const isFirstGroup = currentGroup === 1
+
+    // 마지막 그룹인지 확인
+    const isLastGroup = currentGroup === totalGroups
+
+    // 다음 그룹의 첫 페이지 계산
+    const getNextGroupFirstPage = () => {
+        if (isLastGroup) return totalPages
+        return currentGroup * GROUP_SIZE + 1
+    }
+
+    const currentGroupPages = getCurrentGroupPages()
+
     return (
         <nav
-            className={clsx(
-                'flex items-center justify-end gap-1',
-                className,
-            )}
+            className={clsx('flex items-center', className)}
             aria-label="페이지네이션"
+            style={{ gap: '4px' }}
         >
+            {/* << 버튼: 첫 페이지로 이동 */}
             <button
                 type="button"
                 onClick={() => handlePageChange(1)}
-                disabled={currentPage === 1}
+                disabled={isFirstGroup}
                 className={clsx(
-                    'flex items-center justify-center w-[30px] h-[30px] p-2.5 rounded-[8px]',
-                    'hover:bg-gray-50 transition-colors',
-                    'disabled:opacity-50 disabled:cursor-not-allowed',
+                    'flex items-center justify-center w-[30px] h-[30px] p-[10px] rounded-[8px]',
+                    'transition-colors',
+                    isFirstGroup
+                        ? 'cursor-not-allowed'
+                        : 'hover:bg-gray-50 cursor-pointer',
                 )}
-                aria-label="첫 페이지"
+                aria-label="첫 페이지 그룹"
             >
-                <ChevronsLeft className="w-5 h-5 text-gray-900" />
+                <ChevronsLeft
+                    className={clsx(
+                        'w-5 h-5',
+                        isFirstGroup ? 'text-gray-300' : 'text-gray-900',
+                    )}
+                />
             </button>
 
+            {/* < 버튼: 이전 페이지로 이동 */}
             <button
                 type="button"
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 className={clsx(
-                    'flex items-center justify-center w-[30px] h-[30px] p-2.5 rounded-[8px]',
-                    'hover:bg-gray-50 transition-colors',
-                    'disabled:opacity-50 disabled:cursor-not-allowed',
+                    'flex items-center justify-center w-[30px] h-[30px] p-[10px] rounded-[8px]',
+                    'transition-colors',
+                    currentPage === 1
+                        ? 'cursor-not-allowed'
+                        : 'hover:bg-gray-50 cursor-pointer',
                 )}
                 aria-label="이전 페이지"
             >
-                <ChevronLeft className="w-5 h-5 text-gray-900" />
+                <ChevronLeft
+                    className={clsx(
+                        'w-5 h-5',
+                        currentPage === 1 ? 'text-gray-300' : 'text-gray-900',
+                    )}
+                />
             </button>
 
-            {getPageNumbers().map((page, index) => {
-                if (page === 'ellipsis') {
-                    return (
-                        <span
-                            key={`ellipsis-${index}`}
-                            className="flex items-center justify-center w-[30px] h-[30px] text-title-14-r text-gray-400"
-                        >
-                            ...
-                        </span>
-                    )
-                }
-
-                const pageNumber = page as number
+            {/* 페이지 번호 버튼들 */}
+            {currentGroupPages.map((pageNumber) => {
                 const isActive = pageNumber === currentPage
 
                 return (
@@ -111,12 +112,13 @@ const BgrPagination = ({
                         key={pageNumber}
                         type="button"
                         onClick={() => handlePageChange(pageNumber)}
+                        disabled={isActive}
                         className={clsx(
-                            'flex items-center justify-center w-[30px] h-[30px] p-2.5 rounded-[8px]',
+                            'flex items-center justify-center w-[30px] h-[30px] p-[10px] rounded-[8px]',
                             'transition-colors',
                             isActive
-                                ? 'bg-primary-50 text-primary-500 text-title-14-m'
-                                : 'text-title-14-r text-gray-800 hover:bg-gray-50',
+                                ? 'bg-primary-50 text-primary-500 text-title-14-m cursor-default'
+                                : 'text-title-14-r text-gray-800 hover:bg-gray-50 cursor-pointer',
                         )}
                         aria-label={`${pageNumber}페이지`}
                         aria-current={isActive ? 'page' : undefined}
@@ -126,32 +128,52 @@ const BgrPagination = ({
                 )
             })}
 
+            {/* > 버튼: 다음 그룹의 첫 페이지로 이동 */}
             <button
                 type="button"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(getNextGroupFirstPage())}
+                disabled={isLastGroup}
                 className={clsx(
-                    'flex items-center justify-center w-[30px] h-[30px] p-2.5 rounded-[8px]',
-                    'hover:bg-gray-50 transition-colors',
-                    'disabled:opacity-50 disabled:cursor-not-allowed',
+                    'flex items-center justify-center w-[30px] h-[30px] p-[10px] rounded-[8px]',
+                    'transition-colors',
+                    isLastGroup
+                        ? 'cursor-not-allowed'
+                        : 'hover:bg-gray-50 cursor-pointer',
                 )}
-                aria-label="다음 페이지"
+                aria-label="다음 페이지 그룹"
             >
-                <ChevronRight className="w-5 h-5 text-gray-900" />
+                <ChevronRight
+                    className={clsx(
+                        'w-5 h-5',
+                        isLastGroup ? 'text-gray-300' : 'text-gray-900',
+                    )}
+                />
             </button>
 
+            {/* >> 버튼: 마지막 그룹의 첫 페이지로 이동 */}
             <button
                 type="button"
-                onClick={() => handlePageChange(totalPages)}
-                disabled={currentPage === totalPages}
+                onClick={() => {
+                    const lastGroupFirstPage =
+                        (totalGroups - 1) * GROUP_SIZE + 1
+                    handlePageChange(lastGroupFirstPage)
+                }}
+                disabled={isLastGroup}
                 className={clsx(
-                    'flex items-center justify-center w-[30px] h-[30px] p-2.5 rounded-[8px]',
-                    'hover:bg-gray-50 transition-colors',
-                    'disabled:opacity-50 disabled:cursor-not-allowed',
+                    'flex items-center justify-center w-[30px] h-[30px] p-[10px] rounded-[8px]',
+                    'transition-colors',
+                    isLastGroup
+                        ? 'cursor-not-allowed'
+                        : 'hover:bg-gray-50 cursor-pointer',
                 )}
-                aria-label="마지막 페이지"
+                aria-label="마지막 페이지 그룹"
             >
-                <ChevronsRight className="w-5 h-5 text-gray-900" />
+                <ChevronsRight
+                    className={clsx(
+                        'w-5 h-5',
+                        isLastGroup ? 'text-gray-300' : 'text-gray-900',
+                    )}
+                />
             </button>
         </nav>
     )
