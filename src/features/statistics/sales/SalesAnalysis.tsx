@@ -37,6 +37,12 @@ import {
     TooltipContent,
     TooltipTrigger,
 } from 'src/shared/lib/shadcn/components/ui/tooltip'
+import InfoIconSvg from 'src/assets/icons/info-icon.svg?react'
+
+// 정보 아이콘 컴포넌트
+const InfoIcon = ({ className }: { className?: string }) => {
+    return <InfoIconSvg className={className} />
+}
 
 // 차트 설정
 const paymentChartConfig = {
@@ -100,29 +106,6 @@ const refundChartConfig = {
 } satisfies ChartConfig
 
 type PeriodType = 'day' | 'week' | 'month'
-
-// 정보 아이콘 SVG (Figma 디자인 기준)
-const InfoIcon = ({ className }: { className?: string }) => {
-    return (
-        <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className={className}
-        >
-            <circle cx="12" cy="12" r="11" stroke="#E0E0E0" strokeWidth="1" fill="none" />
-            <path
-                d="M12 7V11M12 15H12.01"
-                stroke="#212121"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-            />
-            <circle cx="12" cy="12" r="1.5" fill="#212121" />
-        </svg>
-    )
-}
 
 // 빈 상태 이미지 URL (Figma에서 제공)
 const emptyStateImages = {
@@ -340,10 +323,7 @@ const SalesAnalysis = () => {
                                 </div>
                             )}
                         </div>
-                        <span className="flex items-center gap-1 text-body-12-r text-gray-500">
-                            <Clock className="h-3 w-3" />
-                            (3:00)
-                        </span>
+                
                     </div>
                 </div>
             </div>
@@ -444,7 +424,6 @@ const SalesAnalysis = () => {
                                         dataKey="average"
                                         stroke="#de4525"
                                         strokeWidth={2}
-                                        strokeDasharray="5 5"
                                         dot={{ r: 5, fill: '#de4525' }}
                                     />
                                 </ComposedChart>
@@ -701,7 +680,6 @@ const SalesAnalysis = () => {
                                         dataKey="average"
                                         stroke="#de4525"
                                         strokeWidth={2}
-                                        strokeDasharray="5 5"
                                         dot={{ r: 5, fill: '#de4525' }}
                                     />
                                 </ComposedChart>

@@ -1,0 +1,23 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Head/Circle -->
+  <circle cx="40" cy="30" r="12" fill="#E0E0E0"/>
+  
+  <!-- Body -->
+  <ellipse cx="40" cy="55" rx="15" ry="18" fill="#E0E0E0"/>
+  
+  <!-- Left Eye -->
+  <circle cx="35" cy="28" r="2" fill="#E0E0E0"/>
+  
+  <!-- Right Eye -->
+  <circle cx="45" cy="28" r="2" fill="#E0E0E0"/>
+  
+  <!-- Mouth -->
+  <path d="M35 35Q40 38 45 35" stroke="#E0E0E0" stroke-width="2" stroke-linecap="round" fill="none"/>
+  
+  <!-- Left Arm -->
+  <ellipse cx="25" cy="50" rx="4" ry="8" fill="#E0E0E0" transform="rotate(-20 25 50)"/>
+  
+  <!-- Right Arm -->
+  <ellipse cx="55" cy="50" rx="4" ry="8" fill="#E0E0E0" transform="rotate(20 55 50)"/>
+</svg>
+
