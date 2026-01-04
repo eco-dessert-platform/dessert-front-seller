@@ -1,5 +1,7 @@
+import SalesAnalysis from 'src/features/statistics/sales/SalesAnalysis'
+
 const SalesAnalysisPage = () => {
-    return <div>판매분석 페이지</div>
+    return <SalesAnalysis />
 }
 
 export default SalesAnalysisPage

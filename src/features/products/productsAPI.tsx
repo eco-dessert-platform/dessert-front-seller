@@ -26,7 +26,13 @@ export const createProduct = (data: FormData) => {
 }
 
 // 상품 수정 API
-export const updateProduct = (id: number, data: FormData) => {
+export const updateProduct = ({
+    id,
+    data,
+}: {
+    id: number
+    data: FormData
+}) => {
     return client.put(`/products/${id}`, data, {
         headers: {
             'Content-Type': 'multipart/form-data',

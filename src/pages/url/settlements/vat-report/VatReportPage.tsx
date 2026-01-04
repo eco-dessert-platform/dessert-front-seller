@@ -1,5 +1,7 @@
+import VatReport from 'src/features/settlements/vat-report/VatReport'
+
 const VatReportPage = () => {
-    return <div>부가세 신고내역 페이지</div>
+    return <VatReport />
 }
 
 export default VatReportPage

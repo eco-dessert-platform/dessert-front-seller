@@ -1,5 +1,7 @@
+import ProductRegister from 'src/features/products/register/ProductRegister'
+
 const ProductRegisterPage = () => {
-    return <div>상품등록 페이지</div>
+    return <ProductRegister />
 }
 
 export default ProductRegisterPage

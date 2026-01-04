@@ -1,5 +1,7 @@
+import ChargeStatus from 'src/features/settlements/charge/ChargeStatus'
+
 const ChargeStatusPage = () => {
-    return <div>충전금 현황 페이지</div>
+    return <ChargeStatus />
 }
 
 export default ChargeStatusPage

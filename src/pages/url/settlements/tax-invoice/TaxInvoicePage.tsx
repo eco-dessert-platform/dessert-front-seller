@@ -1,5 +1,7 @@
+import TaxInvoice from 'src/features/settlements/tax-invoice/TaxInvoice'
+
 const TaxInvoicePage = () => {
-    return <div>세금계산서 조회 페이지</div>
+    return <TaxInvoice />
 }
 
 export default TaxInvoicePage

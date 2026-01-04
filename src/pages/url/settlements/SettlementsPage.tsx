@@ -1,5 +1,7 @@
+import Settlements from 'src/features/settlements/Settlements'
+
 const SettlementsPage = () => {
-    return <div>정산내역 페이지</div>
+    return <Settlements />
 }
 
 export default SettlementsPage

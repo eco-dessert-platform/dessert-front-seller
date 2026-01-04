@@ -1,9 +1,7 @@
-import { useParams } from 'react-router'
+import ProductEdit from 'src/features/products/[id]/edit/ProductEdit'
 
 const ProductEditPage = () => {
-    const { id } = useParams<{ id: string }>()
-
-    return <div>상품 수정 페이지 - ID: {id}</div>
+    return <ProductEdit />
 }
 
 export default ProductEditPage
