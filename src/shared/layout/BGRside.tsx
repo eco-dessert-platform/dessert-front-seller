@@ -15,11 +15,11 @@ const BGRside = () => {
             items: [
                 {
                     title: '상품등록',
-                    href: '/orders'
+                    href: '/products/register',
                 },
                 {
                     title: '상품 조회/수정',
-                    href: '/orders/completed',
+                    href: '/products',
                 },
             ],
         },
@@ -36,43 +36,41 @@ const BGRside = () => {
         {
             group: '정산 관리',
             items: [
-                { title: '정산내역', href: '/settle' },
+                { title: '정산내역', href: '/settlements' },
                 {
                     title: '충전금 현황',
-                    href: '/settle/credits',
+                    href: '/settlements/charge',
                 },
                 {
                     title: '지급보류내역',
-                    href: '/settle/withheld',
+                    href: '/settlements/pending',
                 },
                 {
                     title: '부가세신고내역',
-                    href: '/settle/vat-reports',
+                    href: '/settlements/vat-report',
                 },
                 {
                     title: '세금계산서조회',
-                    href: '/settle/tax-invoices',
+                    href: '/settlements/tax-invoice',
                 },
             ],
         },
         {
-            group: '통계 ',
+            group: '통계',
             items: [
                 {
                     title: '판매분석',
-                    href: '/orders'
+                    href: '/statistics/sales',
                 },
-
             ],
         },
         {
-            group: '판매자 정보 ',
+            group: '판매자 정보',
             items: [
                 {
                     title: '판매자 정보 변경',
-                    href: '/orders'
+                    href: '/seller/profile',
                 },
-
             ],
         },
     ]
