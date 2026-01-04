@@ -1,3 +1,5 @@
+import { format } from 'date-fns'
+
 /**
  * 날짜 형식 규칙 및 상수
  *
@@ -78,7 +80,6 @@ export const formatDateRange = (
     endDate: Date,
     unit: DateUnit = 'day',
 ): string => {
-    const { format } = require('date-fns')
     const dateFormat = getDateFormatByUnit(unit)
     const formattedStart = format(startDate, dateFormat)
     const formattedEnd = format(endDate, dateFormat)
