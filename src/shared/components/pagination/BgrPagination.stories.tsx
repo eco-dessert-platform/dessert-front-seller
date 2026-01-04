@@ -33,15 +33,17 @@ const DefaultComponent = (args: BgrPaginationProps) => {
     )
 }
 
-export const Default: Story = {
+// 첫 번째 그룹 (1-5)
+export const FirstGroup: Story = {
     args: {
         currentPage: 1,
-        totalPages: 10,
+        totalPages: 15,
     },
     render: DefaultComponent,
 }
 
-const MiddlePageComponent = (args: BgrPaginationProps) => {
+// 중간 그룹 (6-10)
+const MiddleGroupComponent = (args: BgrPaginationProps) => {
     const [currentPage, setCurrentPage] = useState(args.currentPage)
     return (
         <BgrPagination
@@ -55,15 +57,16 @@ const MiddlePageComponent = (args: BgrPaginationProps) => {
     )
 }
 
-export const MiddlePage: Story = {
+export const MiddleGroup: Story = {
     args: {
-        currentPage: 5,
-        totalPages: 10,
+        currentPage: 6,
+        totalPages: 15,
     },
-    render: MiddlePageComponent,
+    render: MiddleGroupComponent,
 }
 
-const LastPageComponent = (args: BgrPaginationProps) => {
+// 마지막 그룹 (11-15)
+const LastGroupComponent = (args: BgrPaginationProps) => {
     const [currentPage, setCurrentPage] = useState(args.currentPage)
     return (
         <BgrPagination
@@ -77,14 +80,15 @@ const LastPageComponent = (args: BgrPaginationProps) => {
     )
 }
 
-export const LastPage: Story = {
+export const LastGroup: Story = {
     args: {
-        currentPage: 10,
-        totalPages: 10,
+        currentPage: 11,
+        totalPages: 15,
     },
-    render: LastPageComponent,
+    render: LastGroupComponent,
 }
 
+// 5페이지 이하 (그룹이 하나만 있는 경우)
 const FewPagesComponent = (args: BgrPaginationProps) => {
     const [currentPage, setCurrentPage] = useState(args.currentPage)
     return (
@@ -107,6 +111,7 @@ export const FewPages: Story = {
     render: FewPagesComponent,
 }
 
+// 많은 페이지 (100페이지)
 const ManyPagesComponent = (args: BgrPaginationProps) => {
     const [currentPage, setCurrentPage] = useState(args.currentPage)
     return (
