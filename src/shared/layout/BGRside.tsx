@@ -11,6 +11,19 @@ import { useNavigate } from 'react-router'
 const BGRside = () => {
     const menu = [
         {
+            group: '상품 관리',
+            items: [
+                {
+                    title: '상품등록',
+                    href: '/orders'
+                },
+                {
+                    title: '상품 조회/수정',
+                    href: '/orders/completed',
+                },
+            ],
+        },
+        {
             group: '주문 관리',
             items: [
                 { title: '주문내역', href: '/orders' },
@@ -40,6 +53,26 @@ const BGRside = () => {
                     title: '세금계산서조회',
                     href: '/settle/tax-invoices',
                 },
+            ],
+        },
+        {
+            group: '통계 ',
+            items: [
+                {
+                    title: '판매분석',
+                    href: '/orders'
+                },
+
+            ],
+        },
+        {
+            group: '판매자 정보 ',
+            items: [
+                {
+                    title: '판매자 정보 변경',
+                    href: '/orders'
+                },
+
             ],
         },
     ]
