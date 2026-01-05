@@ -2,17 +2,14 @@ import { useMemo, useState, useCallback, useEffect } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
-import { MOCK_PRODUCT_LIST } from '../data/productsMockData'
-
-type Product = (typeof MOCK_PRODUCT_LIST.content)[number]
-type Option = Product['options'][number]
+import type { ProductListResult, ProductItem } from '../type/productType'
 
 type RowT = {
     // 그룹(병합) 기준
     storeName: string
     productId: string
     productName: string
-    link: string
+    link: string // 링크 컬럼 복원
     productPrice: number // ✅ 상품가(병합될 값)
 
     // 옵션(행마다 다름)
@@ -26,13 +23,17 @@ type RowT = {
 const columnHelper = createColumnHelper<RowT>()
 
 interface ProductTableProps {
+    data?: ProductListResult | null
     onSelectionChange?: (data: {
         selectedProductIds: string[]
         selectedOptionIds: string[]
     }) => void
 }
 
-export default function ProductTable({ onSelectionChange }: ProductTableProps) {
+export default function ProductTable({
+    data,
+    onSelectionChange,
+}: ProductTableProps) {
     const [selections, setSelections] = useState<{
         products: Set<string>
         options: Set<string>
@@ -40,52 +41,67 @@ export default function ProductTable({ onSelectionChange }: ProductTableProps) {
         products: new Set(),
         options: new Set(),
     })
-    const rows: RowT[] = MOCK_PRODUCT_LIST.content.flatMap((p) => {
-        // ✅ 상품가가 데이터에 없으니, 일단 "옵션 가격 합"으로 예시 구현
-        //   (진짜 상품가가 따로 있다면 mock에 productPrice를 추가하는 게 제일 정확함)
-        const productPrice = p.options.reduce((acc, o) => acc + o.price, 0)
 
-        return p.options.map((o) => ({
-            storeName: p.storeName,
-            productId: p.productId,
-            productName: p.productName,
-            link: p.link,
-            productPrice,
+    const rows: RowT[] = useMemo(() => {
+        if (!data?.contents) return []
 
-            optionId: o.id,
-            optionName: o.name,
-            tags: o.tags,
-            optionPrice: o.price,
-            stock: o.stock,
-        }))
-    })
+        return data.contents.flatMap((p: ProductItem) => {
+            if (!p.productOptions || p.productOptions.length === 0) {
+                return [
+                    {
+                        storeName: p.storeName,
+                        productId: String(p.productId),
+                        productName: p.productName,
+                        link: `/products/${p.productId}`, // 링크 생성
+                        productPrice: p.productPrice,
+                        optionId: '',
+                        optionName: '',
+                        tags: [],
+                        optionPrice: 0,
+                        stock: 0,
+                    },
+                ]
+            }
+
+            return p.productOptions.map((o) => ({
+                storeName: p.storeName,
+                productId: String(p.productId),
+                productName: p.productName,
+                link: `/products/${p.productId}`, // 링크 생성
+                productPrice: p.productPrice,
+
+                optionId: String(o.optionId),
+                optionName: o.optionName,
+                tags: o.tags || [],
+                optionPrice: o.price,
+                stock: o.stock,
+            }))
+        })
+    }, [data])
 
     const allProductIds = useMemo(
         () => Array.from(new Set(rows.map((row) => row.productId))),
         [rows],
     )
 
-    const handleSelectProduct = useCallback(
-        (targetProductId: string) => {
-            setSelections((prev) => {
-                const isProductSelected = prev.products.has(targetProductId)
-                const nextSelectedProducts = new Set(prev.products)
+    const handleSelectProduct = useCallback((targetProductId: string) => {
+        setSelections((prev) => {
+            const isProductSelected = prev.products.has(targetProductId)
+            const nextSelectedProducts = new Set(prev.products)
 
-                // 상품 선택/해제만 처리 (옵션 선택과 독립적)
-                if (isProductSelected) {
-                    nextSelectedProducts.delete(targetProductId)
-                } else {
-                    nextSelectedProducts.add(targetProductId)
-                }
+            // 상품 선택/해제만 처리 (옵션 선택과 독립적)
+            if (isProductSelected) {
+                nextSelectedProducts.delete(targetProductId)
+            } else {
+                nextSelectedProducts.add(targetProductId)
+            }
 
-                return {
-                    products: nextSelectedProducts,
-                    options: prev.options, // 옵션 선택은 변경하지 않음
-                }
-            })
-        },
-        [],
-    )
+            return {
+                products: nextSelectedProducts,
+                options: prev.options, // 옵션 선택은 변경하지 않음
+            }
+        })
+    }, [])
 
     const handleSelectOption = useCallback(
         (rowId: string, targetProductId: string) => {

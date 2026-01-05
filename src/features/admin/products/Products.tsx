@@ -80,7 +80,10 @@ const Products = () => {
                     selectedOptionIds={selectedOptionIds}
                     onAction={handleAction}
                 />
-                <ProductTable onSelectionChange={handleSelectionChange} />
+                <ProductTable
+                    data={productList?.result}
+                    onSelectionChange={handleSelectionChange}
+                />
             </div>
         </div>
     )
