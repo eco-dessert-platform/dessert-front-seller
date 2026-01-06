@@ -332,7 +332,7 @@ const SalesAnalysis = () => {
             <Card className="border border-gray-300 rounded-[10px] bg-white shadow-none py-0 gap-0 overflow-hidden">
                 <CardHeader className="flex flex-row items-center justify-between pb-3 pt-4 px-6 bg-white border-0 gap-0 rounded-t-[10px]">
                     <div className="flex items-center gap-1 flex-1 min-w-0 min-h-px">
-                        <CardTitle className="text-heading-20-sb text-gray-900 whitespace-nowrap">일별 결제금액</CardTitle>
+                        <CardTitle className="text-heading-20-sb text-[20px] leading-[1.6] text-gray-900 whitespace-nowrap">일별 결제금액</CardTitle>
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <button type="button" className="cursor-help shrink-0">
@@ -449,7 +449,7 @@ const SalesAnalysis = () => {
             <Card className="border border-gray-300 rounded-[10px] bg-white shadow-none py-0 gap-0 overflow-hidden">
                 <CardHeader className="flex flex-row items-center justify-between pb-3 pt-4 px-6 bg-white border-0 gap-0 rounded-t-[10px]">
                     <div className="flex items-center gap-1 flex-1 min-w-0 min-h-px">
-                        <CardTitle className="text-heading-20-sb text-gray-900 whitespace-nowrap">일별 결제자수 및 결제수</CardTitle>
+                        <CardTitle className="text-heading-20-sb text-[20px] leading-[1.6] text-gray-900 whitespace-nowrap">일별 결제자수 및 결제수</CardTitle>
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <button type="button" className="cursor-help shrink-0">
@@ -564,7 +564,7 @@ const SalesAnalysis = () => {
             <Card className="border border-gray-300 rounded-[10px] bg-white shadow-none py-0 gap-0 overflow-hidden">
                 <CardHeader className="flex flex-row items-center justify-between pb-3 pt-4 px-6 bg-white border-0 gap-0 rounded-t-[10px]">
                     <div className="flex items-center gap-1 flex-1 min-w-0 min-h-px">
-                        <CardTitle className="text-heading-20-sb text-gray-900 whitespace-nowrap">요일별 결제금액 및 평균 결제금액</CardTitle>
+                        <CardTitle className="text-heading-20-sb text-[20px] leading-[1.6] text-gray-900 whitespace-nowrap">요일별 결제금액 및 평균 결제금액</CardTitle>
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <button type="button" className="cursor-help shrink-0">
@@ -717,7 +717,7 @@ const SalesAnalysis = () => {
             <Card className="border border-gray-300 rounded-[10px] bg-white shadow-none py-0 gap-0 overflow-hidden">
                 <CardHeader className="flex flex-row items-center justify-between pb-3 pt-4 px-6 bg-white border-0 gap-0 rounded-t-[10px]">
                     <div className="flex items-center gap-1 flex-1 min-w-0 min-h-px">
-                        <CardTitle className="text-heading-20-sb text-gray-900 whitespace-nowrap">일별 환불율</CardTitle>
+                        <CardTitle className="text-heading-20-sb text-[20px] leading-[1.6] text-gray-900 whitespace-nowrap">일별 환불율</CardTitle>
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <button type="button" className="cursor-help shrink-0">
