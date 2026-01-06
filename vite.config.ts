@@ -34,13 +34,14 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks: {
-                    // React 관련 모듈
+                    // React 코어 라이브러리
                     'vendor-react': [
                         'react',
-                        'react-dom',
-                        'scheduler',
                         'react/jsx-runtime',
+                        'scheduler',
                     ],
+                    // React DOM
+                    'vendor-react-dom': ['react-dom'],
                     // Redux 관련 모듈
                     'vendor-redux': [
                         '@reduxjs/toolkit',
@@ -48,24 +49,59 @@ export default defineConfig({
                         'redux',
                         'redux-saga',
                     ],
+                    // React Router
+                    'vendor-router': [
+                        'react-router-dom',
+                        'react-router',
+                    ],
+                    // 차트 라이브러리 (recharts는 크기가 큼)
+                    'vendor-charts': ['recharts'],
+                    // 테이블 라이브러리
+                    'vendor-table': ['@tanstack/react-table'],
+                    'vendor-virtual': ['@tanstack/react-virtual'],
                     // i18n 관련 모듈
-                    'vendor-i18n': ['i18next', 'react-i18next'],
+                    'vendor-i18n': [
+                        'i18next',
+                        'react-i18next',
+                        'i18next-browser-languagedetector',
+                    ],
+                    // 날짜 관련 라이브러리
+                    'vendor-date': ['date-fns'],
+                    'vendor-date-picker': ['react-day-picker'],
                     // 애니메이션 관련 모듈
                     'vendor-motion': ['framer-motion'],
                     // 아이콘 관련 모듈
                     'vendor-icons': ['lucide-react'],
+                    // HTTP 클라이언트
+                    'vendor-http': ['axios'],
+                    // Toast 알림
+                    'vendor-toast': ['react-toastify'],
                     // Radix UI 관련 모듈
                     'vendor-radix': [
+                        '@radix-ui/react-accordion',
+                        '@radix-ui/react-alert-dialog',
+                        '@radix-ui/react-checkbox',
                         '@radix-ui/react-dialog',
+                        '@radix-ui/react-dropdown-menu',
                         '@radix-ui/react-label',
                         '@radix-ui/react-scroll-area',
+                        '@radix-ui/react-select',
                         '@radix-ui/react-separator',
                         '@radix-ui/react-slot',
                         '@radix-ui/react-switch',
                         '@radix-ui/react-tabs',
                         '@radix-ui/react-tooltip',
                     ],
-                }
+                    // 기타 유틸리티 라이브러리들
+                    'vendor-utils': [
+                        'clsx',
+                        'tailwind-merge',
+                        'class-variance-authority',
+                        'culori',
+                        'typesafe-actions',
+                        'vaul',
+                    ],
+                },
             },
         },
     },
