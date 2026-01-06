@@ -33,68 +33,39 @@ export default defineConfig({
         chunkSizeWarningLimit: 500,
         rollupOptions: {
             output: {
-                manualChunks(id) {
-                    // node_modules의 큰 라이브러리들을 분리
-                    if (id.includes('node_modules')) {
-                        // Recharts (매우 큰 라이브러리, 별도 분리)
-                        if (id.includes('recharts')) {
-                            return 'vendor-recharts'
-                        }
-                        // React 관련 모듈
-                        if (
-                            id.includes('react') ||
-                            id.includes('scheduler') ||
-                            id.includes('react-dom')
-                        ) {
-                            return 'vendor-react'
-                        }
-                        // Redux 관련 모듈
-                        if (
-                            id.includes('redux') ||
-                            id.includes('@reduxjs/toolkit')
-                        ) {
-                            return 'vendor-redux'
-                        }
-                        // TanStack Table & Virtual (큰 라이브러리)
-                        if (id.includes('@tanstack')) {
-                            return 'vendor-tanstack'
-                        }
-                        // i18n 관련 모듈
-                        if (id.includes('i18next') || id.includes('i18next-browser-languagedetector')) {
-                            return 'vendor-i18n'
-                        }
-                        // 애니메이션 관련 모듈
-                        if (id.includes('framer-motion')) {
-                            return 'vendor-motion'
-                        }
-                        // 아이콘 관련 모듈
-                        if (id.includes('lucide-react')) {
-                            return 'vendor-icons'
-                        }
-                        // Radix UI 관련 모듈 (여러 패키지)
-                        if (id.includes('@radix-ui')) {
-                            return 'vendor-radix'
-                        }
-                        // React Router
-                        if (id.includes('react-router')) {
-                            return 'vendor-router'
-                        }
-                        // 날짜 관련 라이브러리
-                        if (id.includes('date-fns') || id.includes('react-day-picker')) {
-                            return 'vendor-date'
-                        }
-                        // 차트/UI 유틸리티
-                        if (id.includes('culori') || id.includes('vaul')) {
-                            return 'vendor-ui-utils'
-                        }
-                        // HTTP 클라이언트 및 알림
-                        if (id.includes('axios') || id.includes('react-toastify')) {
-                            return 'vendor-http'
-                        }
-                        // 나머지 node_modules는 vendor로 묶기
-                        return 'vendor'
-                    }
-                },
+                manualChunks: {
+                    // React 관련 모듈
+                    'vendor-react': [
+                        'react',
+                        'react-dom',
+                        'scheduler',
+                        'react/jsx-runtime',
+                    ],
+                    // Redux 관련 모듈
+                    'vendor-redux': [
+                        '@reduxjs/toolkit',
+                        'react-redux',
+                        'redux',
+                        'redux-saga',
+                    ],
+                    // i18n 관련 모듈
+                    'vendor-i18n': ['i18next', 'react-i18next'],
+                    // 애니메이션 관련 모듈
+                    'vendor-motion': ['framer-motion'],
+                    // 아이콘 관련 모듈
+                    'vendor-icons': ['lucide-react'],
+                    // Radix UI 관련 모듈
+                    'vendor-radix': [
+                        '@radix-ui/react-dialog',
+                        '@radix-ui/react-label',
+                        '@radix-ui/react-scroll-area',
+                        '@radix-ui/react-separator',
+                        '@radix-ui/react-slot',
+                        '@radix-ui/react-switch',
+                        '@radix-ui/react-tabs',
+                        '@radix-ui/react-tooltip',
+                    ],
+                }
             },
         },
     },
