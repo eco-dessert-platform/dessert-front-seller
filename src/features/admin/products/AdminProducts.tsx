@@ -18,13 +18,15 @@ const getInitialFilterValue = (): AdminProductSearchFilter => ({
 
 const AdminProducts = () => {
     const dispatch = useAppDispatch()
-    const { adminProductList, deleteProductsResult } = useAppSelector(
-        ({ adminProductsReducer }) => ({
-            adminProductList: adminProductsReducer.adminProductList,
-            deleteProductsResult: adminProductsReducer.deleteProductsResult,
-        }),
-        shallowEqual,
-    )
+    const { adminProductList, deleteProductsResult, deleteOptionsResult } =
+        useAppSelector(
+            ({ adminProductsReducer }) => ({
+                adminProductList: adminProductsReducer.adminProductList,
+                deleteProductsResult: adminProductsReducer.deleteProductsResult,
+                deleteOptionsResult: adminProductsReducer.deleteOptionsResult,
+            }),
+            shallowEqual,
+        )
 
     const [selectedProductIds, setSelectedProductIds] = useState<string[]>([])
     const [selectedOptionIds, setSelectedOptionIds] = useState<string[]>([])
@@ -53,6 +55,26 @@ const AdminProducts = () => {
             dispatch(adminProductsAction.initialize('deleteProductsResult'))
         }
     }, [deleteProductsResult, dispatch])
+
+    useEffect(() => {
+        if (deleteOptionsResult?.data?.success) {
+            alert('상품 옵션이 성공적으로 삭제되었습니다.')
+            dispatch(
+                adminProductsAction.getAdminProductList(
+                    getInitialFilterValue(),
+                ),
+            )
+            setSelectedProductIds([])
+            setSelectedOptionIds([])
+            dispatch(adminProductsAction.initialize('deleteOptionsResult'))
+        } else if (deleteOptionsResult?.error) {
+            alert(
+                deleteOptionsResult.errorMsg ||
+                    '상품 옵션 삭제 중 오류가 발생했습니다.',
+            )
+            dispatch(adminProductsAction.initialize('deleteOptionsResult'))
+        }
+    }, [deleteOptionsResult, dispatch])
 
     const handleSelectionChange = (data: {
         selectedProductIds: string[]
@@ -90,8 +112,39 @@ const AdminProducts = () => {
                 }
                 break
             case 'ADMIN_OPTION_DELETE':
-                // TODO: 상품옵션 삭제 기능 구현
-                console.log('상품옵션삭제:', ids)
+                if (ids.length === 0) {
+                    alert('삭제할 옵션을 선택해주세요.')
+                    return
+                }
+                if (
+                    window.confirm(
+                        `선택한 ${ids.length}개의 옵션을 삭제하시겠습니까?`,
+                    )
+                ) {
+                    // ids는 "productId:optionId" 형식의 문자열 배열입니다.
+                    const grouped = ids.reduce(
+                        (acc, cur) => {
+                            const [pid, oid] = cur.split(':')
+                            if (!acc[pid]) acc[pid] = []
+                            acc[pid].push(Number(oid))
+                            return acc
+                        },
+                        {} as Record<string, number[]>,
+                    )
+
+                    // 각 상품별로 옵션 삭제 API 호출
+                    Object.entries(grouped).forEach(([pid, oids]) => {
+                        dispatch(
+                            adminProductsAction.deleteAdminProductOptions({
+                                productId: Number(pid),
+                                data: {
+                                    removeAll: false,
+                                    optionIds: oids,
+                                },
+                            }),
+                        )
+                    })
+                }
                 break
             case 'ADMIN_OPTION_OUT_OF_STOCK':
                 // TODO: 품절 처리 기능 구현

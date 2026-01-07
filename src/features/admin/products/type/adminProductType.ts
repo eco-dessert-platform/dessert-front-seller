@@ -30,3 +30,8 @@ export interface AdminAPIResponse<T> {
 }
 
 export type AdminProductListResponse = AdminAPIResponse<AdminProductListResult>
+
+export interface AdminDeleteOptionsRequest {
+    removeAll: boolean
+    optionIds: number[]
+}

@@ -37,8 +37,6 @@ export default function AdminProductTable({
     data,
     onSelectionChange,
 }: AdminProductTableProps) {
-    console.log(data);
-    
     const [selections, setSelections] = useState<{
         products: Set<string>
         options: Set<string>
@@ -109,19 +107,19 @@ export default function AdminProductTable({
     }, [])
 
     const handleSelectOption = useCallback(
-        (rowId: string, targetProductId: string) => {
+        (productId: string, optionId: string) => {
             setSelections((prev) => {
                 const nextSelectedOptions = new Set(prev.options)
+                const selectionKey = `${productId}:${optionId}`
 
-                // 옵션 선택/해제만 처리 (상품 선택과 독립적)
-                if (nextSelectedOptions.has(rowId)) {
-                    nextSelectedOptions.delete(rowId)
+                if (nextSelectedOptions.has(selectionKey)) {
+                    nextSelectedOptions.delete(selectionKey)
                 } else {
-                    nextSelectedOptions.add(rowId)
+                    nextSelectedOptions.add(selectionKey)
                 }
 
                 return {
-                    products: prev.products, // 상품 선택은 변경하지 않음
+                    products: prev.products,
                     options: nextSelectedOptions,
                 }
             })
@@ -142,9 +140,13 @@ export default function AdminProductTable({
                 }
             }
 
+            const allOptionSelectionKeys = rows
+                .filter((row) => row.optionId)
+                .map((row) => `${row.productId}:${row.optionId}`)
+
             return {
                 products: new Set(allProductIds),
-                options: new Set(Array.from(rows, (_, idx) => idx.toString())),
+                options: new Set(allOptionSelectionKeys),
             }
         })
     }, [allProductIds, rows])
@@ -164,9 +166,11 @@ export default function AdminProductTable({
     }, [selections.products.size, allProductIds.length])
 
     // 선택 상태 확인 헬퍼 함수
-    const getSelectionState = (rowId: string, productId: string) => {
+    const getSelectionState = (productId: string, optionId?: string) => {
         const isProductSelected = selections.products.has(productId)
-        const isOptionSelected = selections.options.has(rowId)
+        const isOptionSelected = optionId
+            ? selections.options.has(`${productId}:${optionId}`)
+            : false
         const isSelected = isProductSelected || isOptionSelected
         return { isProductSelected, isOptionSelected, isSelected }
     }
@@ -196,7 +200,6 @@ export default function AdminProductTable({
                 accessorFn: (row: RowT) => row.productId,
                 cell: ({ row }: { row: { original: RowT; id: string } }) => {
                     const { isProductSelected } = getSelectionState(
-                        row.id,
                         row.original.productId,
                     )
 
@@ -219,8 +222,8 @@ export default function AdminProductTable({
                 meta: { merge: true, width: 120 },
                 cell: ({ getValue, row }) => {
                     const { isSelected } = getSelectionState(
-                        row.id,
                         row.original.productId,
+                        row.original.optionId,
                     )
 
                     return (
@@ -237,8 +240,8 @@ export default function AdminProductTable({
                 meta: { merge: true },
                 cell: ({ row }) => {
                     const { isSelected } = getSelectionState(
-                        row.id,
                         row.original.productId,
+                        row.original.optionId,
                     )
 
                     return (
@@ -258,9 +261,9 @@ export default function AdminProductTable({
                 meta: { width: 50 },
                 header: () => <div />,
                 cell: ({ row }) => {
-                    const { isOptionSelected, isSelected } = getSelectionState(
-                        row.id,
+                    const { isOptionSelected } = getSelectionState(
                         row.original.productId,
+                        row.original.optionId,
                     )
 
                     return (
@@ -270,8 +273,8 @@ export default function AdminProductTable({
                                 checked={isOptionSelected}
                                 onChange={() =>
                                     handleSelectOption(
-                                        row.id,
                                         row.original.productId,
+                                        row.original.optionId,
                                     )
                                 }
                                 className="accent-primary-500 cursor-pointer"
@@ -284,8 +287,8 @@ export default function AdminProductTable({
                 header: '상품옵션명',
                 cell: ({ row }) => {
                     const { isSelected } = getSelectionState(
-                        row.id,
                         row.original.productId,
+                        row.original.optionId,
                     )
 
                     return (
@@ -312,8 +315,8 @@ export default function AdminProductTable({
                 meta: { width: 80 },
                 cell: ({ getValue, row }) => {
                     const { isSelected } = getSelectionState(
-                        row.id,
                         row.original.productId,
+                        row.original.optionId,
                     )
 
                     return (
@@ -328,8 +331,8 @@ export default function AdminProductTable({
                 meta: { merge: true, width: 120 },
                 cell: ({ getValue, row }) => {
                     const { isSelected } = getSelectionState(
-                        row.id,
                         row.original.productId,
+                        row.original.optionId,
                     )
 
                     return (
@@ -346,8 +349,8 @@ export default function AdminProductTable({
                 meta: { merge: true, width: 100 },
                 cell: ({ getValue, row }) => {
                     const { isSelected } = getSelectionState(
-                        row.id,
                         row.original.productId,
+                        row.original.optionId,
                     )
 
                     return (

@@ -1,5 +1,9 @@
 import { reduxMaker } from 'src/global/store/redux/reduxUtils.ts'
-import { getAdminProductList, deleteAdminProducts } from './adminProductsAPI'
+import {
+    getAdminProductList,
+    deleteAdminProducts,
+    deleteAdminProductOptions,
+} from './adminProductsAPI'
 
 const prefix = 'adminProducts'
 
@@ -15,6 +19,12 @@ const asyncRequests = [
         state: 'deleteProductsResult',
         initialState: null,
         api: deleteAdminProducts,
+    },
+    {
+        action: 'deleteAdminProductOptions',
+        state: 'deleteOptionsResult',
+        initialState: null,
+        api: deleteAdminProductOptions,
     },
 ] as const
 

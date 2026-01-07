@@ -1,8 +1,9 @@
 import { AxiosResponse } from 'axios'
 import { client } from 'src/global/api/client.tsx'
 import type { AdminProductSearchFilter } from './type/adminProductFilterType'
-import type {
+import {
     AdminAPIResponse,
+    AdminDeleteOptionsRequest,
     AdminProductListResponse,
 } from './type/adminProductType'
 
@@ -29,4 +30,15 @@ export const deleteAdminProducts = (
             productIds: productIds.join(','),
         },
     })
+}
+
+// 상품 옵션 삭제 API
+export const deleteAdminProductOptions = ({
+    productId,
+    data,
+}: {
+    productId: number
+    data: AdminDeleteOptionsRequest
+}): Promise<AxiosResponse<AdminAPIResponse<null>>> => {
+    return client.delete(`/api/v1/admin/products/${productId}`, { data })
 }
