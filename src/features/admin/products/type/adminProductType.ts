@@ -35,3 +35,10 @@ export interface AdminDeleteOptionsRequest {
     removeAll: boolean
     optionIds: number[]
 }
+
+export type AdminStockEditFlag = 'INCREASE' | 'DECREASE' | 'SOLDOUT'
+
+export interface AdminUpdateStockRequest {
+    editStockFlag: AdminStockEditFlag
+    amount: number | null
+}

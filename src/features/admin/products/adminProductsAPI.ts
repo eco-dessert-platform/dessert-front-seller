@@ -5,6 +5,7 @@ import {
     AdminAPIResponse,
     AdminDeleteOptionsRequest,
     AdminProductListResponse,
+    AdminUpdateStockRequest,
 } from './type/adminProductType'
 
 import { createMockResponse } from 'src/shared/utils/mockResponse'
@@ -41,4 +42,15 @@ export const deleteAdminProductOptions = ({
     data: AdminDeleteOptionsRequest
 }): Promise<AxiosResponse<AdminAPIResponse<null>>> => {
     return client.delete(`/api/v1/admin/products/${productId}`, { data })
+}
+
+// 상품 재고 수정 API
+export const updateAdminProductStock = ({
+    productId,
+    data,
+}: {
+    productId: number
+    data: AdminUpdateStockRequest
+}): Promise<AxiosResponse<AdminAPIResponse<null>>> => {
+    return client.patch(`/api/v1/admin/products/${productId}/stock`, data)
 }

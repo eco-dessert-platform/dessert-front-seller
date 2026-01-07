@@ -18,15 +18,20 @@ const getInitialFilterValue = (): AdminProductSearchFilter => ({
 
 const AdminProducts = () => {
     const dispatch = useAppDispatch()
-    const { adminProductList, deleteProductsResult, deleteOptionsResult } =
-        useAppSelector(
-            ({ adminProductsReducer }) => ({
-                adminProductList: adminProductsReducer.adminProductList,
-                deleteProductsResult: adminProductsReducer.deleteProductsResult,
-                deleteOptionsResult: adminProductsReducer.deleteOptionsResult,
-            }),
-            shallowEqual,
-        )
+    const {
+        adminProductList,
+        deleteProductsResult,
+        deleteOptionsResult,
+        updateStockResult,
+    } = useAppSelector(
+        ({ adminProductsReducer }) => ({
+            adminProductList: adminProductsReducer.adminProductList,
+            deleteProductsResult: adminProductsReducer.deleteProductsResult,
+            deleteOptionsResult: adminProductsReducer.deleteOptionsResult,
+            updateStockResult: adminProductsReducer.updateStockResult,
+        }),
+        shallowEqual,
+    )
 
     const [selectedProductIds, setSelectedProductIds] = useState<string[]>([])
     const [selectedOptionIds, setSelectedOptionIds] = useState<string[]>([])
@@ -37,44 +42,41 @@ const AdminProducts = () => {
     }, [dispatch])
 
     useEffect(() => {
-        if (deleteProductsResult?.data?.success) {
-            alert('상품이 성공적으로 삭제되었습니다.')
-            dispatch(
-                adminProductsAction.getAdminProductList(
-                    getInitialFilterValue(),
-                ),
-            )
-            setSelectedProductIds([])
-            setSelectedOptionIds([])
-            dispatch(adminProductsAction.initialize('deleteProductsResult'))
-        } else if (deleteProductsResult?.error) {
-            alert(
-                deleteProductsResult.errorMsg ||
-                    '상품 삭제 중 오류가 발생했습니다.',
-            )
-            dispatch(adminProductsAction.initialize('deleteProductsResult'))
-        }
-    }, [deleteProductsResult, dispatch])
+        const results = [
+            {
+                res: deleteProductsResult,
+                msg: '상품이 성공적으로 삭제되었습니다.',
+                key: 'deleteProductsResult',
+            },
+            {
+                res: deleteOptionsResult,
+                msg: '상품 옵션이 성공적으로 삭제되었습니다.',
+                key: 'deleteOptionsResult',
+            },
+            {
+                res: updateStockResult,
+                msg: '재고 상태가 성공적으로 변경되었습니다.',
+                key: 'updateStockResult',
+            },
+        ]
 
-    useEffect(() => {
-        if (deleteOptionsResult?.data?.success) {
-            alert('상품 옵션이 성공적으로 삭제되었습니다.')
-            dispatch(
-                adminProductsAction.getAdminProductList(
-                    getInitialFilterValue(),
-                ),
-            )
-            setSelectedProductIds([])
-            setSelectedOptionIds([])
-            dispatch(adminProductsAction.initialize('deleteOptionsResult'))
-        } else if (deleteOptionsResult?.error) {
-            alert(
-                deleteOptionsResult.errorMsg ||
-                    '상품 옵션 삭제 중 오류가 발생했습니다.',
-            )
-            dispatch(adminProductsAction.initialize('deleteOptionsResult'))
-        }
-    }, [deleteOptionsResult, dispatch])
+        results.forEach(({ res, msg, key }) => {
+            if (res?.data?.success) {
+                alert(msg)
+                dispatch(
+                    adminProductsAction.getAdminProductList(
+                        getInitialFilterValue(),
+                    ),
+                )
+                setSelectedProductIds([])
+                setSelectedOptionIds([])
+                dispatch(adminProductsAction.initialize(key))
+            } else if (res?.error) {
+                alert(res.errorMsg || '요청 처리 중 오류가 발생했습니다.')
+                dispatch(adminProductsAction.initialize(key))
+            }
+        })
+    }, [deleteProductsResult, deleteOptionsResult, updateStockResult, dispatch])
 
     const handleSelectionChange = (data: {
         selectedProductIds: string[]
@@ -147,12 +149,57 @@ const AdminProducts = () => {
                 }
                 break
             case 'ADMIN_OPTION_OUT_OF_STOCK':
-                // TODO: 품절 처리 기능 구현
-                console.log('품절:', ids)
+                if (ids.length === 0) {
+                    alert('품절 처리할 옵션을 선택해주세요.')
+                    return
+                }
+                if (
+                    window.confirm(
+                        `선택한 ${ids.length}개의 옵션을 품절 처리하시겠습니까?`,
+                    )
+                ) {
+                    ids.forEach((id) => {
+                        const [, oid] = id.split(':')
+                        dispatch(
+                            adminProductsAction.updateAdminProductStock({
+                                productId: Number(oid),
+                                data: {
+                                    editStockFlag: 'SOLDOUT',
+                                    amount: null,
+                                },
+                            }),
+                        )
+                    })
+                }
                 break
             case 'ADMIN_OPTION_INCREASE_STOCK':
-                // TODO: 재고증가 기능 구현
-                console.log('재고증가:', ids)
+                if (ids.length === 0) {
+                    alert('재고를 증가시킬 옵션을 선택해주세요.')
+                    return
+                }
+                const amountStr = window.prompt(
+                    '증가시킬 재고 수량을 입력하세요.',
+                    '1',
+                )
+                if (amountStr === null) return
+                const amount = Number(amountStr)
+                if (isNaN(amount) || amount <= 0) {
+                    alert('올바른 수량을 입력해주세요.')
+                    return
+                }
+
+                ids.forEach((id) => {
+                    const [, oid] = id.split(':')
+                    dispatch(
+                        adminProductsAction.updateAdminProductStock({
+                            productId: Number(oid),
+                            data: {
+                                editStockFlag: 'INCREASE',
+                                amount: amount,
+                            },
+                        }),
+                    )
+                })
                 break
             default:
                 console.warn('Unknown action:', action)

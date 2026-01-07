@@ -3,6 +3,7 @@ import {
     getAdminProductList,
     deleteAdminProducts,
     deleteAdminProductOptions,
+    updateAdminProductStock,
 } from './adminProductsAPI'
 
 const prefix = 'adminProducts'
@@ -25,6 +26,12 @@ const asyncRequests = [
         state: 'deleteOptionsResult',
         initialState: null,
         api: deleteAdminProductOptions,
+    },
+    {
+        action: 'updateAdminProductStock',
+        state: 'updateStockResult',
+        initialState: null,
+        api: updateAdminProductStock,
     },
 ] as const
 
