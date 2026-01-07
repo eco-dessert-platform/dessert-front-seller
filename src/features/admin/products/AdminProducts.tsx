@@ -18,9 +18,10 @@ const getInitialFilterValue = (): AdminProductSearchFilter => ({
 
 const AdminProducts = () => {
     const dispatch = useAppDispatch()
-    const { adminProductList } = useAppSelector(
+    const { adminProductList, deleteProductsResult } = useAppSelector(
         ({ adminProductsReducer }) => ({
             adminProductList: adminProductsReducer.adminProductList,
+            deleteProductsResult: adminProductsReducer.deleteProductsResult,
         }),
         shallowEqual,
     )
@@ -32,6 +33,26 @@ const AdminProducts = () => {
         const filterValue = getInitialFilterValue()
         dispatch(adminProductsAction.getAdminProductList(filterValue))
     }, [dispatch])
+
+    useEffect(() => {
+        if (deleteProductsResult?.data?.success) {
+            alert('상품이 성공적으로 삭제되었습니다.')
+            dispatch(
+                adminProductsAction.getAdminProductList(
+                    getInitialFilterValue(),
+                ),
+            )
+            setSelectedProductIds([])
+            setSelectedOptionIds([])
+            dispatch(adminProductsAction.initialize('deleteProductsResult'))
+        } else if (deleteProductsResult?.error) {
+            alert(
+                deleteProductsResult.errorMsg ||
+                    '상품 삭제 중 오류가 발생했습니다.',
+            )
+            dispatch(adminProductsAction.initialize('deleteProductsResult'))
+        }
+    }, [deleteProductsResult, dispatch])
 
     const handleSelectionChange = (data: {
         selectedProductIds: string[]
@@ -52,8 +73,21 @@ const AdminProducts = () => {
                 console.log('상품수정:', ids)
                 break
             case 'ADMIN_PRODUCT_DELETE':
-                // TODO: 상품 삭제 기능 구현
-                console.log('상품삭제:', ids)
+                if (ids.length === 0) {
+                    alert('삭제할 상품을 선택해주세요.')
+                    return
+                }
+                if (
+                    window.confirm(
+                        `선택한 ${ids.length}개의 상품을 삭제하시겠습니까?`,
+                    )
+                ) {
+                    dispatch(
+                        adminProductsAction.deleteAdminProducts(
+                            ids.map(Number),
+                        ),
+                    )
+                }
                 break
             case 'ADMIN_OPTION_DELETE':
                 // TODO: 상품옵션 삭제 기능 구현
