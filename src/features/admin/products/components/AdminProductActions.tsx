@@ -1,22 +1,19 @@
 import { useMemo } from 'react'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
-import type { ProductActionType } from '../type/productActionType'
-import { PRODUCT_BUTTON_GROUPS } from '../data/productButtons'
+import type { AdminProductActionType } from '../type/adminProductActionType'
+import { ADMIN_PRODUCT_BUTTON_GROUPS } from '../data/adminProductButtons'
 
-interface ProductActionsProps {
+interface AdminProductActionsProps {
     selectedProductIds: string[]
     selectedOptionIds: string[]
-    onAction: (
-        action: ProductActionType,
-        ids: string[],
-    ) => void
+    onAction: (action: AdminProductActionType, ids: string[]) => void
 }
 
-const ProductActions = ({
+const AdminProductActions = ({
     selectedProductIds,
     selectedOptionIds,
     onAction,
-}: ProductActionsProps) => {
+}: AdminProductActionsProps) => {
     const hasSelectedProducts = useMemo(
         () => selectedProductIds.length > 0,
         [selectedProductIds.length],
@@ -28,17 +25,17 @@ const ProductActions = ({
     )
 
     // 액션이 상품 액션인지 확인
-    const isProductAction = (action: ProductActionType): boolean => {
+    const isProductAction = (action: AdminProductActionType): boolean => {
         return (
-            action === 'PRODUCT_ADD' ||
-            action === 'PRODUCT_EDIT' ||
-            action === 'PRODUCT_DELETE'
+            action === 'ADMIN_PRODUCT_ADD' ||
+            action === 'ADMIN_PRODUCT_EDIT' ||
+            action === 'ADMIN_PRODUCT_DELETE'
         )
     }
 
     return (
         <div className="flex flex-col gap-3">
-            {PRODUCT_BUTTON_GROUPS.map((group) => (
+            {ADMIN_PRODUCT_BUTTON_GROUPS.map((group) => (
                 <div key={group.label} className="flex items-center gap-3">
                     <span className="min-w-[80px] text-right text-sm font-medium text-gray-700">
                         {group.label}
@@ -49,8 +46,7 @@ const ProductActions = ({
                             const isDisabled =
                                 (isProduct
                                     ? !hasSelectedProducts
-                                    : !hasSelectedOptions) ||
-                                button.disabled
+                                    : !hasSelectedOptions) || button.disabled
                             const selectedIds = isProduct
                                 ? selectedProductIds
                                 : selectedOptionIds
@@ -79,4 +75,4 @@ const ProductActions = ({
     )
 }
 
-export default ProductActions
+export default AdminProductActions

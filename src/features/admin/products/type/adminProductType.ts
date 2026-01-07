@@ -1,4 +1,4 @@
-export interface ProductOption {
+export interface AdminProductOption {
     optionId: number
     optionName: string
     price: number
@@ -6,27 +6,27 @@ export interface ProductOption {
     tags?: string[]
 }
 
-export interface ProductItem {
+export interface AdminProductItem {
     productId: number
     storeName: string
     productName: string
     productPrice: number
-    productOptions?: ProductOption[]
+    productOptions?: AdminProductOption[]
 }
 
-export interface ProductListResult {
-    contents: ProductItem[]
+export interface AdminProductListResult {
+    contents: AdminProductItem[]
     page: number
     size: number
     totalElements: number
     totalPages: number
 }
 
-export interface APIResponse<T> {
+export interface AdminAPIResponse<T> {
     success: boolean
     code: number
     message: string
     result: T
 }
 
-export type ProductListResponse = APIResponse<ProductListResult>
+export type AdminProductListResponse = AdminAPIResponse<AdminProductListResult>

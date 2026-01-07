@@ -2,7 +2,10 @@ import { useMemo, useState, useCallback, useEffect } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
-import type { ProductListResult, ProductItem } from '../type/productType'
+import type {
+    AdminProductListResult,
+    AdminProductItem,
+} from '../type/adminProductType'
 
 type RowT = {
     // 그룹(병합) 기준
@@ -22,18 +25,20 @@ type RowT = {
 
 const columnHelper = createColumnHelper<RowT>()
 
-interface ProductTableProps {
-    data?: ProductListResult | null
+interface AdminProductTableProps {
+    data?: AdminProductListResult | null
     onSelectionChange?: (data: {
         selectedProductIds: string[]
         selectedOptionIds: string[]
     }) => void
 }
 
-export default function ProductTable({
+export default function AdminProductTable({
     data,
     onSelectionChange,
-}: ProductTableProps) {
+}: AdminProductTableProps) {
+    console.log(data);
+    
     const [selections, setSelections] = useState<{
         products: Set<string>
         options: Set<string>
@@ -45,7 +50,7 @@ export default function ProductTable({
     const rows: RowT[] = useMemo(() => {
         if (!data?.contents) return []
 
-        return data.contents.flatMap((p: ProductItem) => {
+        return data.contents.flatMap((p: AdminProductItem) => {
             if (!p.productOptions || p.productOptions.length === 0) {
                 return [
                     {

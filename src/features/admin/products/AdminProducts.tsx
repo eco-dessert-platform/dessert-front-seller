@@ -4,23 +4,23 @@ import {
     useAppSelector,
 } from 'src/global/store/redux/reduxHooks.tsx'
 import { shallowEqual } from 'react-redux'
-import { productsAction } from './productsReducer'
-import { ProductSearchFilter } from './type/productFilterType'
-import type { ProductActionType } from './type/productActionType'
-import ProductTable from './components/ProductTable'
-import ProductActions from './components/ProductActions'
+import { adminProductsAction } from './adminProductsReducer'
+import { AdminProductSearchFilter } from './type/adminProductFilterType'
+import type { AdminProductActionType } from './type/adminProductActionType'
+import AdminProductTable from './components/AdminProductTable'
+import AdminProductActions from './components/AdminProductActions'
 
-const getInitialFilterValue = (): ProductSearchFilter => ({
+const getInitialFilterValue = (): AdminProductSearchFilter => ({
     page: 0,
     size: 10,
     keyword: '',
 })
 
-const Products = () => {
+const AdminProducts = () => {
     const dispatch = useAppDispatch()
-    const { productList } = useAppSelector(
+    const { adminProductList } = useAppSelector(
         ({ adminProductsReducer }) => ({
-            productList: adminProductsReducer.productList,
+            adminProductList: adminProductsReducer.adminProductList,
         }),
         shallowEqual,
     )
@@ -30,7 +30,7 @@ const Products = () => {
 
     useEffect(() => {
         const filterValue = getInitialFilterValue()
-        dispatch(productsAction.getProductList(filterValue))
+        dispatch(adminProductsAction.getAdminProductList(filterValue))
     }, [dispatch])
 
     const handleSelectionChange = (data: {
@@ -41,29 +41,29 @@ const Products = () => {
         setSelectedOptionIds(data.selectedOptionIds)
     }
 
-    const handleAction = (action: ProductActionType, ids: string[]) => {
+    const handleAction = (action: AdminProductActionType, ids: string[]) => {
         switch (action) {
-            case 'PRODUCT_ADD':
+            case 'ADMIN_PRODUCT_ADD':
                 // TODO: 상품 추가 기능 구현
                 console.log('상품추가:', ids)
                 break
-            case 'PRODUCT_EDIT':
+            case 'ADMIN_PRODUCT_EDIT':
                 // TODO: 상품 수정 기능 구현
                 console.log('상품수정:', ids)
                 break
-            case 'PRODUCT_DELETE':
+            case 'ADMIN_PRODUCT_DELETE':
                 // TODO: 상품 삭제 기능 구현
                 console.log('상품삭제:', ids)
                 break
-            case 'OPTION_DELETE':
+            case 'ADMIN_OPTION_DELETE':
                 // TODO: 상품옵션 삭제 기능 구현
                 console.log('상품옵션삭제:', ids)
                 break
-            case 'OPTION_OUT_OF_STOCK':
+            case 'ADMIN_OPTION_OUT_OF_STOCK':
                 // TODO: 품절 처리 기능 구현
                 console.log('품절:', ids)
                 break
-            case 'OPTION_INCREASE_STOCK':
+            case 'ADMIN_OPTION_INCREASE_STOCK':
                 // TODO: 재고증가 기능 구현
                 console.log('재고증가:', ids)
                 break
@@ -75,13 +75,13 @@ const Products = () => {
     return (
         <div className="w-full rounded-lg border border-gray-300 bg-white">
             <div className="flex flex-col gap-4 p-4">
-                <ProductActions
+                <AdminProductActions
                     selectedProductIds={selectedProductIds}
                     selectedOptionIds={selectedOptionIds}
                     onAction={handleAction}
                 />
-                <ProductTable
-                    data={productList?.result}
+                <AdminProductTable
+                    data={adminProductList?.data?.result}
                     onSelectionChange={handleSelectionChange}
                 />
             </div>
@@ -89,4 +89,4 @@ const Products = () => {
     )
 }
 
-export default Products
+export default AdminProducts

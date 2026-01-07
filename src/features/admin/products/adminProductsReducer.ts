@@ -1,14 +1,14 @@
 import { reduxMaker } from 'src/global/store/redux/reduxUtils.ts'
-import { getProductList } from './productsAPI'
+import { getAdminProductList } from './adminProductsAPI'
 
 const prefix = 'adminProducts'
 
 const asyncRequests = [
     {
-        action: 'getProductList',
-        state: 'productList',
+        action: 'getAdminProductList',
+        state: 'adminProductList',
         initialState: null,
-        api: getProductList,
+        api: getAdminProductList,
     },
 ] as const
 
@@ -20,7 +20,6 @@ const module = reduxMaker(prefix, asyncRequests, localState, localReducers)
 
 export const {
     slice: adminProductsSlice,
-    actions: productsAction,
+    actions: adminProductsAction,
     saga: adminProductsSaga,
 } = module
-
