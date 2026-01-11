@@ -2,17 +2,29 @@ import { useMemo, useState, useCallback, useEffect } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
-import { MOCK_PRODUCT_LIST } from '../data/productsMockData'
+import {
+    useAppDispatch,
+    useAppSelector,
+} from 'src/global/store/redux/reduxHooks.tsx'
+import { shallowEqual } from 'react-redux'
+import { adminProductsAction } from '../adminProductsReducer'
+import { AdminProductSearchFilter } from '../type/adminProductFilterType'
+import type {
+    AdminProductItem,
+} from '../type/adminProductType'
 
-type Product = (typeof MOCK_PRODUCT_LIST.content)[number]
-type Option = Product['options'][number]
+const getInitialFilterValue = (): AdminProductSearchFilter => ({
+    page: 0,
+    size: 10,
+    keyword: '',
+})
 
 type RowT = {
     // 그룹(병합) 기준
     storeName: string
     productId: string
     productName: string
-    link: string
+    link: string // 링크 컬럼 복원
     productPrice: number // ✅ 상품가(병합될 값)
 
     // 옵션(행마다 다름)
@@ -25,14 +37,29 @@ type RowT = {
 
 const columnHelper = createColumnHelper<RowT>()
 
-interface ProductTableProps {
+interface AdminProductTableProps {
     onSelectionChange?: (data: {
         selectedProductIds: string[]
         selectedOptionIds: string[]
     }) => void
 }
 
-export default function ProductTable({ onSelectionChange }: ProductTableProps) {
+export default function AdminProductTable({
+    onSelectionChange,
+}: AdminProductTableProps) {
+    const dispatch = useAppDispatch()
+    const { adminProductList } = useAppSelector(
+        ({ adminProductsReducer }) => ({
+            adminProductList: adminProductsReducer.adminProductList?.data?.result,
+        }),
+        shallowEqual,
+    )
+
+    // 초기 데이터 로드
+    useEffect(() => {
+        const filterValue = getInitialFilterValue()
+        dispatch(adminProductsAction.getAdminProductList(filterValue))
+    }, [dispatch])
     const [selections, setSelections] = useState<{
         products: Set<string>
         options: Set<string>
@@ -40,67 +67,82 @@ export default function ProductTable({ onSelectionChange }: ProductTableProps) {
         products: new Set(),
         options: new Set(),
     })
-    const rows: RowT[] = MOCK_PRODUCT_LIST.content.flatMap((p) => {
-        // ✅ 상품가가 데이터에 없으니, 일단 "옵션 가격 합"으로 예시 구현
-        //   (진짜 상품가가 따로 있다면 mock에 productPrice를 추가하는 게 제일 정확함)
-        const productPrice = p.options.reduce((acc, o) => acc + o.price, 0)
 
-        return p.options.map((o) => ({
-            storeName: p.storeName,
-            productId: p.productId,
-            productName: p.productName,
-            link: p.link,
-            productPrice,
+    const rows: RowT[] = useMemo(() => {
+        if (!adminProductList?.contents) return []
 
-            optionId: o.id,
-            optionName: o.name,
-            tags: o.tags,
-            optionPrice: o.price,
-            stock: o.stock,
-        }))
-    })
+        return adminProductList.contents.flatMap((p: AdminProductItem) => {
+            if (!p.productOptions || p.productOptions.length === 0) {
+                return [
+                    {
+                        storeName: p.storeName,
+                        productId: String(p.productId),
+                        productName: p.productName,
+                        link: `/products/${p.productId}`, // 링크 생성
+                        productPrice: p.productPrice,
+                        optionId: '',
+                        optionName: '',
+                        tags: [],
+                        optionPrice: 0,
+                        stock: 0,
+                    },
+                ]
+            }
+
+            return p.productOptions.map((o) => ({
+                storeName: p.storeName,
+                productId: String(p.productId),
+                productName: p.productName,
+                link: `/products/${p.productId}`, // 링크 생성
+                productPrice: p.productPrice,
+
+                optionId: String(o.optionId),
+                optionName: o.optionName,
+                tags: o.tags || [],
+                optionPrice: o.price,
+                stock: o.stock,
+            }))
+        })
+    }, [adminProductList])
 
     const allProductIds = useMemo(
         () => Array.from(new Set(rows.map((row) => row.productId))),
         [rows],
     )
 
-    const handleSelectProduct = useCallback(
-        (targetProductId: string) => {
-            setSelections((prev) => {
-                const isProductSelected = prev.products.has(targetProductId)
-                const nextSelectedProducts = new Set(prev.products)
+    const handleSelectProduct = useCallback((targetProductId: string) => {
+        setSelections((prev) => {
+            const isProductSelected = prev.products.has(targetProductId)
+            const nextSelectedProducts = new Set(prev.products)
 
-                // 상품 선택/해제만 처리 (옵션 선택과 독립적)
-                if (isProductSelected) {
-                    nextSelectedProducts.delete(targetProductId)
-                } else {
-                    nextSelectedProducts.add(targetProductId)
-                }
+            // 상품 선택/해제만 처리 (옵션 선택과 독립적)
+            if (isProductSelected) {
+                nextSelectedProducts.delete(targetProductId)
+            } else {
+                nextSelectedProducts.add(targetProductId)
+            }
 
-                return {
-                    products: nextSelectedProducts,
-                    options: prev.options, // 옵션 선택은 변경하지 않음
-                }
-            })
-        },
-        [],
-    )
+            return {
+                products: nextSelectedProducts,
+                options: prev.options, // 옵션 선택은 변경하지 않음
+            }
+        })
+    }, [])
 
     const handleSelectOption = useCallback(
-        (rowId: string, targetProductId: string) => {
+        (productId: string, optionId: string) => {
             setSelections((prev) => {
                 const nextSelectedOptions = new Set(prev.options)
+                const selectionKey = `${productId}:${optionId}`
 
-                // 옵션 선택/해제만 처리 (상품 선택과 독립적)
-                if (nextSelectedOptions.has(rowId)) {
-                    nextSelectedOptions.delete(rowId)
+                if (nextSelectedOptions.has(selectionKey)) {
+                    nextSelectedOptions.delete(selectionKey)
                 } else {
-                    nextSelectedOptions.add(rowId)
+                    nextSelectedOptions.add(selectionKey)
                 }
 
                 return {
-                    products: prev.products, // 상품 선택은 변경하지 않음
+                    products: prev.products,
                     options: nextSelectedOptions,
                 }
             })
@@ -121,9 +163,13 @@ export default function ProductTable({ onSelectionChange }: ProductTableProps) {
                 }
             }
 
+            const allOptionSelectionKeys = rows
+                .filter((row) => row.optionId)
+                .map((row) => `${row.productId}:${row.optionId}`)
+
             return {
                 products: new Set(allProductIds),
-                options: new Set(Array.from(rows, (_, idx) => idx.toString())),
+                options: new Set(allOptionSelectionKeys),
             }
         })
     }, [allProductIds, rows])
@@ -143,9 +189,11 @@ export default function ProductTable({ onSelectionChange }: ProductTableProps) {
     }, [selections.products.size, allProductIds.length])
 
     // 선택 상태 확인 헬퍼 함수
-    const getSelectionState = (rowId: string, productId: string) => {
+    const getSelectionState = (productId: string, optionId?: string) => {
         const isProductSelected = selections.products.has(productId)
-        const isOptionSelected = selections.options.has(rowId)
+        const isOptionSelected = optionId
+            ? selections.options.has(`${productId}:${optionId}`)
+            : false
         const isSelected = isProductSelected || isOptionSelected
         return { isProductSelected, isOptionSelected, isSelected }
     }
@@ -175,7 +223,6 @@ export default function ProductTable({ onSelectionChange }: ProductTableProps) {
                 accessorFn: (row: RowT) => row.productId,
                 cell: ({ row }: { row: { original: RowT; id: string } }) => {
                     const { isProductSelected } = getSelectionState(
-                        row.id,
                         row.original.productId,
                     )
 
@@ -198,8 +245,8 @@ export default function ProductTable({ onSelectionChange }: ProductTableProps) {
                 meta: { merge: true, width: 120 },
                 cell: ({ getValue, row }) => {
                     const { isSelected } = getSelectionState(
-                        row.id,
                         row.original.productId,
+                        row.original.optionId,
                     )
 
                     return (
@@ -216,8 +263,8 @@ export default function ProductTable({ onSelectionChange }: ProductTableProps) {
                 meta: { merge: true },
                 cell: ({ row }) => {
                     const { isSelected } = getSelectionState(
-                        row.id,
                         row.original.productId,
+                        row.original.optionId,
                     )
 
                     return (
@@ -237,9 +284,9 @@ export default function ProductTable({ onSelectionChange }: ProductTableProps) {
                 meta: { width: 50 },
                 header: () => <div />,
                 cell: ({ row }) => {
-                    const { isOptionSelected, isSelected } = getSelectionState(
-                        row.id,
+                    const { isOptionSelected } = getSelectionState(
                         row.original.productId,
+                        row.original.optionId,
                     )
 
                     return (
@@ -249,8 +296,8 @@ export default function ProductTable({ onSelectionChange }: ProductTableProps) {
                                 checked={isOptionSelected}
                                 onChange={() =>
                                     handleSelectOption(
-                                        row.id,
                                         row.original.productId,
+                                        row.original.optionId,
                                     )
                                 }
                                 className="accent-primary-500 cursor-pointer"
@@ -263,8 +310,8 @@ export default function ProductTable({ onSelectionChange }: ProductTableProps) {
                 header: '상품옵션명',
                 cell: ({ row }) => {
                     const { isSelected } = getSelectionState(
-                        row.id,
                         row.original.productId,
+                        row.original.optionId,
                     )
 
                     return (
@@ -291,8 +338,8 @@ export default function ProductTable({ onSelectionChange }: ProductTableProps) {
                 meta: { width: 80 },
                 cell: ({ getValue, row }) => {
                     const { isSelected } = getSelectionState(
-                        row.id,
                         row.original.productId,
+                        row.original.optionId,
                     )
 
                     return (
@@ -307,8 +354,8 @@ export default function ProductTable({ onSelectionChange }: ProductTableProps) {
                 meta: { merge: true, width: 120 },
                 cell: ({ getValue, row }) => {
                     const { isSelected } = getSelectionState(
-                        row.id,
                         row.original.productId,
+                        row.original.optionId,
                     )
 
                     return (
@@ -325,8 +372,8 @@ export default function ProductTable({ onSelectionChange }: ProductTableProps) {
                 meta: { merge: true, width: 100 },
                 cell: ({ getValue, row }) => {
                     const { isSelected } = getSelectionState(
-                        row.id,
                         row.original.productId,
+                        row.original.optionId,
                     )
 
                     return (
