@@ -2,10 +2,22 @@ import { useMemo, useState, useCallback, useEffect } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
+import {
+    useAppDispatch,
+    useAppSelector,
+} from 'src/global/store/redux/reduxHooks.tsx'
+import { shallowEqual } from 'react-redux'
+import { adminProductsAction } from '../adminProductsReducer'
+import { AdminProductSearchFilter } from '../type/adminProductFilterType'
 import type {
-    AdminProductListResult,
     AdminProductItem,
 } from '../type/adminProductType'
+
+const getInitialFilterValue = (): AdminProductSearchFilter => ({
+    page: 0,
+    size: 10,
+    keyword: '',
+})
 
 type RowT = {
     // 그룹(병합) 기준
@@ -26,7 +38,6 @@ type RowT = {
 const columnHelper = createColumnHelper<RowT>()
 
 interface AdminProductTableProps {
-    data?: AdminProductListResult | null
     onSelectionChange?: (data: {
         selectedProductIds: string[]
         selectedOptionIds: string[]
@@ -34,9 +45,21 @@ interface AdminProductTableProps {
 }
 
 export default function AdminProductTable({
-    data,
     onSelectionChange,
 }: AdminProductTableProps) {
+    const dispatch = useAppDispatch()
+    const { adminProductList } = useAppSelector(
+        ({ adminProductsReducer }) => ({
+            adminProductList: adminProductsReducer.adminProductList?.data?.result,
+        }),
+        shallowEqual,
+    )
+
+    // 초기 데이터 로드
+    useEffect(() => {
+        const filterValue = getInitialFilterValue()
+        dispatch(adminProductsAction.getAdminProductList(filterValue))
+    }, [dispatch])
     const [selections, setSelections] = useState<{
         products: Set<string>
         options: Set<string>
@@ -46,9 +69,9 @@ export default function AdminProductTable({
     })
 
     const rows: RowT[] = useMemo(() => {
-        if (!data?.contents) return []
+        if (!adminProductList?.contents) return []
 
-        return data.contents.flatMap((p: AdminProductItem) => {
+        return adminProductList.contents.flatMap((p: AdminProductItem) => {
             if (!p.productOptions || p.productOptions.length === 0) {
                 return [
                     {
@@ -80,7 +103,7 @@ export default function AdminProductTable({
                 stock: o.stock,
             }))
         })
-    }, [data])
+    }, [adminProductList])
 
     const allProductIds = useMemo(
         () => Array.from(new Set(rows.map((row) => row.productId))),
