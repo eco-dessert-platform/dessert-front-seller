@@ -35,9 +35,23 @@ const asyncRequests = [
     },
 ] as const
 
-const localState = {}
+const localState = {
+    selectedProductIds: [] as string[],
+    selectedOptionIds: [] as string[],
+}
 
-const localReducers = {}
+const localReducers = {
+    setSelectedProductIds: (state: any, action: { payload: string[] }) => {
+        state.selectedProductIds = action.payload
+    },
+    setSelectedOptionIds: (state: any, action: { payload: string[] }) => {
+        state.selectedOptionIds = action.payload
+    },
+    clearSelections: (state: any) => {
+        state.selectedProductIds = []
+        state.selectedOptionIds = []
+    },
+}
 
 const module = reduxMaker(prefix, asyncRequests, localState, localReducers)
 

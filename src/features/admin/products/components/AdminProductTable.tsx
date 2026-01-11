@@ -1,21 +1,28 @@
-import { useMemo, useState, useCallback, useEffect } from 'react'
+import { useMemo, useEffect, useCallback } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Button } from 'src/shared/lib/shadcn/components/ui/button'
 import { SSdataTable } from 'src/shared/components/table/SSdataTable'
-import type {
-    AdminProductListResult,
-    AdminProductItem,
-} from '../type/adminProductType'
+import {
+    useAppDispatch,
+    useAppSelector,
+} from 'src/global/store/redux/reduxHooks.tsx'
+import { shallowEqual } from 'react-redux'
+import { adminProductsAction } from '../adminProductsReducer'
+import { AdminProductSearchFilter } from '../type/adminProductFilterType'
+import type { AdminProductItem } from '../type/adminProductType'
+
+const getInitialFilterValue = (): AdminProductSearchFilter => ({
+    page: 0,
+    size: 10,
+    keyword: '',
+})
 
 type RowT = {
-    // 그룹(병합) 기준
     storeName: string
     productId: string
     productName: string
-    link: string // 링크 컬럼 복원
-    productPrice: number // ✅ 상품가(병합될 값)
-
-    // 옵션(행마다 다름)
+    link: string
+    productPrice: number
     optionId: string
     optionName: string
     tags: string[]
@@ -25,37 +32,38 @@ type RowT = {
 
 const columnHelper = createColumnHelper<RowT>()
 
-interface AdminProductTableProps {
-    data?: AdminProductListResult | null
-    onSelectionChange?: (data: {
-        selectedProductIds: string[]
-        selectedOptionIds: string[]
-    }) => void
-}
+export default function AdminProductTable() {
+    const dispatch = useAppDispatch()
+    const { adminProductList, selectedProductIds, selectedOptionIds } =
+        useAppSelector(
+            ({ adminProductsReducer }) => ({
+                adminProductList:
+                    adminProductsReducer.adminProductList?.data?.result,
+                selectedProductIds:
+                    adminProductsReducer.selectedProductIds as string[],
+                selectedOptionIds:
+                    adminProductsReducer.selectedOptionIds as string[],
+            }),
+            shallowEqual,
+        )
 
-export default function AdminProductTable({
-    data,
-    onSelectionChange,
-}: AdminProductTableProps) {
-    const [selections, setSelections] = useState<{
-        products: Set<string>
-        options: Set<string>
-    }>({
-        products: new Set(),
-        options: new Set(),
-    })
+    // 초기 데이터 로드
+    useEffect(() => {
+        const filterValue = getInitialFilterValue()
+        dispatch(adminProductsAction.getAdminProductList(filterValue))
+    }, [dispatch])
 
     const rows: RowT[] = useMemo(() => {
-        if (!data?.contents) return []
+        if (!adminProductList?.contents) return []
 
-        return data.contents.flatMap((p: AdminProductItem) => {
+        return adminProductList.contents.flatMap((p: AdminProductItem) => {
             if (!p.productOptions || p.productOptions.length === 0) {
                 return [
                     {
                         storeName: p.storeName,
                         productId: String(p.productId),
                         productName: p.productName,
-                        link: `/products/${p.productId}`, // 링크 생성
+                        link: `/products/${p.productId}`,
                         productPrice: p.productPrice,
                         optionId: '',
                         optionName: '',
@@ -70,9 +78,8 @@ export default function AdminProductTable({
                 storeName: p.storeName,
                 productId: String(p.productId),
                 productName: p.productName,
-                link: `/products/${p.productId}`, // 링크 생성
+                link: `/products/${p.productId}`,
                 productPrice: p.productPrice,
-
                 optionId: String(o.optionId),
                 optionName: o.optionName,
                 tags: o.tags || [],
@@ -80,99 +87,125 @@ export default function AdminProductTable({
                 stock: o.stock,
             }))
         })
-    }, [data])
+    }, [adminProductList])
 
     const allProductIds = useMemo(
         () => Array.from(new Set(rows.map((row) => row.productId))),
         [rows],
     )
 
-    const handleSelectProduct = useCallback((targetProductId: string) => {
-        setSelections((prev) => {
-            const isProductSelected = prev.products.has(targetProductId)
-            const nextSelectedProducts = new Set(prev.products)
+    // 상품 선택 시 해당 상품의 모든 옵션도 같이 선택/해제
+    const handleSelectProduct = useCallback(
+        (targetProductId: string) => {
+            const isSelecting = !selectedProductIds.includes(targetProductId)
 
-            // 상품 선택/해제만 처리 (옵션 선택과 독립적)
-            if (isProductSelected) {
-                nextSelectedProducts.delete(targetProductId)
+            // 1. 상품 ID 업데이트
+            const nextProducts = isSelecting
+                ? [...selectedProductIds, targetProductId]
+                : selectedProductIds.filter((id) => id !== targetProductId)
+
+            // 2. 해당 상품에 속한 모든 옵션 키들 (pid:oid)
+            const productOptionKeys = rows
+                .filter(
+                    (row) => row.productId === targetProductId && row.optionId,
+                )
+                .map((row) => `${row.productId}:${row.optionId}`)
+
+            // 3. 옵션 ID 업데이트
+            let nextOptions = [...selectedOptionIds]
+            if (isSelecting) {
+                // 중복 제거하며 추가
+                nextOptions = Array.from(
+                    new Set([...nextOptions, ...productOptionKeys]),
+                )
             } else {
-                nextSelectedProducts.add(targetProductId)
+                // 해당 상품의 옵션들 모두 제거
+                nextOptions = nextOptions.filter(
+                    (key) => !productOptionKeys.includes(key),
+                )
             }
 
-            return {
-                products: nextSelectedProducts,
-                options: prev.options, // 옵션 선택은 변경하지 않음
-            }
-        })
-    }, [])
+            dispatch(adminProductsAction.setSelectedProductIds(nextProducts))
+            dispatch(adminProductsAction.setSelectedOptionIds(nextOptions))
+        },
+        [selectedProductIds, selectedOptionIds, rows, dispatch],
+    )
 
     const handleSelectOption = useCallback(
         (productId: string, optionId: string) => {
-            setSelections((prev) => {
-                const nextSelectedOptions = new Set(prev.options)
-                const selectionKey = `${productId}:${optionId}`
+            const selectionKey = `${productId}:${optionId}`
+            const isSelecting = !selectedOptionIds.includes(selectionKey)
 
-                if (nextSelectedOptions.has(selectionKey)) {
-                    nextSelectedOptions.delete(selectionKey)
-                } else {
-                    nextSelectedOptions.add(selectionKey)
-                }
+            // 1. 옵션 상태 업데이트
+            const nextOptions = isSelecting
+                ? [...selectedOptionIds, selectionKey]
+                : selectedOptionIds.filter((key) => key !== selectionKey)
 
-                return {
-                    products: prev.products,
-                    options: nextSelectedOptions,
-                }
-            })
+            // 2. 해당 상품의 모든 옵션이 체크되었는지 확인하여 상품 체크박스 상태 동기화
+            const allOptionsOfProduct = rows
+                .filter((row) => row.productId === productId && row.optionId)
+                .map((row) => `${row.productId}:${row.optionId}`)
+
+            const selectedOptionsOfProduct = nextOptions.filter((key) =>
+                key.startsWith(`${productId}:`),
+            )
+
+            let nextProducts = [...selectedProductIds]
+            if (
+                isSelecting &&
+                allOptionsOfProduct.length === selectedOptionsOfProduct.length
+            ) {
+                // 모든 옵션 선택 시 상품도 체크
+                if (!nextProducts.includes(productId))
+                    nextProducts.push(productId)
+            } else if (!isSelecting) {
+                // 하나라도 해제 시 상품 체크 해제
+                nextProducts = nextProducts.filter((id) => id !== productId)
+            }
+
+            dispatch(adminProductsAction.setSelectedOptionIds(nextOptions))
+            dispatch(adminProductsAction.setSelectedProductIds(nextProducts))
         },
-        [],
+        [selectedProductIds, selectedOptionIds, rows, dispatch],
     )
 
     const handleSelectAll = useCallback(() => {
-        setSelections((prev) => {
-            const isAllSelected =
-                prev.products.size === allProductIds.length &&
-                allProductIds.length > 0
+        const isAllSelected =
+            allProductIds.length > 0 &&
+            selectedProductIds.length === allProductIds.length
 
-            if (isAllSelected) {
-                return {
-                    products: new Set(),
-                    options: new Set(),
-                }
-            }
-
-            const allOptionSelectionKeys = rows
+        if (isAllSelected) {
+            dispatch(adminProductsAction.clearSelections(undefined))
+        } else {
+            const allOptionKeys = rows
                 .filter((row) => row.optionId)
                 .map((row) => `${row.productId}:${row.optionId}`)
 
-            return {
-                products: new Set(allProductIds),
-                options: new Set(allOptionSelectionKeys),
-            }
-        })
-    }, [allProductIds, rows])
+            dispatch(adminProductsAction.setSelectedProductIds(allProductIds))
+            dispatch(adminProductsAction.setSelectedOptionIds(allOptionKeys))
+        }
+    }, [allProductIds, selectedProductIds.length, rows, dispatch])
 
     const isAllSelected = useMemo(() => {
         return (
-            selections.products.size === allProductIds.length &&
-            allProductIds.length > 0
+            allProductIds.length > 0 &&
+            selectedProductIds.length === allProductIds.length
         )
-    }, [selections.products.size, allProductIds.length])
+    }, [selectedProductIds.length, allProductIds.length])
 
     const isSomeSelected = useMemo(() => {
         return (
-            selections.products.size > 0 &&
-            selections.products.size < allProductIds.length
+            selectedProductIds.length > 0 &&
+            selectedProductIds.length < allProductIds.length
         )
-    }, [selections.products.size, allProductIds.length])
+    }, [selectedProductIds.length, allProductIds.length])
 
-    // 선택 상태 확인 헬퍼 함수
     const getSelectionState = (productId: string, optionId?: string) => {
-        const isProductSelected = selections.products.has(productId)
+        const isProductSelected = selectedProductIds.includes(productId)
         const isOptionSelected = optionId
-            ? selections.options.has(`${productId}:${optionId}`)
+            ? selectedOptionIds.includes(`${productId}:${optionId}`)
             : false
-        const isSelected = isProductSelected || isOptionSelected
-        return { isProductSelected, isOptionSelected, isSelected }
+        return { isProductSelected, isOptionSelected }
     }
 
     const columns = useMemo(() => {
@@ -180,29 +213,24 @@ export default function AdminProductTable({
             {
                 id: 'select',
                 meta: { merge: true, width: 50 },
-                header: () => {
-                    return (
-                        <div className="flex items-center justify-center">
-                            <input
-                                ref={(el) => {
-                                    if (el) {
-                                        el.indeterminate = isSomeSelected
-                                    }
-                                }}
-                                type="checkbox"
-                                checked={isAllSelected}
-                                onChange={handleSelectAll}
-                                className="accent-primary-500 cursor-pointer"
-                            />
-                        </div>
-                    )
-                },
+                header: () => (
+                    <div className="flex items-center justify-center">
+                        <input
+                            ref={(el) => {
+                                if (el) el.indeterminate = isSomeSelected
+                            }}
+                            type="checkbox"
+                            checked={isAllSelected}
+                            onChange={handleSelectAll}
+                            className="accent-primary-500 cursor-pointer"
+                        />
+                    </div>
+                ),
                 accessorFn: (row: RowT) => row.productId,
-                cell: ({ row }: { row: { original: RowT; id: string } }) => {
+                cell: ({ row }: { row: { original: RowT } }) => {
                     const { isProductSelected } = getSelectionState(
                         row.original.productId,
                     )
-
                     return (
                         <div className="flex items-center justify-center">
                             <input
@@ -220,41 +248,27 @@ export default function AdminProductTable({
             columnHelper.accessor('storeName', {
                 header: '스토어명',
                 meta: { merge: true, width: 120 },
-                cell: ({ getValue, row }) => {
-                    const { isSelected } = getSelectionState(
-                        row.original.productId,
-                        row.original.optionId,
-                    )
-
-                    return (
-                        <div className="text-center">
-                            <span className="text-primary-500 underline">
-                                {String(getValue())}
-                            </span>
-                        </div>
-                    )
-                },
+                cell: ({ getValue }) => (
+                    <div className="text-center">
+                        <span className="text-primary-500 underline">
+                            {String(getValue())}
+                        </span>
+                    </div>
+                ),
             }),
             columnHelper.accessor('productId', {
                 header: '상품아이디/상품명',
                 meta: { merge: true },
-                cell: ({ row }) => {
-                    const { isSelected } = getSelectionState(
-                        row.original.productId,
-                        row.original.optionId,
-                    )
-
-                    return (
-                        <div className="flex flex-col items-center">
-                            <span className="text-primary-500">
-                                [{row.original.productId}]
-                            </span>
-                            <span className="underline">
-                                {row.original.productName}
-                            </span>
-                        </div>
-                    )
-                },
+                cell: ({ row }) => (
+                    <div className="flex flex-col items-center">
+                        <span className="text-primary-500">
+                            [{row.original.productId}]
+                        </span>
+                        <span className="underline">
+                            {row.original.productName}
+                        </span>
+                    </div>
+                ),
             }),
             columnHelper.display({
                 id: 'select-option',
@@ -265,7 +279,6 @@ export default function AdminProductTable({
                         row.original.productId,
                         row.original.optionId,
                     )
-
                     return (
                         <div className="flex items-center justify-center">
                             <input
@@ -285,118 +298,69 @@ export default function AdminProductTable({
             }),
             columnHelper.accessor('optionName', {
                 header: '상품옵션명',
-                cell: ({ row }) => {
-                    const { isSelected } = getSelectionState(
-                        row.original.productId,
-                        row.original.optionId,
-                    )
-
-                    return (
-                        <div>
-                            <div className="flex flex-col gap-1">
-                                <span>{row.original.optionName}</span>
-
-                                <div className="flex items-center gap-3">
-                                    <div className="text-12 text-gray-500">
-                                        {row.original.tags.join(', ')}
-                                    </div>
-                                    <span className="font-semibold">
-                                        {row.original.optionPrice.toLocaleString()}
-                                        원
-                                    </span>
+                cell: ({ row }) => (
+                    <div>
+                        <div className="flex flex-col gap-1">
+                            <span>{row.original.optionName}</span>
+                            <div className="flex items-center gap-3">
+                                <div className="text-[12px] text-gray-500">
+                                    {row.original.tags.join(', ')}
                                 </div>
+                                <span className="font-semibold">
+                                    {row.original.optionPrice.toLocaleString()}
+                                    원
+                                </span>
                             </div>
                         </div>
-                    )
-                },
+                    </div>
+                ),
             }),
             columnHelper.accessor('stock', {
                 header: '재고',
                 meta: { width: 80 },
-                cell: ({ getValue, row }) => {
-                    const { isSelected } = getSelectionState(
-                        row.original.productId,
-                        row.original.optionId,
-                    )
-
-                    return (
-                        <div className="text-center">
-                            <span>{Number(getValue() ?? 0)}</span>
-                        </div>
-                    )
-                },
+                cell: ({ getValue }) => (
+                    <div className="text-center">
+                        <span>{Number(getValue() ?? 0)}</span>
+                    </div>
+                ),
             }),
             columnHelper.accessor('productPrice', {
                 header: '상품가',
                 meta: { merge: true, width: 120 },
-                cell: ({ getValue, row }) => {
-                    const { isSelected } = getSelectionState(
-                        row.original.productId,
-                        row.original.optionId,
-                    )
-
-                    return (
-                        <div className="text-center">
-                            <span>
-                                {Number(getValue() ?? 0).toLocaleString()}원
-                            </span>
-                        </div>
-                    )
-                },
+                cell: ({ getValue }) => (
+                    <div className="text-center">
+                        <span>
+                            {Number(getValue() ?? 0).toLocaleString()}원
+                        </span>
+                    </div>
+                ),
             }),
             columnHelper.accessor('link', {
                 header: '링크',
                 meta: { merge: true, width: 100 },
-                cell: ({ getValue, row }) => {
-                    const { isSelected } = getSelectionState(
-                        row.original.productId,
-                        row.original.optionId,
-                    )
-
-                    return (
-                        <div className="text-center">
-                            <Button
-                                variant="secondary"
-                                size="sm"
-                                onClick={() => {
-                                    window.open(String(getValue()), '_blank')
-                                }}
-                            >
-                                이동
-                            </Button>
-                        </div>
-                    )
-                },
+                cell: ({ getValue }) => (
+                    <div className="text-center">
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() =>
+                                window.open(String(getValue()), '_blank')
+                            }
+                        >
+                            이동
+                        </Button>
+                    </div>
+                ),
             }),
         ]
     }, [
-        selections,
+        isSomeSelected,
+        isAllSelected,
+        handleSelectAll,
+        getSelectionState,
         handleSelectProduct,
         handleSelectOption,
-        handleSelectAll,
-        isAllSelected,
-        isSomeSelected,
     ])
-
-    // 선택된 상품 ID 목록
-    const selectedProductIds = useMemo(() => {
-        return Array.from(selections.products)
-    }, [selections.products])
-
-    // 선택된 옵션 ID 목록 (row index를 문자열로 저장)
-    const selectedOptionIds = useMemo(() => {
-        return Array.from(selections.options)
-    }, [selections.options])
-
-    // 선택 상태 변경 시 콜백 호출
-    useEffect(() => {
-        if (onSelectionChange) {
-            onSelectionChange({
-                selectedProductIds,
-                selectedOptionIds,
-            })
-        }
-    }, [selectedProductIds, selectedOptionIds, onSelectionChange])
 
     return (
         <SSdataTable<RowT, unknown>
@@ -409,7 +373,7 @@ export default function AdminProductTable({
                 pageSize: 10,
             }}
             styles={{
-                headerClassName: 'bg-[#eee]',
+                headerClassName: 'bg-gray-200',
                 containerClassName: 'rounded-none border border-gray-200',
             }}
         />
