@@ -1,4 +1,4 @@
-export interface ProductSearchFilter {
+export interface AdminProductSearchFilter {
     page?: number
     size?: number
     keyword?: string
@@ -7,4 +7,3 @@ export interface ProductSearchFilter {
     endDate?: Date
     searchType?: string
 }
-

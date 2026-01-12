@@ -1,0 +1,62 @@
+import { reduxMaker } from 'src/global/store/redux/reduxUtils.ts'
+import {
+    getAdminProductList,
+    deleteAdminProducts,
+    deleteAdminProductOptions,
+    updateAdminProductStock,
+} from './adminProductsAPI'
+
+const prefix = 'adminProducts'
+
+const asyncRequests = [
+    {
+        action: 'getAdminProductList',
+        state: 'adminProductList',
+        initialState: null,
+        api: getAdminProductList,
+    },
+    {
+        action: 'deleteAdminProducts',
+        state: 'deleteProductsResult',
+        initialState: null,
+        api: deleteAdminProducts,
+    },
+    {
+        action: 'deleteAdminProductOptions',
+        state: 'deleteOptionsResult',
+        initialState: null,
+        api: deleteAdminProductOptions,
+    },
+    {
+        action: 'updateAdminProductStock',
+        state: 'updateStockResult',
+        initialState: null,
+        api: updateAdminProductStock,
+    },
+] as const
+
+const localState = {
+    selectedProductIds: [] as string[],
+    selectedOptionIds: [] as string[],
+}
+
+const localReducers = {
+    setSelectedProductIds: (state: any, action: { payload: string[] }) => {
+        state.selectedProductIds = action.payload
+    },
+    setSelectedOptionIds: (state: any, action: { payload: string[] }) => {
+        state.selectedOptionIds = action.payload
+    },
+    clearSelections: (state: any) => {
+        state.selectedProductIds = []
+        state.selectedOptionIds = []
+    },
+}
+
+const module = reduxMaker(prefix, asyncRequests, localState, localReducers)
+
+export const {
+    slice: adminProductsSlice,
+    actions: adminProductsAction,
+    saga: adminProductsSaga,
+} = module

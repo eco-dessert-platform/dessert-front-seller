@@ -10,10 +10,22 @@ import {
 } from 'src/pages/url/register/store/storeReducer'
 import { authSaga, authSlice } from 'src/features/auth/authReducer.ts'
 import { ordersSaga, ordersSlice } from 'src/features/orders/ordersReducer.ts'
-import { adminProductsSaga, adminProductsSlice } from 'src/features/admin/products/productsReducer.ts'
-import { productsSaga, productsSlice } from 'src/features/products/productsReducer.ts'
-import { settlementsSaga, settlementsSlice } from 'src/features/settlements/settlementsReducer.ts'
-import { statisticsSaga, statisticsSlice } from 'src/features/statistics/statisticsReducer.ts'
+import {
+    adminProductsSaga,
+    adminProductsSlice,
+} from 'src/features/admin/products/adminProductsReducer.ts'
+import {
+    productsSaga,
+    productsSlice,
+} from 'src/features/products/productsReducer.ts'
+import {
+    settlementsSaga,
+    settlementsSlice,
+} from 'src/features/settlements/settlementsReducer.ts'
+import {
+    statisticsSaga,
+    statisticsSlice,
+} from 'src/features/statistics/statisticsReducer.ts'
 import { sellerSaga, sellerSlice } from 'src/features/seller/sellerReducer.ts'
 
 const reducers = {
