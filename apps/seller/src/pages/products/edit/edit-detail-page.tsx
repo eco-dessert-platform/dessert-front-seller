@@ -19,7 +19,10 @@ function EditDetailPageInner() {
   const { productDetail, setProductDetail } = useProductEditStore()
 
   const localDetailRef = useRef(productDetail)
-  const { handleImageInsert } = useEditorImageInsert('edit')
+  const setEditorImageFiles = useProductEditStore(
+    (state) => state.setEditorImageFiles,
+  )
+  const { handleImageInsert } = useEditorImageInsert(setEditorImageFiles)
 
   const navigateBackToEdit = () => {
     navigateBackToEditFromDetail(navigate, boardId)

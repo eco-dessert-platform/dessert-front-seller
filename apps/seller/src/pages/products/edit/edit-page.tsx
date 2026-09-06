@@ -4,7 +4,7 @@ import { Button } from '@dessert/ui'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
 import { FormProvider, Resolver, useForm, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import {
   type ProvisionalSellerBoardDetail,
@@ -18,6 +18,7 @@ import {
 import { CreateFooter } from '@/features/products/create/create-footer'
 import { ProductPreviewModal } from '@/features/products/create/create-preview'
 import { EDIT_FORM_TOAST } from '@/features/products/edit/edit-form-toast.constants'
+import { navigateToEditDetail } from '@/features/products/edit/edit-funnel-navigation.utils'
 import { mapProductDetailToFormValues } from '@/features/products/edit/map-product-detail-to-form.utils'
 import { useProductEditSessionStore } from '@/features/products/edit/product-edit-session.store'
 import { useProductEditStore } from '@/features/products/edit/product-edit.store'
@@ -125,6 +126,7 @@ function EditPageHydrated({
   return (
     <FormProvider {...form}>
       <EditPageContent
+        boardId={boardId}
         isPreviewOpen={isPreviewOpen}
         onOpenPreview={() => setIsPreviewOpen(true)}
         onClosePreview={() => setIsPreviewOpen(false)}
@@ -134,26 +136,40 @@ function EditPageHydrated({
 }
 
 function EditPageContent({
+  boardId,
   isPreviewOpen,
   onOpenPreview,
   onClosePreview,
 }: {
+  boardId: number
   isPreviewOpen: boolean
   onOpenPreview: () => void
   onClosePreview: () => void
 }) {
+  const navigate = useNavigate()
+  const form = useFormContext<CreateProductForm>()
   const { handleSubmit, isPending } = useSubmitEditForm()
   const {
     formState: { isDirty },
-  } = useFormContext<CreateProductForm>()
+  } = form
+  const productDetail = useProductEditStore((state) => state.productDetail)
   const isEditDetailDirty = useProductEditStore(
     (state) => state.productDetail !== state.initialProductDetail,
   )
+  const saveEditSession = useProductEditSessionStore((state) => state.save)
   const canSubmit = isDirty || isEditDetailDirty
+
+  const handleOpenDetail = () => {
+    saveEditSession(boardId, form.getValues())
+    navigateToEditDetail(navigate, boardId)
+  }
 
   return (
     <>
-      <ProductBoardFormSections />
+      <ProductBoardFormSections
+        productDetail={productDetail}
+        onOpenDetail={handleOpenDetail}
+      />
       <CreateFooter
         onPreview={onOpenPreview}
         onSubmit={handleSubmit}
@@ -165,6 +181,7 @@ function EditPageContent({
         <ProductPreviewModal
           isOpen={isPreviewOpen}
           onClose={onClosePreview}
+          productDetail={productDetail}
         />
       )}
     </>

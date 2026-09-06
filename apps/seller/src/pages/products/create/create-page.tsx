@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { FormProvider, useFormContext, useWatch } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 
 import {
   CreateProductForm,
@@ -18,6 +19,7 @@ import {
   useCreateDraftStore,
 } from '@/features/products/create/create-draft'
 import { CreateFooter } from '@/features/products/create/create-footer'
+import { navigateToCreateDetail } from '@/features/products/create/create-form/create-funnel-navigation.utils'
 import { ProductPreviewModal } from '@/features/products/create/create-preview'
 import { ProductFormModeProvider } from '@/features/products/edit/product-form-mode.context'
 
@@ -39,6 +41,7 @@ interface CreatePageInnerProps {
 }
 
 function CreatePageInner({ entryMode }: CreatePageInnerProps) {
+  const navigate = useNavigate()
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false)
   const { draft } = useCreateDraftStore()
@@ -69,7 +72,10 @@ function CreatePageInner({ entryMode }: CreatePageInnerProps) {
 
   return (
     <>
-      <ProductBoardFormSections />
+      <ProductBoardFormSections
+        productDetail={productDetail}
+        onOpenDetail={() => navigateToCreateDetail(navigate)}
+      />
       <CreateFooter
         onPreview={() => setIsPreviewOpen(true)}
         onSubmit={handleSubmit}
@@ -82,6 +88,7 @@ function CreatePageInner({ entryMode }: CreatePageInnerProps) {
         <ProductPreviewModal
           isOpen={isPreviewOpen}
           onClose={() => setIsPreviewOpen(false)}
+          productDetail={productDetail}
         />
       )}
 

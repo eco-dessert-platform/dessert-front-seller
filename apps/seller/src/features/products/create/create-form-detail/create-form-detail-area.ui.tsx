@@ -2,32 +2,21 @@ import { useEffect } from 'react'
 
 import { PlusIcon, SquarePenIcon } from '@dessert/icons'
 import { Button, Label } from '@dessert/ui'
-import { useFormContext } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 
 import AppLogoImage from '@/assets/images/apple-120x120.png'
-import { navigateToEditDetail } from '@/features/products/edit/edit-funnel-navigation.utils'
-import { useProductEditSessionStore } from '@/features/products/edit/product-edit-session.store'
-import { useProductEditStore } from '@/features/products/edit/product-edit.store'
-import { useProductFormMode } from '@/features/products/edit/product-form-mode.context'
 
-import { CreateProductForm, useProductCreationStore } from '../create-form'
-import { navigateToCreateDetail } from '../create-form/create-funnel-navigation.utils'
 import { useCreateHeaderSteps } from '../create-header'
 
-export const ProductDetailArea = () => {
-  const navigate = useNavigate()
-  const mode = useProductFormMode()
-  const form = useFormContext<CreateProductForm>()
-  const createProductDetail = useProductCreationStore(
-    (state) => state.productDetail,
-  )
-  const editProductDetail = useProductEditStore((state) => state.productDetail)
-  const saveEditSession = useProductEditSessionStore((state) => state.save)
-  const { setProductFields } = useCreateHeaderSteps()
+interface ProductDetailAreaProps {
+  productDetail: string
+  onOpenDetail: () => void
+}
 
-  const productDetail =
-    mode.mode === 'edit' ? editProductDetail : createProductDetail
+export const ProductDetailArea = ({
+  productDetail,
+  onOpenDetail,
+}: ProductDetailAreaProps) => {
+  const { setProductFields } = useCreateHeaderSteps()
 
   const hasContent =
     productDetail.trim() !== '' && productDetail !== '<p><br></p>'
@@ -35,15 +24,6 @@ export const ProductDetailArea = () => {
   useEffect(() => {
     setProductFields({ productDetail: hasContent })
   }, [hasContent, setProductFields])
-
-  const handleEditClick = () => {
-    if (mode.mode === 'edit') {
-      saveEditSession(mode.boardId, form.getValues())
-      navigateToEditDetail(navigate, mode.boardId)
-      return
-    }
-    navigateToCreateDetail(navigate)
-  }
 
   return (
     <>
@@ -74,7 +54,7 @@ export const ProductDetailArea = () => {
             size="lg"
             leftIcon={<SquarePenIcon width={24} height={24} />}
             className="w-full"
-            onClick={handleEditClick}
+            onClick={onOpenDetail}
           />
         </div>
       ) : (
@@ -85,7 +65,7 @@ export const ProductDetailArea = () => {
           size="lg"
           leftIcon={<PlusIcon width={24} height={24} />}
           className="w-full"
-          onClick={handleEditClick}
+          onClick={onOpenDetail}
         />
       )}
     </>

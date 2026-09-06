@@ -5,8 +5,8 @@ import { Button, Editor } from '@dessert/ui'
 import { useNavigate } from 'react-router'
 
 import { useEditorImageInsert } from '@/features/products/create'
-import { navigateBackToCreateFromDetail } from '@/features/products/create/create-form/create-funnel-navigation.utils'
 import { useCreateFormSessionStore } from '@/features/products/create/create-form/create-form-session.store'
+import { navigateBackToCreateFromDetail } from '@/features/products/create/create-form/create-funnel-navigation.utils'
 import { useProductCreationStore } from '@/features/products/create/create-form/product-creation.store'
 import './create-detail-editor.css'
 import { cn } from '@/shared/libs/utils'
@@ -16,7 +16,10 @@ export function DetailEditPage() {
   const { productDetail, setProductDetail } = useProductCreationStore()
 
   const localDetailRef = useRef(productDetail)
-  const { handleImageInsert } = useEditorImageInsert()
+  const setEditorImageFiles = useProductCreationStore(
+    (state) => state.setEditorImageFiles,
+  )
+  const { handleImageInsert } = useEditorImageInsert(setEditorImageFiles)
 
   const navigateBackToCreate = () => {
     navigateBackToCreateFromDetail(navigate)
