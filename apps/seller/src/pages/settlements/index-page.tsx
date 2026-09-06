@@ -14,7 +14,7 @@ import { SettlementOverview } from '@/features/settlement/history/history-overvi
 import { TransactionSettlementTable } from '@/features/settlement/history/history-transaction-table'
 import { useDailySettlementFilter } from '@/features/settlement/history/model/use-daily-settlement-filter'
 import { useSettlementFilter } from '@/features/settlement/history/model/use-settlement-filter'
-import { downloadBlob } from '@/shared/utils/download-file'
+import { triggerFileDownload } from '@/shared/utils/file-download'
 
 import Layout from './layout'
 
@@ -63,7 +63,7 @@ const SettlementPage = () => {
         return
       }
 
-      downloadBlob(blob, '일별_정산내역.xlsx')
+      triggerFileDownload(blob, '일별_정산내역.xlsx')
       toast.success('정산목록 엑셀 파일이 다운로드 되었어요.', undefined, {
         position: 'bottom-right',
       })
@@ -96,7 +96,7 @@ const SettlementPage = () => {
         return
       }
 
-      downloadBlob(blob, '건별_정산내역.xlsx')
+      triggerFileDownload(blob, '건별_정산내역.xlsx')
       toast.success('정산목록 엑셀 파일이 다운로드 되었어요.', undefined, {
         position: 'bottom-right',
       })
