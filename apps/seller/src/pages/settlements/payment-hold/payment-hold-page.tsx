@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from '@dessert/ui'
 import { format, subDays } from 'date-fns'
+import { omit } from 'lodash-es'
 
 import { buildPaymentHoldRequest } from '@/entity/settlement/payment-hold/api/build-payment-hold-request'
 import { paymentHoldQueries } from '@/entity/settlement/payment-hold/api/payment-hold-queries'
@@ -47,9 +48,13 @@ const PaymentHoldPage = () => {
 
   const handleExcelDownload = useCallback(async () => {
     try {
-      const { data, fileName } = await paymentHoldService.getExcelBlob(
-        buildPaymentHoldRequest(filters),
-      )
+      // 엑셀 다운로드는 전체 데이터가 대상이므로 페이징 필드는 제외하고 전달
+      const excelRequest = omit(buildPaymentHoldRequest(filters), [
+        'page',
+        'size',
+      ])
+      const { data, fileName } =
+        await paymentHoldService.getExcelBlob(excelRequest)
       triggerFileDownload(data, fileName)
       toast.info('지급 보류 내역 엑셀 파일이 다운로드 되었어요.', undefined, {
         position: 'bottom-right',
