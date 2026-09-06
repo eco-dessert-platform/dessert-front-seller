@@ -2,17 +2,20 @@ import { useEffect } from 'react'
 
 import { PlusIcon, SquarePenIcon } from '@dessert/icons'
 import { Button, Label } from '@dessert/ui'
-import { useNavigate } from 'react-router-dom'
 
 import AppLogoImage from '@/assets/images/apple-120x120.png'
 
-import { useProductCreationStore } from '../create-form'
-import { navigateToCreateDetail } from '../create-form/create-funnel-navigation.utils'
 import { useCreateHeaderSteps } from '../create-header'
 
-export const ProductDetailArea = () => {
-  const navigate = useNavigate()
-  const { productDetail } = useProductCreationStore()
+interface ProductDetailAreaProps {
+  productDetail: string
+  onOpenDetail: () => void
+}
+
+export const ProductDetailArea = ({
+  productDetail,
+  onOpenDetail,
+}: ProductDetailAreaProps) => {
   const { setProductFields } = useCreateHeaderSteps()
 
   const hasContent =
@@ -21,10 +24,6 @@ export const ProductDetailArea = () => {
   useEffect(() => {
     setProductFields({ productDetail: hasContent })
   }, [hasContent, setProductFields])
-
-  const handleEditClick = () => {
-    navigateToCreateDetail(navigate)
-  }
 
   return (
     <>
@@ -55,7 +54,7 @@ export const ProductDetailArea = () => {
             size="lg"
             leftIcon={<SquarePenIcon width={24} height={24} />}
             className="w-full"
-            onClick={handleEditClick}
+            onClick={onOpenDetail}
           />
         </div>
       ) : (
@@ -66,7 +65,7 @@ export const ProductDetailArea = () => {
           size="lg"
           leftIcon={<PlusIcon width={24} height={24} />}
           className="w-full"
-          onClick={handleEditClick}
+          onClick={onOpenDetail}
         />
       )}
     </>

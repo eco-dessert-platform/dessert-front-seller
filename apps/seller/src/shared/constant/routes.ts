@@ -18,6 +18,11 @@ export const ROUTES = {
     ALL: '/products',
     CREATE: '/products/create',
     CREATE_DETAIL: '/products/create/detail',
+    EDIT: '/products/:boardId/edit',
+    EDIT_DETAIL: '/products/:boardId/edit/detail',
+    edit: (boardId: number | string) => `/products/${boardId}/edit`,
+    editDetail: (boardId: number | string) =>
+      `/products/${boardId}/edit/detail`,
   },
   SETTLEMENTS: {
     ALL: '/settlements',

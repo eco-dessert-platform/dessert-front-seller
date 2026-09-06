@@ -12,6 +12,7 @@ type Args = {
   onToggleAll: (checked: boolean | 'indeterminate') => void
   onToggleRow: (id: string, checked: boolean | 'indeterminate') => void
   onCopyRow: (row: ProductType) => void
+  onEditRow: (id: string) => void
   onStatusChange: (id: string, status: ProductType['status']) => void
 }
 
@@ -28,6 +29,7 @@ export const getResultColumns = ({
   onToggleAll,
   onToggleRow,
   onCopyRow,
+  onEditRow,
   onStatusChange,
 }: Args): ColumnDef<ProductType>[] => [
   {
@@ -122,15 +124,13 @@ export const getResultColumns = ({
     header: '관리',
     id: 'actions',
     cell: ({ row }) => {
-      const onEdit = () => {}
-
       return (
         <div className="flex flex-col items-center justify-center gap-4">
           <Button
             variant="primary-outlined"
             title="수정"
             size="sm"
-            onClick={onEdit}
+            onClick={() => onEditRow(row.original.id)}
           />
           <Button
             variant="secondary-outlined"

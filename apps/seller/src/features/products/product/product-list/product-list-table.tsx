@@ -1,7 +1,11 @@
 import { Pagination, Table } from '@dessert/ui'
+import { useNavigate } from 'react-router-dom'
 
-import type { ProductType } from '@/entity/products/product/product.type'
 import type { ProductBoardSortType } from '@/entity/products/product/product-board-sort.constants'
+import type { ProductType } from '@/entity/products/product/product.type'
+import { useProductEditSessionStore } from '@/features/products/edit/product-edit-session.store'
+import { useProductEditStore } from '@/features/products/edit/product-edit.store'
+import { ROUTES } from '@/shared/constant/routes'
 
 import { getResultColumns } from './product-list-columns'
 import { useProductList } from './product-list.hook'
@@ -34,6 +38,7 @@ export const ResultTable = ({
   onPageChange,
   onRetry,
 }: ResultTableProps) => {
+  const navigate = useNavigate()
   const {
     tableData,
     selectedIds,
@@ -54,6 +59,11 @@ export const ResultTable = ({
     onToggleAll: toggleAll,
     onToggleRow: toggleRow,
     onCopyRow: handleCopyRow,
+    onEditRow: (id) => {
+      useProductEditSessionStore.getState().clear()
+      useProductEditStore.getState().reset()
+      navigate(ROUTES.PRODUCTS.edit(id))
+    },
     onStatusChange: handleStatusChange,
   })
 

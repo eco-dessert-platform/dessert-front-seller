@@ -21,6 +21,7 @@ import { useCreatePreviewHook } from './create-preview.hook'
 interface ProductPreviewModalProps {
   isOpen: boolean
   onClose: () => void
+  productDetail: string
 }
 
 const BADGES = [
@@ -32,11 +33,12 @@ const BADGES = [
 export const ProductPreviewModal = ({
   isOpen,
   onClose,
+  productDetail,
 }: ProductPreviewModalProps) => {
   const {
     productName,
     productPrice,
-    productDetail,
+    productDetail: previewProductDetail,
     discountPercent,
     deliveryFee,
     deliveryMinFee,
@@ -46,7 +48,7 @@ export const ProductPreviewModal = ({
     discountAmount,
     hasMainImage,
     options,
-  } = useCreatePreviewHook()
+  } = useCreatePreviewHook(productDetail)
 
   const slides = !hasMainImage
     ? (['placeholder', ...allImageUrls] as const)
@@ -254,10 +256,10 @@ export const ProductPreviewModal = ({
 
         {/* 7. 상세 설명 */}
         <div className="mb-10 bg-white px-20 py-24 text-left">
-          {productDetail ? (
+          {previewProductDetail ? (
             <div
               className="ql-editor leading-relaxed text-gray-700"
-              dangerouslySetInnerHTML={{ __html: productDetail }}
+              dangerouslySetInnerHTML={{ __html: previewProductDetail }}
             />
           ) : (
             <p className="typo-body-14-r text-gray-400">

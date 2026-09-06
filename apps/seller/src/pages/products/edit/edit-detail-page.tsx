@@ -2,27 +2,30 @@ import { useRef } from 'react'
 
 import { BbanggreuiOvenLogo } from '@dessert/icons'
 import { Button, Editor } from '@dessert/ui'
-import { useNavigate } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 
 import { useEditorImageInsert } from '@/features/products/create'
-import { useCreateFormSessionStore } from '@/features/products/create/create-form/create-form-session.store'
-import { navigateBackToCreateFromDetail } from '@/features/products/create/create-form/create-funnel-navigation.utils'
-import { useProductCreationStore } from '@/features/products/create/create-form/product-creation.store'
-import './create-detail-editor.css'
+import { navigateBackToEditFromDetail } from '@/features/products/edit/edit-funnel-navigation.utils'
+import { useProductEditStore } from '@/features/products/edit/product-edit.store'
+import { ProductFormModeProvider } from '@/features/products/edit/product-form-mode.context'
 import { cn } from '@/shared/libs/utils'
 
-export function DetailEditPage() {
+import '../create/create-detail-editor.css'
+
+function EditDetailPageInner() {
   const navigate = useNavigate()
-  const { productDetail, setProductDetail } = useProductCreationStore()
+  const { boardId: boardIdParam } = useParams<{ boardId: string }>()
+  const boardId = Number(boardIdParam)
+  const { productDetail, setProductDetail } = useProductEditStore()
 
   const localDetailRef = useRef(productDetail)
-  const setEditorImageFiles = useProductCreationStore(
+  const setEditorImageFiles = useProductEditStore(
     (state) => state.setEditorImageFiles,
   )
   const { handleImageInsert } = useEditorImageInsert(setEditorImageFiles)
 
-  const navigateBackToCreate = () => {
-    navigateBackToCreateFromDetail(navigate)
+  const navigateBackToEdit = () => {
+    navigateBackToEditFromDetail(navigate, boardId)
   }
 
   return (
@@ -59,22 +62,34 @@ export function DetailEditPage() {
           title="취소"
           variant="primary-outlined"
           size="lg"
-          onClick={navigateBackToCreate}
+          onClick={navigateBackToEdit}
         />
         <Button
           type="button"
-          title="등록하기"
+          title="확인"
           variant="primary-filled"
           size="lg"
           onClick={() => {
             setProductDetail(localDetailRef.current)
-            useCreateFormSessionStore
-              .getState()
-              .updateProductDetail(localDetailRef.current)
-            navigateBackToCreate()
+            navigateBackToEdit()
           }}
         />
       </footer>
     </div>
+  )
+}
+
+export function EditDetailPage() {
+  const { boardId: boardIdParam } = useParams<{ boardId: string }>()
+  const boardId = Number(boardIdParam)
+
+  if (!Number.isFinite(boardId) || boardId <= 0) {
+    return null
+  }
+
+  return (
+    <ProductFormModeProvider value={{ mode: 'edit', boardId }}>
+      <EditDetailPageInner />
+    </ProductFormModeProvider>
   )
 }

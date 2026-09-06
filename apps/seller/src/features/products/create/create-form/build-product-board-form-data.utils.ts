@@ -1,8 +1,8 @@
 import { CreateProductRequest, ProductOptionRequest } from '@/entity/products'
 
 import { ProductOptionsType } from '../create-form-options'
-import { CreateProductForm } from './product-create.types'
 import { mapToBackendCategory } from './map-to-backend-category.utils'
+import { CreateProductForm } from './product-create.types'
 
 /** Spring @ModelAttribute — 중첩은 dot, 배열은 bracket index */
 export function appendFormValue(
@@ -144,7 +144,7 @@ export function buildProductBoardFormData({
   storeId,
   boardDetailImages = [],
 }: BuildProductBoardFormDataParams): FormData {
-  if (!data.mainImage) {
+  if (!(data.mainImage instanceof File)) {
     throw new Error('썸네일 이미지는 필수입니다.')
   }
 
@@ -159,7 +159,9 @@ export function buildProductBoardFormData({
   formData.append('thumbnailImgFile', data.mainImage, data.mainImage.name)
 
   data.extraImages?.forEach((item) => {
-    formData.append('productImgs', item.file, item.file.name)
+    if (item.kind === 'file') {
+      formData.append('productImgs', item.file, item.file.name)
+    }
   })
 
   boardDetailImages.forEach((file) => {
@@ -221,18 +223,22 @@ export function buildUpdateProductBoardFormData({
   )
 
   data.options.forEach((option, index) => {
-    const productId = productIdsByOptionIndex[index]
+    const productIdFromIndex = productIdsByOptionIndex[index]
+    const productId =
+      option.productId !== undefined && option.productId !== null
+        ? option.productId
+        : productIdFromIndex === undefined
+          ? null
+          : productIdFromIndex
+
     appendFormValue(
       formData,
       `products[${index}]`,
-      mapOptionToRequest(
-        option,
-        productId === undefined ? null : productId,
-      ),
+      mapOptionToRequest(option, productId),
     )
   })
 
-  if (data.mainImage) {
+  if (data.mainImage instanceof File) {
     formData.append('thumbnailImgFile', data.mainImage, data.mainImage.name)
   } else if (existingThumbnailUrl) {
     formData.append('existingThumbnailUrl', existingThumbnailUrl)
@@ -245,7 +251,9 @@ export function buildUpdateProductBoardFormData({
   const subImages =
     newSubImageFiles.length > 0
       ? newSubImageFiles
-      : (data.extraImages?.map((item) => item.file) ?? [])
+      : (data.extraImages
+          ?.filter((item) => item.kind === 'file')
+          .map((item) => item.file) ?? [])
 
   subImages.forEach((file) => {
     formData.append('newSubImages', file, file.name)

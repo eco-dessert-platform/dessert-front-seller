@@ -1,19 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { FormProvider } from 'react-hook-form'
+import { FormProvider, useFormContext, useWatch } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 
 import {
-  CreateFormContainer,
-  ProductDeliveryArea,
-  ProductDetailArea,
-  ProductDisclosureArea,
-  ProductHeader,
-  ProductInfoArea,
-  ProductOptionsArea,
-  ThumbnailUploadArea,
+  CreateProductForm,
+  ProductBoardFormSections,
+  hasCreateFormInput,
   useCreateFormPersistence,
   useCreateFunnelEntry,
   useCreateProductForm,
+  useProductCreationStore,
+  useSubmitCreateForm,
 } from '@/features/products/create'
 import {
   CreateDraftModal,
@@ -21,16 +19,20 @@ import {
   useCreateDraftStore,
 } from '@/features/products/create/create-draft'
 import { CreateFooter } from '@/features/products/create/create-footer'
+import { navigateToCreateDetail } from '@/features/products/create/create-form/create-funnel-navigation.utils'
 import { ProductPreviewModal } from '@/features/products/create/create-preview'
+import { ProductFormModeProvider } from '@/features/products/edit/product-form-mode.context'
 
 function CreatePage() {
   const entryMode = useCreateFunnelEntry()
   const form = useCreateProductForm(entryMode)
 
   return (
-    <FormProvider {...form}>
-      <CreatePageInner entryMode={entryMode} />
-    </FormProvider>
+    <ProductFormModeProvider value={{ mode: 'create' }}>
+      <FormProvider {...form}>
+        <CreatePageInner entryMode={entryMode} />
+      </FormProvider>
+    </ProductFormModeProvider>
   )
 }
 
@@ -39,15 +41,23 @@ interface CreatePageInnerProps {
 }
 
 function CreatePageInner({ entryMode }: CreatePageInnerProps) {
+  const navigate = useNavigate()
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false)
   const { draft } = useCreateDraftStore()
   const isInitialMount = useRef(true)
-  const { handleRestoreDraft, clearDraft } = useCreateDraft()
+  const { handleRestoreDraft, clearDraft, handleSaveDraft } = useCreateDraft()
+  const { handleSubmit, isPending } = useSubmitCreateForm()
+  const {
+    control,
+    formState: { isDirty },
+  } = useFormContext<CreateProductForm>()
+  const values = useWatch({ control }) as CreateProductForm
+  const productDetail = useProductCreationStore((state) => state.productDetail)
+  const canSubmit = hasCreateFormInput(values, productDetail, isDirty)
 
   useCreateFormPersistence(entryMode)
 
-  // 퍼널 외부 진입(reset)이고 수동 임시저장 데이터가 있으면 복원 모달을 노출합니다.
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false
@@ -62,36 +72,23 @@ function CreatePageInner({ entryMode }: CreatePageInnerProps) {
 
   return (
     <>
-      <ProductHeader />
-      <CreateFormContainer id="productInfo" className="mt-22">
-        <ProductInfoArea />
-      </CreateFormContainer>
-
-      <CreateFormContainer id="productDelivery">
-        <ProductDeliveryArea />
-      </CreateFormContainer>
-
-      <CreateFormContainer id="productThumbnail">
-        <ThumbnailUploadArea />
-      </CreateFormContainer>
-
-      <CreateFormContainer id="productOptions">
-        <ProductOptionsArea />
-      </CreateFormContainer>
-
-      <CreateFormContainer id="productDetail">
-        <ProductDetailArea />
-      </CreateFormContainer>
-
-      <CreateFormContainer id="productDisclosure" className="mb-40">
-        <ProductDisclosureArea />
-      </CreateFormContainer>
-
-      <CreateFooter onPreview={() => setIsPreviewOpen(true)} />
+      <ProductBoardFormSections
+        productDetail={productDetail}
+        onOpenDetail={() => navigateToCreateDetail(navigate)}
+      />
+      <CreateFooter
+        onPreview={() => setIsPreviewOpen(true)}
+        onSubmit={handleSubmit}
+        submitLabel="저장하기"
+        isPending={isPending}
+        canSubmit={canSubmit}
+        onSaveDraft={handleSaveDraft}
+      />
       {isPreviewOpen && (
         <ProductPreviewModal
           isOpen={isPreviewOpen}
           onClose={() => setIsPreviewOpen(false)}
+          productDetail={productDetail}
         />
       )}
 

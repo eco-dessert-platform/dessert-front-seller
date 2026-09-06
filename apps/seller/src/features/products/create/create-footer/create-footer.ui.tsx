@@ -1,31 +1,22 @@
 import { Button } from '@dessert/ui'
-import { useFormContext, useWatch } from 'react-hook-form'
-
-import {
-  CreateProductForm,
-  hasCreateFormInput,
-  useProductCreationStore,
-  useSubmitCreateForm,
-} from '@/features/products/create/create-form'
-
-import { useCreateDraft } from '../create-draft'
 
 interface ProductFooterProps {
   onPreview: () => void
+  onSubmit: () => void
+  submitLabel: string
+  isPending: boolean
+  canSubmit: boolean
+  onSaveDraft?: () => void
 }
 
-export const CreateFooter = ({ onPreview }: ProductFooterProps) => {
-  const { handleSaveDraft } = useCreateDraft()
-  const { handleSubmit, isPending } = useSubmitCreateForm()
-  const {
-    control,
-    formState: { isDirty },
-  } = useFormContext<CreateProductForm>()
-  const values = useWatch({ control }) as CreateProductForm
-  const { productDetail } = useProductCreationStore()
-
-  const hasAnyInput = hasCreateFormInput(values, productDetail, isDirty)
-
+export const CreateFooter = ({
+  onPreview,
+  onSubmit,
+  submitLabel,
+  isPending,
+  canSubmit,
+  onSaveDraft,
+}: ProductFooterProps) => {
   return (
     <div className="sticky bottom-0 left-0 z-20 -mb-36 -ml-[90px] flex w-[calc(100%+180px)] justify-end gap-12 border-t border-t-gray-200 bg-white px-[90px] py-24">
       <Button
@@ -34,19 +25,21 @@ export const CreateFooter = ({ onPreview }: ProductFooterProps) => {
         size="lg"
         onClick={onPreview}
       />
+      {onSaveDraft && (
+        <Button
+          title="임시저장"
+          variant="primary-outlined"
+          size="lg"
+          disabled={!canSubmit || isPending}
+          onClick={onSaveDraft}
+        />
+      )}
       <Button
-        title="임시저장"
-        variant="primary-outlined"
-        size="lg"
-        disabled={!hasAnyInput || isPending}
-        onClick={handleSaveDraft}
-      />
-      <Button
-        title="저장하기"
+        title={submitLabel}
         variant="primary-filled"
         size="lg"
-        disabled={!hasAnyInput || isPending}
-        onClick={handleSubmit}
+        disabled={!canSubmit || isPending}
+        onClick={onSubmit}
       />
     </div>
   )

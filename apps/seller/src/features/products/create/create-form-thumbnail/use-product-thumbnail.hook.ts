@@ -13,6 +13,8 @@ import { useFormContext } from 'react-hook-form'
 
 import { CreateProductForm } from '../create-form/product-create.types'
 
+import type { ExtraImageItem, MainImageValue } from './create-form-thumbnail.type'
+
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png']
 const MIN_SIZE = 160
@@ -67,7 +69,6 @@ const generateId = () => Math.random().toString(36).substring(2, 11)
 export function useProductThumbnailForm() {
   const form = useFormContext<CreateProductForm>()
 
-  // 1. 타입 수정 덕분에 이제 casting 없이 바로 타입을 인식합니다.
   const mainImage = form.watch('mainImage')
   const extraImages = form.watch('extraImages') || []
   type DeleteTarget = 'main' | { id: string }
@@ -75,12 +76,11 @@ export function useProductThumbnailForm() {
 
   const isFormField = mainImage !== null
 
-  const handleMainImageChange = (file: File | null) => {
-    form.setValue('mainImage', file, { shouldValidate: true })
+  const handleMainImageChange = (value: MainImageValue) => {
+    form.setValue('mainImage', value, { shouldValidate: true })
   }
 
-  // 2. newItems 타입이 정의와 일치하므로 에러가 나지 않습니다.
-  const handleExtraImagesChange = (newItems: { id: string; file: File }[]) => {
+  const handleExtraImagesChange = (newItems: ExtraImageItem[]) => {
     form.setValue('extraImages', newItems, { shouldValidate: true })
   }
 
@@ -124,7 +124,7 @@ export function useProductThumbnailForm() {
     } else {
       const remainingSlots = 9 - extraImages.length
       const selectedFiles = Array.from(files)
-      const newValidItems: { id: string; file: File }[] = []
+      const newValidItems: ExtraImageItem[] = []
 
       for (const file of selectedFiles) {
         if (newValidItems.length >= remainingSlots) break
@@ -133,7 +133,7 @@ export function useProductThumbnailForm() {
           toast.error(`${file.name}: ${error}`)
         } else {
           if (warning) toast.info(`${file.name}: ${warning}`)
-          newValidItems.push({ id: generateId(), file })
+          newValidItems.push({ id: generateId(), kind: 'file', file })
         }
       }
 

@@ -101,6 +101,13 @@ export const FilterCategory = ({
         placeholder="1~50자로 검색해 주세요"
         value={filters.keyword ?? ''}
         onChange={(e) => handleKeywordChange(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key !== 'Enter') return
+          // 한글 IME 조합 중 Enter는 검색으로 처리하지 않음
+          if (e.nativeEvent.isComposing || e.keyCode === 229) return
+          e.preventDefault()
+          onSearch()
+        }}
         disabled={!mainCategoryValue || !subCategoryValue}
         className="flex-1"
         maxLength={50}

@@ -13,7 +13,10 @@ export {
 export { initCreateFunnelRouterSubscription } from './init-create-funnel-router-subscription'
 export { hasCreateFormInput } from './has-create-form-input.utils'
 export { mapToBackendCategory } from './map-to-backend-category.utils'
-export { buildProductBoardFormData, buildUpdateProductBoardFormData } from './build-product-board-form-data.utils'
+export {
+  buildProductBoardFormData,
+  buildUpdateProductBoardFormData,
+} from './build-product-board-form-data.utils'
 export { InfoTooltip } from './info-tooltip.ui'
 export {
   CREATE_PRODUCT_DEFAULT_VALUES,
