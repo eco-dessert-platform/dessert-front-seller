@@ -3,6 +3,14 @@ import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { CreateProductForm } from '../create-form'
+import {
+  type ExtraImageItem,
+  type MainImageValue,
+  isExistingImageRef,
+  isExtraImageFileItem,
+} from '../create-form-thumbnail/create-form-thumbnail.type'
+
+type PreviewImageValue = MainImageValue | ExtraImageItem | null | undefined
 
 export const useCreatePreviewHook = (productDetail: string) => {
   const { watch } = useFormContext<CreateProductForm>()
@@ -55,44 +63,30 @@ export const useCreatePreviewHook = (productDetail: string) => {
   useEffect(() => {
     const images: string[] = []
 
-    const createUrl = (item: unknown): string | null => {
+    const createUrl = (item: PreviewImageValue): string | null => {
       if (!item) return null
-      if (item instanceof File || item instanceof Blob) {
+
+      if (item instanceof File) {
         return URL.createObjectURL(item)
       }
-      if (typeof item === 'string' && item.startsWith('http')) {
-        return item
+
+      if (isExistingImageRef(item)) {
+        return item.url
       }
-      if (typeof item === 'object' && item !== null) {
-        if (
-          'kind' in item &&
-          (item as { kind?: string }).kind === 'existing' &&
-          'url' in item &&
-          typeof (item as { url?: unknown }).url === 'string'
-        ) {
-          return (item as { url: string }).url
-        }
-        if ('file' in item) {
-          const internalFile = (item as { file: unknown }).file
-          if (internalFile instanceof File || internalFile instanceof Blob) {
-            return URL.createObjectURL(internalFile)
-          }
-        }
+
+      if (isExtraImageFileItem(item)) {
+        return URL.createObjectURL(item.file)
       }
+
       return null
     }
 
     const main = createUrl(mainImage)
     if (main) images.push(main)
 
-    if (extraImages && typeof extraImages === 'object') {
-      const extraLength =
-        'length' in extraImages ? (extraImages as ArrayLike<unknown>).length : 0
-      for (let i = 0; i < extraLength; i++) {
-        const file = (extraImages as Record<number, unknown>)[i]
-        const url = createUrl(file)
-        if (url) images.push(url)
-      }
+    for (const extraImage of extraImages ?? []) {
+      const url = createUrl(extraImage)
+      if (url) images.push(url)
     }
 
     setAllImageUrls(images)
