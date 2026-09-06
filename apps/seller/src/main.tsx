@@ -8,26 +8,28 @@ import {
   GuestOnlyRoute,
   RegisterAccessRoute,
 } from '@/features/auth'
+import { initCreateFunnelRouterSubscription } from '@/features/products/create/create-form/init-create-funnel-router-subscription'
 import AuthPage from '@/pages/auth/auth-page'
 import SocialCallbackPage from '@/pages/auth/social-callback-page'
 import AllOrdersPage from '@/pages/orders/all-orders/all-orders-page'
 import CompletedOrdersPage from '@/pages/orders/completed-orders/completed-orders-page'
 import CreatePage from '@/pages/products/create/create-page'
 import { DetailEditPage } from '@/pages/products/create/detail-edit-page'
+import { EditDetailPage } from '@/pages/products/edit/edit-detail-page'
+import EditPage from '@/pages/products/edit/edit-page'
 import ProductsPage from '@/pages/products/product/product-page'
 import CompletePage from '@/pages/register/complete/complete-page'
 import RegisterLayout from '@/pages/register/register-layout'
 import StoreInfoPage from '@/pages/register/store-info/store-info-page'
 import VerificationPage from '@/pages/register/verification/verification-page'
-import SalesAnalyticsPage from '@/pages/statistics/sales-analytics/sales-analytics-page'
 import SettlementPage from '@/pages/settlements/index-page'
-import { initCreateFunnelRouterSubscription } from '@/features/products/create/create-form/init-create-funnel-router-subscription'
+import SalesAnalyticsPage from '@/pages/statistics/sales-analytics/sales-analytics-page'
 import { ROUTES } from '@/shared/constant/routes'
 
 import App from './App'
 import { SellerInfoPage } from './pages/seller-info/seller-info-page'
-import FixedLayout from './shared/block/fixed-layout/fixed-layout'
 import ChargePage from './pages/settlements/charge/charge-page'
+import FixedLayout from './shared/block/fixed-layout/fixed-layout'
 
 const router = createBrowserRouter([
   {
@@ -51,6 +53,10 @@ const router = createBrowserRouter([
         element: <DetailEditPage />,
       },
       {
+        path: ROUTES.PRODUCTS.EDIT_DETAIL,
+        element: <EditDetailPage />,
+      },
+      {
         path: ROUTES.HOME,
         element: <FixedLayout />,
         children: [
@@ -62,6 +68,7 @@ const router = createBrowserRouter([
           { path: ROUTES.ORDERS.COMPLETED, element: <CompletedOrdersPage /> },
           { path: ROUTES.PRODUCTS.ALL, element: <ProductsPage /> },
           { path: ROUTES.PRODUCTS.CREATE, element: <CreatePage /> },
+          { path: ROUTES.PRODUCTS.EDIT, element: <EditPage /> },
           { path: ROUTES.SETTLEMENTS.ALL, element: <SettlementPage /> },
           {
             path: ROUTES.STATISTICS.SALES_ANALYTICS,

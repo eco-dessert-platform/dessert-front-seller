@@ -35,6 +35,16 @@ export type {
   ApiResponse,
 } from './create'
 
+export {
+  getSellerBoardDetail,
+  boardDetailQueries,
+} from './edit'
+export type {
+  ProvisionalSellerBoardDetail,
+  ProvisionalBoardDetailProduct,
+  GetSellerBoardDetailResponse,
+} from './edit'
+
 export { getProductBoards } from './product/product-board.api'
 export { mapProductBoardItemToProductType } from './product/product-board.mapper'
 export {

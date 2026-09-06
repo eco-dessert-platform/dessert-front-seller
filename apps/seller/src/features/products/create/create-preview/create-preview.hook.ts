@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react'
 
 import { useFormContext } from 'react-hook-form'
 
-//import { CreateFormType } from '@/entity/products/create/create-form'
+import { useProductFormMode } from '@/features/products/edit/product-form-mode.context'
+import { useProductEditStore } from '@/features/products/edit/product-edit.store'
+
 import { CreateProductForm } from '../create-form'
 import { useProductCreationStore } from '../create-form/product-creation.store'
 
 export const useCreatePreviewHook = () => {
   const { watch } = useFormContext<CreateProductForm>()
+  const mode = useProductFormMode()
 
   const [
     productName,
@@ -31,7 +34,12 @@ export const useCreatePreviewHook = () => {
     'options',
   ])
 
-  const { productDetail } = useProductCreationStore()
+  const createProductDetail = useProductCreationStore(
+    (state) => state.productDetail,
+  )
+  const editProductDetail = useProductEditStore((state) => state.productDetail)
+  const productDetail =
+    mode.mode === 'edit' ? editProductDetail : createProductDetail
 
   const price = productPrice ?? 0
   const rawDiscountValue = rawDiscount ?? 0
@@ -67,10 +75,20 @@ export const useCreatePreviewHook = () => {
       if (typeof item === 'string' && item.startsWith('http')) {
         return item
       }
-      if (typeof item === 'object' && item !== null && 'file' in item) {
-        const internalFile = (item as { file: unknown }).file
-        if (internalFile instanceof File || internalFile instanceof Blob) {
-          return URL.createObjectURL(internalFile)
+      if (typeof item === 'object' && item !== null) {
+        if (
+          'kind' in item &&
+          (item as { kind?: string }).kind === 'existing' &&
+          'url' in item &&
+          typeof (item as { url?: unknown }).url === 'string'
+        ) {
+          return (item as { url: string }).url
+        }
+        if ('file' in item) {
+          const internalFile = (item as { file: unknown }).file
+          if (internalFile instanceof File || internalFile instanceof Blob) {
+            return URL.createObjectURL(internalFile)
+          }
         }
       }
       return null

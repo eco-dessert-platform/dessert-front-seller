@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const productOptionSchema = z
   .object({
+    productId: z.number().nullable().optional(),
     mainCategory: z.enum(['bread', 'snack']).or(z.literal('')),
     subCategory: z.string(),
     optionName: z.string(),

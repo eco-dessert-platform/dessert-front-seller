@@ -61,7 +61,7 @@ export const ThumbnailUploadArea = () => {
         <div className="flex flex-col gap-8">
           {mainImage ? (
             <ImagePreviewItem
-              file={mainImage}
+              image={mainImage}
               onDelete={() => setDeleteTarget('main')}
             />
           ) : (
@@ -105,14 +105,13 @@ export const ThumbnailUploadArea = () => {
               items={extraImages.map((item) => item.id)}
               strategy={rectSortingStrategy}
             >
-              {extraImages.map((file) => {
+              {extraImages.map((image) => {
                 return (
                   <SortableImageItems
-                    key={file.id}
-                    id={file.id}
-                    file={file.file}
-                    // idx 대신 고유 ID를 전달
-                    onDelete={() => setDeleteTarget({ id: file.id })}
+                    key={image.id}
+                    id={image.id}
+                    image={image}
+                    onDelete={() => setDeleteTarget({ id: image.id })}
                   />
                 )
               })}

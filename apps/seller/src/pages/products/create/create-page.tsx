@@ -3,14 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { FormProvider } from 'react-hook-form'
 
 import {
-  CreateFormContainer,
-  ProductDeliveryArea,
-  ProductDetailArea,
-  ProductDisclosureArea,
-  ProductHeader,
-  ProductInfoArea,
-  ProductOptionsArea,
-  ThumbnailUploadArea,
+  ProductBoardFormSections,
   useCreateFormPersistence,
   useCreateFunnelEntry,
   useCreateProductForm,
@@ -22,15 +15,18 @@ import {
 } from '@/features/products/create/create-draft'
 import { CreateFooter } from '@/features/products/create/create-footer'
 import { ProductPreviewModal } from '@/features/products/create/create-preview'
+import { ProductFormModeProvider } from '@/features/products/edit/product-form-mode.context'
 
 function CreatePage() {
   const entryMode = useCreateFunnelEntry()
   const form = useCreateProductForm(entryMode)
 
   return (
-    <FormProvider {...form}>
-      <CreatePageInner entryMode={entryMode} />
-    </FormProvider>
+    <ProductFormModeProvider value={{ mode: 'create' }}>
+      <FormProvider {...form}>
+        <CreatePageInner entryMode={entryMode} />
+      </FormProvider>
+    </ProductFormModeProvider>
   )
 }
 
@@ -47,7 +43,6 @@ function CreatePageInner({ entryMode }: CreatePageInnerProps) {
 
   useCreateFormPersistence(entryMode)
 
-  // 퍼널 외부 진입(reset)이고 수동 임시저장 데이터가 있으면 복원 모달을 노출합니다.
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false
@@ -62,31 +57,7 @@ function CreatePageInner({ entryMode }: CreatePageInnerProps) {
 
   return (
     <>
-      <ProductHeader />
-      <CreateFormContainer id="productInfo" className="mt-22">
-        <ProductInfoArea />
-      </CreateFormContainer>
-
-      <CreateFormContainer id="productDelivery">
-        <ProductDeliveryArea />
-      </CreateFormContainer>
-
-      <CreateFormContainer id="productThumbnail">
-        <ThumbnailUploadArea />
-      </CreateFormContainer>
-
-      <CreateFormContainer id="productOptions">
-        <ProductOptionsArea />
-      </CreateFormContainer>
-
-      <CreateFormContainer id="productDetail">
-        <ProductDetailArea />
-      </CreateFormContainer>
-
-      <CreateFormContainer id="productDisclosure" className="mb-40">
-        <ProductDisclosureArea />
-      </CreateFormContainer>
-
+      <ProductBoardFormSections />
       <CreateFooter onPreview={() => setIsPreviewOpen(true)} />
       {isPreviewOpen && (
         <ProductPreviewModal

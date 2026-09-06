@@ -2,18 +2,32 @@ import { useEffect } from 'react'
 
 import { PlusIcon, SquarePenIcon } from '@dessert/icons'
 import { Button, Label } from '@dessert/ui'
+import { useFormContext } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
 import AppLogoImage from '@/assets/images/apple-120x120.png'
+import { navigateToEditDetail } from '@/features/products/edit/edit-funnel-navigation.utils'
+import { useProductEditSessionStore } from '@/features/products/edit/product-edit-session.store'
+import { useProductEditStore } from '@/features/products/edit/product-edit.store'
+import { useProductFormMode } from '@/features/products/edit/product-form-mode.context'
 
-import { useProductCreationStore } from '../create-form'
+import { CreateProductForm, useProductCreationStore } from '../create-form'
 import { navigateToCreateDetail } from '../create-form/create-funnel-navigation.utils'
 import { useCreateHeaderSteps } from '../create-header'
 
 export const ProductDetailArea = () => {
   const navigate = useNavigate()
-  const { productDetail } = useProductCreationStore()
+  const mode = useProductFormMode()
+  const form = useFormContext<CreateProductForm>()
+  const createProductDetail = useProductCreationStore(
+    (state) => state.productDetail,
+  )
+  const editProductDetail = useProductEditStore((state) => state.productDetail)
+  const saveEditSession = useProductEditSessionStore((state) => state.save)
   const { setProductFields } = useCreateHeaderSteps()
+
+  const productDetail =
+    mode.mode === 'edit' ? editProductDetail : createProductDetail
 
   const hasContent =
     productDetail.trim() !== '' && productDetail !== '<p><br></p>'
@@ -23,6 +37,11 @@ export const ProductDetailArea = () => {
   }, [hasContent, setProductFields])
 
   const handleEditClick = () => {
+    if (mode.mode === 'edit') {
+      saveEditSession(mode.boardId, form.getValues())
+      navigateToEditDetail(navigate, mode.boardId)
+      return
+    }
     navigateToCreateDetail(navigate)
   }
 
