@@ -12,7 +12,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const formFieldBase =
-  'w-full typo-title-16-r border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400'
+  'w-full typo-title-16-r border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 transition-all duration-200 focus-visible:outline-none disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400'
 
 const Input = ({
   ref,
@@ -48,8 +48,9 @@ const Input = ({
           className={cn(
             formFieldBase,
             'flex h-input items-center rounded-10 px-12 py-8 disabled:cursor-not-allowed',
-            error &&
-              'border-error-500 focus-visible:border-error-500 focus-visible:ring-error-500/40',
+            error
+              ? 'border-error-500 focus-visible:border-error-500'
+              : 'focus-visible:ring-2 focus-visible:ring-[#9E9E9E] focus-visible:ring-offset-1',
             maxLength && 'pr-14',
           )}
           placeholder={placeholder}

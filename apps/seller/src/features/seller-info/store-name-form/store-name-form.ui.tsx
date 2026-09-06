@@ -25,9 +25,7 @@ import { sellerInfoToast } from '../seller-info-toast'
 type ConfirmDialogType = 'cancel' | 'submit'
 
 export function StoreNameForm() {
-  const { data, isLoading, isError, refetch } = useQuery({
-    ...sellerInfoQueries.store(),
-  })
+  const { data } = useQuery(sellerInfoQueries.store())
   const { mutate: checkName } = useCheckStoreNameMutation()
   const { mutate: requestChange, isPending: isRequesting } =
     useRequestStoreNameChangeMutation()
@@ -50,28 +48,8 @@ export function StoreNameForm() {
     mode: 'onChange',
   })
 
-  if (isLoading) {
-    return (
-      <div className="py-40 text-center typo-body-14-r text-gray-500">
-        스토어 정보를 불러오는 중이에요.
-      </div>
-    )
-  }
-
-  if (isError || !data) {
-    return (
-      <div className="flex flex-col items-center gap-12 py-40">
-        <p className="typo-body-14-r text-gray-500">
-          스토어 정보를 불러오지 못했어요.
-        </p>
-        <Button
-          title="다시 시도"
-          variant="secondary-outlined"
-          onClick={() => refetch()}
-        />
-      </div>
-    )
-  }
+  // 로딩/에러는 페이지(SellerInfoPage)에서 처리하므로 여기선 데이터 존재만 가드
+  if (!data) return null
 
   const { available, store } = data
   const storeName = watch('storeName').trim()
@@ -168,6 +146,7 @@ export function StoreNameForm() {
 
       <InputField
         {...register('storeName')}
+        value={watch('storeName')}
         label="스토어명"
         placeholder={store.name}
         required

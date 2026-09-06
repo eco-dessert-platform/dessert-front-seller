@@ -1,17 +1,27 @@
-import { useState } from 'react'
-
 import { Controller, useFormContext } from 'react-hook-form'
 import { Textarea } from '@dessert/ui'
+import { useQuery } from '@tanstack/react-query'
 
-import { StoreDetailFormValues } from '@/entity/seller-info'
+import { StoreDetailFormValues, sellerInfoQueries } from '@/entity/seller-info'
+import { cn } from '@/shared/libs/utils'
 
 import { StoreProfileImagePreview } from '../store-profile-image-preview'
 
 const IMG_NOTICE_SIZE = '권장 크기 1000x1000, 최소 160 이상 (1:1 비율)'
 const IMG_NOTICE_FORMAT = 'jpg,jpeg,png 형식 10MB 이하 파일만 업로드 가능해요'
 
-export function StoreProfileForm() {
-  const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
+interface StoreProfileFormProps {
+  isEditable: boolean
+  profileImageFile: File | null
+  onProfileImageChange: (file: File | null) => void
+}
+
+export function StoreProfileForm({
+  isEditable,
+  profileImageFile,
+  onProfileImageChange,
+}: StoreProfileFormProps) {
+  const { data } = useQuery(sellerInfoQueries.store())
 
   const {
     control,
@@ -24,7 +34,9 @@ export function StoreProfileForm() {
       <StoreProfileImagePreview
         className="mt-4"
         file={profileImageFile}
-        onChange={setProfileImageFile}
+        initialUrl={data?.store.profile}
+        disabled={!isEditable}
+        onChange={onProfileImageChange}
       />
       <div className="text-[10px] font-normal text-gray-500">
         <p>{IMG_NOTICE_SIZE}</p>
@@ -41,7 +53,11 @@ export function StoreProfileForm() {
             placeholder="빵그리입니다!"
             maxLength={100}
             showCount
-            className="mt-8"
+            readOnly={!isEditable}
+            className={cn(
+              'mt-8',
+              !isEditable && 'pointer-events-none [&_textarea]:text-gray-400',
+            )}
           />
         )}
       />

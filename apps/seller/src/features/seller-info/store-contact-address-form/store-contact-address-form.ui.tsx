@@ -1,16 +1,17 @@
-import { useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 
 import { Button, Dropdown, Input, Label } from '@dessert/ui'
 import { useKakaoPostcodePopup } from 'react-daum-postcode'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { StoreDetailFormValues } from '@/entity/seller-info'
+import { cn } from '@/shared/libs/utils'
 import { formatDaumAddress } from '@/shared/utils/format-daum-address'
 
 const CUSTOM_EMAIL_DOMAIN = 'custom'
 
 const EMAIL_DOMAIN = [
-  { label: '선택하세요', value: '' },
+  { label: '직접 입력', value: CUSTOM_EMAIL_DOMAIN },
   { label: 'naver.com', value: 'naver.com' },
   { label: 'gmail.com', value: 'gmail.com' },
   { label: 'kakao.com', value: 'kakao.com' },
@@ -18,34 +19,63 @@ const EMAIL_DOMAIN = [
   { label: 'hanmail.net', value: 'hanmail.net' },
   { label: 'hotmail.com', value: 'hotmail.com' },
   { label: 'outlook.com', value: 'outlook.com' },
-  { label: '직접 입력', value: CUSTOM_EMAIL_DOMAIN },
 ]
 
-export function StoreContactAddressForm() {
+interface StoreContactAddressFormProps {
+  isEditable: boolean
+}
+
+export function StoreContactAddressForm({
+  isEditable,
+}: StoreContactAddressFormProps) {
   return (
     <section className="flex w-full min-w-0 flex-col gap-24">
-      <ContactSection />
-      <EmailSection />
-      <AddressSection />
+      <ContactSection isEditable={isEditable} />
+      <EmailSection isEditable={isEditable} />
+      <AddressSection isEditable={isEditable} />
     </section>
   )
 }
 
-function ContactSection() {
+interface SectionProps {
+  isEditable: boolean
+}
+
+const MAX_PHONE_LENGTH = 11
+
+function ContactSection({ isEditable }: SectionProps) {
   const {
     register,
     formState: { errors },
   } = useFormContext<StoreDetailFormValues>()
+
+  const phoneField = register('phoneNumber')
+  const subPhoneField = register('subPhoneNumber')
+
+  // 입력 단계에서 숫자만 + 11자로 제한 (하이픈·문자 원천 차단)
+  const handleDigitsOnly =
+    (onChange: (event: ChangeEvent<HTMLInputElement>) => void) =>
+    (event: ChangeEvent<HTMLInputElement>) => {
+      event.target.value = event.target.value
+        .replace(/\D/g, '')
+        .slice(0, MAX_PHONE_LENGTH)
+      onChange(event)
+    }
 
   return (
     <div>
       <div className="flex w-full flex-col gap-20 2xl:flex-row">
         <div className="flex flex-1 flex-col gap-6">
           <Input
-            {...register('phoneNumber')}
-            placeholder="01011112222"
+            {...phoneField}
+            onChange={handleDigitsOnly(phoneField.onChange)}
+            placeholder={isEditable ? '하이픈(-) 없이 입력해주세요' : ''}
             required
             label="연락처"
+            readOnly={!isEditable}
+            className={cn(
+              !isEditable && 'pointer-events-none [&_input]:text-gray-400',
+            )}
           />
           {errors.phoneNumber && (
             <span className="typo-body-12-r text-error-500">
@@ -53,12 +83,18 @@ function ContactSection() {
             </span>
           )}
         </div>
-        <Input
-          {...register('subPhoneNumber')}
-          placeholder="01033334444"
-          label="추가 연락처"
-          className="flex-1"
-        />
+        <div className="flex flex-1 flex-col gap-6">
+          <Input
+            {...subPhoneField}
+            onChange={handleDigitsOnly(subPhoneField.onChange)}
+            placeholder={isEditable ? '하이픈(-) 없이 입력해주세요' : ''}
+            label="추가 연락처"
+            readOnly={!isEditable}
+            className={cn(
+              !isEditable && 'pointer-events-none [&_input]:text-gray-400',
+            )}
+          />
+        </div>
       </div>
       <p className="mt-2 text-[12px] font-normal text-gray-500">
         연락처는 주문서 혹은 상품 페이지 하단에서 고객이 확인할 수 있어요
@@ -67,28 +103,47 @@ function ContactSection() {
   )
 }
 
-function EmailSection() {
+function EmailSection({ isEditable }: SectionProps) {
   const {
     register,
     control,
     setValue,
+    watch,
     formState: { errors },
   } = useFormContext<StoreDetailFormValues>()
 
   const [selectedEmailDomain, setSelectedEmailDomain] = useState('')
   const isCustomDomain = selectedEmailDomain === CUSTOM_EMAIL_DOMAIN
 
+  const emailDomain = watch('emailDomain')
+
+  // prefill 로 도메인이 채워지면 드롭다운도 동기화 (프리셋이면 그 값, 아니면 직접 입력)
+  useEffect(() => {
+    if (!emailDomain || selectedEmailDomain !== '') return
+
+    const matched = EMAIL_DOMAIN.find(
+      (option) =>
+        option.value === emailDomain &&
+        option.value !== '' &&
+        option.value !== CUSTOM_EMAIL_DOMAIN,
+    )
+    setSelectedEmailDomain(matched ? matched.value : CUSTOM_EMAIL_DOMAIN)
+  }, [emailDomain, selectedEmailDomain])
+
   return (
     <div>
       <Label label="이메일" required />
       <div className="flex w-full flex-col gap-20 2xl:flex-row 2xl:items-center">
         <div className="flex flex-1 flex-col gap-6">
-          <Input {...register('emailLocal')} placeholder="aaa123" required />
-          {errors.emailLocal && (
-            <span className="typo-body-12-r text-error-500">
-              {errors.emailLocal.message}
-            </span>
-          )}
+          <Input
+            {...register('emailLocal')}
+            placeholder={isEditable ? '이메일 주소를 입력해 주세요' : ''}
+            required
+            readOnly={!isEditable}
+            className={cn(
+              !isEditable && 'pointer-events-none [&_input]:text-gray-400',
+            )}
+          />
         </div>
 
         <div className="flex items-center text-[16px] font-normal text-gray-800">
@@ -106,21 +161,17 @@ function EmailSection() {
                 onBlur={field.onBlur}
                 placeholder="naver.com"
                 required
-                disabled={!isCustomDomain}
+                disabled={!isEditable || !isCustomDomain}
               />
             )}
           />
-          {errors.emailDomain && (
-            <span className="typo-body-12-r text-error-500">
-              {errors.emailDomain.message}
-            </span>
-          )}
         </div>
 
         <Dropdown
           options={EMAIL_DOMAIN}
           placeholder="선택하세요"
           value={selectedEmailDomain}
+          disabled={!isEditable}
           onSelect={(value) => {
             setSelectedEmailDomain(value)
             if (value === CUSTOM_EMAIL_DOMAIN) {
@@ -132,11 +183,16 @@ function EmailSection() {
           className="flex-1"
         />
       </div>
+      {(errors.emailLocal || errors.emailDomain) && (
+        <span className="mt-6 block typo-body-12-r text-error-500">
+          {errors.emailLocal?.message ?? errors.emailDomain?.message}
+        </span>
+      )}
     </div>
   )
 }
 
-function AddressSection() {
+function AddressSection({ isEditable }: SectionProps) {
   const {
     register,
     setValue,
@@ -151,9 +207,12 @@ function AddressSection() {
     openPostcode({
       onComplete: (data) => {
         setPostalCode(data.zonecode)
-        setValue('originAddress', formatDaumAddress(data), {
-          shouldValidate: true,
-        })
+        // 백엔드는 우편번호를 originAddress 안에 "(우편번호) 주소" 형태로 받음
+        setValue(
+          'originAddress',
+          `(${data.zonecode}) ${formatDaumAddress(data)}`,
+          { shouldValidate: true },
+        )
         setIsPostalCodeSelected(true)
       },
     })
@@ -177,6 +236,7 @@ function AddressSection() {
               <Button
                 title="우편번호 검색"
                 className="shrink-0"
+                disabled={!isEditable}
                 onClick={handleClickPostalCodeSearch}
               />
             </div>
@@ -202,9 +262,11 @@ function AddressSection() {
           <Input
             {...register('originAddressDetail')}
             label="출고지 상세주소"
-            placeholder="1동 101호"
+            placeholder={
+              isEditable ? '상세 주소를 입력해 주세요(동/호수 포함)' : ''
+            }
             required
-            disabled={!isPostalCodeSelected}
+            disabled={!isEditable || !isPostalCodeSelected}
           />
           {errors.originAddressDetail && (
             <span className="typo-body-12-r text-error-500">

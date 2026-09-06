@@ -30,15 +30,29 @@ export const storeAccountInfoSchema = z.object({
 
 export type StoreAccountInfoFormValues = z.infer<typeof storeAccountInfoSchema>
 
+const PHONE_NUMBER_REGEX = /^\d{9,11}$/
+
 export const storeDetailSchema = z
   .object({
     introduce: z.string().max(100, '100자 이내로 입력해주세요.'),
-    phoneNumber: z.string().min(1, '연락처를 입력해주세요.'),
-    subPhoneNumber: z.string().optional(),
+    phoneNumber: z
+      .string()
+      .min(1, '연락처를 입력해주세요.')
+      .regex(PHONE_NUMBER_REGEX, '하이픈 없이 숫자 9~11자리로 입력해주세요.'),
+    subPhoneNumber: z
+      .string()
+      .optional()
+      .refine(
+        (value) => !value || PHONE_NUMBER_REGEX.test(value),
+        '하이픈 없이 숫자 9~11자리로 입력해주세요.',
+      ),
     emailLocal: z.string().min(1, '이메일을 입력해주세요.'),
     emailDomain: z.string().min(1, '도메인을 선택해주세요.'),
     originAddress: z.string().min(1, '주소를 입력해주세요.'),
-    originAddressDetail: z.string().min(1, '상세주소를 입력해주세요.'),
+    originAddressDetail: z
+      .string()
+      .min(1, '상세주소를 입력해주세요.')
+      .max(50, '상세주소는 50자 이내로 입력해주세요.'),
   })
   .superRefine(({ emailLocal, emailDomain }, ctx) => {
     const combined = `${emailLocal}@${emailDomain}`

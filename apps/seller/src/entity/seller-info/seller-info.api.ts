@@ -8,6 +8,8 @@ import type {
   MyStoreSummary,
   SellerAccountUpdateRequest,
   StoreNameCheckResult,
+  UpdateStoreDetailInput,
+  UpdateStoreDetailResult,
   UpdateStoreNameRequest,
   UpdateStoreNameResult,
 } from './seller-info.type'
@@ -19,6 +21,33 @@ export async function getStore(): Promise<MyStoreSummary> {
 
   if (!data.result) {
     throw new Error(data.message ?? '스토어 정보 조회에 실패했습니다.')
+  }
+
+  return data.result
+}
+
+export async function updateStoreDetail({
+  request,
+  profileImage,
+}: UpdateStoreDetailInput): Promise<UpdateStoreDetailResult> {
+  const formData = new FormData()
+  formData.append(
+    'request',
+    new Blob([JSON.stringify(request)], { type: 'application/json' }),
+  )
+  if (profileImage) {
+    formData.append('profileImage', profileImage)
+  }
+
+  // FormData는 브라우저가 boundary 포함 Content-Type을 설정해야 함
+  const { data } = await client.put<ApiResponse<UpdateStoreDetailResult>>(
+    '/api/v1/seller/stores',
+    formData,
+    { headers: { 'Content-Type': undefined } },
+  )
+
+  if (!data.result) {
+    throw new Error(data.message ?? '스토어 정보 수정에 실패했습니다.')
   }
 
   return data.result

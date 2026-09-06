@@ -1,6 +1,5 @@
 import { useState } from 'react'
 
-import { IAccountVerification } from '@/entity/settlement/charge/entities'
 import {
   Button,
   Dialog,
@@ -11,7 +10,11 @@ import {
   DialogTitle,
   Input,
   Text,
+  toast,
 } from '@dessert/ui'
+
+import { IAccountVerification } from '@/entity/settlement/charge/entities'
+import { useWithdrawalMutation } from '@/features/settlement/charge/use-withdrawal-mutation'
 
 interface ChargeWithdrawModalProps {
   open: boolean
@@ -27,6 +30,55 @@ const ChargeWithdrawModal = ({
   accountVerification,
 }: ChargeWithdrawModalProps) => {
   const [withdrawAmount, setWithdrawAmount] = useState('')
+  const { mutate: requestWithdrawal, isPending } = useWithdrawalMutation()
+
+  const amount = Number(withdrawAmount)
+  const isValidAmount =
+    withdrawAmount !== '' &&
+    !Number.isNaN(amount) &&
+    amount > 0 &&
+    amount <= chargeBalance
+
+  const handleWithdraw = () => {
+    if (!accountVerification) {
+      toast.error('정산 계좌 정보가 없습니다.', undefined, {
+        position: 'bottom-right',
+      })
+      return
+    }
+
+    if (!isValidAmount) {
+      toast.error('출금 금액을 확인해주세요.', undefined, {
+        position: 'bottom-right',
+      })
+      return
+    }
+
+    requestWithdrawal(
+      {
+        withdrawalAmount: amount,
+        bankName: accountVerification.bankCode,
+        accountHolder: accountVerification.accountHolder,
+        accountNumber: accountVerification.accountNumber,
+      },
+      {
+        onSuccess: () => {
+          toast.success('출금 신청이 완료되었어요.', undefined, {
+            position: 'bottom-right',
+          })
+          setWithdrawAmount('')
+          onOpenChange(false)
+        },
+        onError: (error) => {
+          toast.error(
+            error instanceof Error ? error.message : '출금 신청에 실패했습니다.',
+            undefined,
+            { position: 'bottom-right' },
+          )
+        },
+      },
+    )
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -104,6 +156,7 @@ const ChargeWithdrawModal = ({
               variant="secondary-outlined"
               size="sm"
               className="h-32 min-w-[80px] rounded-8"
+              disabled={isPending}
             />
           </DialogClose>
           <Button
@@ -111,6 +164,8 @@ const ChargeWithdrawModal = ({
             variant="primary-filled"
             size="sm"
             className="h-32 min-w-[96px] rounded-8"
+            disabled={isPending}
+            onClick={handleWithdraw}
           />
         </DialogFooter>
       </DialogContent>
