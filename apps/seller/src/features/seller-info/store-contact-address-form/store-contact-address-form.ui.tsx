@@ -82,10 +82,10 @@ function EmailSection() {
     <div>
       <Label label="이메일" required />
       <div className="flex w-full flex-col gap-20 2xl:flex-row 2xl:items-center">
-        <div className="flex flex-1 flex-col gap-6">
+        <div className="relative flex-1">
           <Input {...register('emailLocal')} placeholder="aaa123" required />
           {errors.emailLocal && (
-            <span className="typo-body-12-r text-error-500">
+            <span className="absolute top-full left-0 mt-6 typo-body-12-r text-error-500">
               {errors.emailLocal.message}
             </span>
           )}
@@ -95,7 +95,7 @@ function EmailSection() {
           @
         </div>
 
-        <div className="flex flex-1 flex-col gap-6">
+        <div className="relative flex-1">
           <Controller
             name="emailDomain"
             control={control}
@@ -111,7 +111,7 @@ function EmailSection() {
             )}
           />
           {errors.emailDomain && (
-            <span className="typo-body-12-r text-error-500">
+            <span className="absolute top-full left-0 mt-6 typo-body-12-r text-error-500">
               {errors.emailDomain.message}
             </span>
           )}
