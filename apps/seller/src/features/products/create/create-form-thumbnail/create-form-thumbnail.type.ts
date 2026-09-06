@@ -41,6 +41,12 @@ export function isExtraImageFileItem(
   return value.kind === 'file'
 }
 
+export function isExtraImageExistingItem(
+  value: ExtraImageItem,
+): value is ExtraImageExistingItem {
+  return value.kind === 'existing'
+}
+
 export function getImagePreviewSrc(
   value: MainImageValue | ExtraImageItem | null | undefined,
 ): string | null {

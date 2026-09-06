@@ -9,6 +9,7 @@ import {
 } from '@/features/products/create'
 import {
   isExistingImageRef,
+  isExtraImageExistingItem,
   isExtraImageFileItem,
 } from '@/features/products/create/create-form-thumbnail/create-form-thumbnail.type'
 import { ROUTES } from '@/shared/constant/routes'
@@ -29,7 +30,7 @@ export function resolveUpdateImagePayload(data: CreateProductForm) {
   const mainImageFile = data.mainImage instanceof File ? data.mainImage : null
 
   const existingSubImageUrls = (data.extraImages ?? [])
-    .filter(isExistingImageRef)
+    .filter(isExtraImageExistingItem)
     .map((item) => item.url)
 
   const newSubImageFiles = (data.extraImages ?? [])

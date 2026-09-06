@@ -10,6 +10,7 @@ export type {
 export {
   isExistingImageRef,
   isExtraImageFileItem,
+  isExtraImageExistingItem,
 } from './create-form-thumbnail.type'
 export {
   ImagePreviewItem,
