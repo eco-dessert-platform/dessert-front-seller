@@ -14,7 +14,7 @@ import type {
   TPaymentHoldStatus,
 } from '@/entity/settlement/payment-hold/entities'
 import type { PaymentHoldSearchFilterFormValues } from '@/entity/settlement/payment-hold/payment-hold-filter.schema'
-import { dateToString, stringToDateRange } from '@/shared/utils/fomatter'
+import { dateToString, stringToDateRange } from '@/shared/utils/formatter'
 import { DatePicker } from '@/widgets/date-picker'
 
 import { usePaymentHoldFilterForm } from './use-payment-hold-filter-form.hook'

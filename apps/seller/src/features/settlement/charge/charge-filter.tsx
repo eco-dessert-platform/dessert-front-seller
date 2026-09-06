@@ -7,7 +7,7 @@ import { IChargeFilter } from '@/entity/settlement/charge/entities'
 import {
   dateRangeToFilterDates,
   stringToDateRange,
-} from '@/shared/utils/fomatter'
+} from '@/shared/utils/formatter'
 import { DatePicker } from '@/widgets/date-picker'
 
 interface IChargeFilterProps {
