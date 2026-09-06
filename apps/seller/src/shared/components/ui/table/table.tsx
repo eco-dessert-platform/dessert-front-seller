@@ -9,6 +9,8 @@ import {
 
 import type { Cell, Row } from '@tanstack/react-table'
 
+import TableEmpty from './table-empty'
+
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData, TValue> {
     getRowSpan?: (cell: Cell<TData, TValue>) => number
@@ -22,6 +24,8 @@ interface TableProps<T> {
   data: T[]
   columns: ColumnDef<T>[]
   topArea?: React.ReactNode
+  bottomArea?: React.ReactNode
+  emptyDesc?: string
   scrollHeight?: number // 스크롤 영역 설정
   getRowClassName?: (row: Row<T>) => string
   fillWidth?: boolean
@@ -31,6 +35,8 @@ function Table<T>({
   data,
   columns,
   topArea,
+  bottomArea,
+  emptyDesc,
   scrollHeight,
   getRowClassName,
   fillWidth = false,
@@ -42,6 +48,9 @@ function Table<T>({
     columnResizeMode: 'onChange', // 드래그 중 실시간 반영
   })
   const { getHeaderGroups, getRowModel } = table
+  const rows = getRowModel().rows
+  const columnCount = table.getAllLeafColumns().length
+  const isEmpty = rows.length === 0 && !!emptyDesc
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -51,7 +60,7 @@ function Table<T>({
   return (
     <div className="overflow-hidden rounded-md border border-gray-300">
       {topArea && (
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 pt-4 pb-3">
+        <div className="flex items-center justify-between border-b border-gray-200 bg-white px-24 pt-16 pb-3">
           {topArea}
         </div>
       )}
@@ -61,7 +70,7 @@ function Table<T>({
         style={scrollHeight ? { height: scrollHeight } : undefined}
       >
         <table
-          className="table-fixed border-collapse"
+          className={`table-fixed border-collapse${isEmpty ? ' h-full' : ''}`}
           style={
             fillWidth
               ? { width: '100%', minWidth: table.getTotalSize() }
@@ -77,6 +86,7 @@ function Table<T>({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
+                    colSpan={header.colSpan}
                     className="text-center align-middle typo-body-12-m text-gray-800"
                     style={
                       header.column.columnDef.meta?.flexible
@@ -111,55 +121,69 @@ function Table<T>({
               </tr>
             ))}
           </thead>
-          <tbody>
-            {getRowModel().rows.map((row) => (
-              <tr
-                key={row.id}
-                className={[
-                  'border-b border-gray-300',
-                  getRowClassName?.(row) ?? '',
-                ].join(' ')}
-              >
-                {row.getVisibleCells().map((cell) => {
-                  const rowSpan =
-                    cell.column.columnDef.meta?.getRowSpan?.(cell) ?? 1
-                  const colSpan =
-                    cell.column.columnDef.meta?.getColSpan?.(cell) ?? 1
+          <tbody className={isEmpty ? 'h-full' : undefined}>
+            {rows.length > 0
+              ? rows.map((row) => (
+                  <tr
+                    key={row.id}
+                    className={[
+                      'border-b border-gray-300',
+                      getRowClassName?.(row) ?? '',
+                    ].join(' ')}
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      const rowSpan =
+                        cell.column.columnDef.meta?.getRowSpan?.(cell) ?? 1
+                      const colSpan =
+                        cell.column.columnDef.meta?.getColSpan?.(cell) ?? 1
 
-                  if (rowSpan === 0 || colSpan === 0) {
-                    return null
-                  }
-
-                  return (
-                    <td
-                      key={cell.id}
-                      rowSpan={rowSpan}
-                      colSpan={colSpan}
-                      className={[
-                        'border-r border-l border-gray-200 text-center align-middle last:border-r-0',
-                        cell.column.columnDef.meta?.getCellClassName?.(cell) ??
-                          '',
-                      ].join(' ')}
-                      style={
-                        cell.column.columnDef.meta?.flexible
-                          ? undefined
-                          : { width: cell.column.getSize() }
+                      if (rowSpan === 0 || colSpan === 0) {
+                        return null
                       }
-                    >
-                      <div className="p-10">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </div>
+
+                      return (
+                        <td
+                          key={cell.id}
+                          rowSpan={rowSpan}
+                          colSpan={colSpan}
+                          className={[
+                            'border-r border-l border-gray-200 text-center align-middle last:border-r-0',
+                            cell.column.columnDef.meta?.getCellClassName?.(
+                              cell,
+                            ) ?? '',
+                          ].join(' ')}
+                          style={
+                            cell.column.columnDef.meta?.flexible
+                              ? undefined
+                              : { width: cell.column.getSize() }
+                          }
+                        >
+                          <div className="p-10">
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </div>
+                        </td>
+                      )
+                    })}
+                  </tr>
+                ))
+              : emptyDesc && (
+                  <tr className="h-full">
+                    <td colSpan={columnCount} className="h-full border-0 p-0">
+                      <TableEmpty description={emptyDesc} />
                     </td>
-                  )
-                })}
-              </tr>
-            ))}
+                  </tr>
+                )}
           </tbody>
         </table>
       </div>
+      {bottomArea && (
+        <div className="border-t border-gray-200 bg-white px-24 py-12">
+          {bottomArea}
+        </div>
+      )}
     </div>
   )
 }

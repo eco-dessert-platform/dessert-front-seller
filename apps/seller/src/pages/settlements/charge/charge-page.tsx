@@ -10,6 +10,7 @@ import ChargeTable from '@/features/settlement/charge/charge-table'
 
 import Layout from '../layout'
 import ChargeWithdrawModal from '@/features/settlement/charge/modal/charge-withdraw-modal'
+import SettlementTitles from '@/features/settlement/common/titles'
 
 const ChargePage: React.FC = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false)
@@ -37,9 +38,7 @@ const ChargePage: React.FC = () => {
   return (
     <>
       <Layout>
-        <Text as="h2" variant="heading20-sb" className="mb-10">
-          충전금 현황
-        </Text>
+        <SettlementTitles title="충전금 현황" />
         <ChargeFilter
           filtersDate={{
             startDate: filters.startDate,

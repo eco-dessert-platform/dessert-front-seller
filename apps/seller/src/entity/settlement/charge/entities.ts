@@ -34,3 +34,10 @@ export interface IAccountVerification {
   verified: boolean
   createdAt: string
 }
+
+export interface IWithdrawalRequest {
+  withdrawalAmount: number // 출금 신청 금액 (0 초과 ~ 현재 잔액 이하)
+  bankName: string
+  accountHolder: string
+  accountNumber: string // 숫자만, 최대 20자
+}

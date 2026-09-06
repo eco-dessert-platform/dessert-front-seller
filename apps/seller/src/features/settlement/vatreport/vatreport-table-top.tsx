@@ -2,21 +2,19 @@ import { Button, Pagination } from '@dessert/ui'
 
 import ExcelIcon from '@/assets/icons/icon-excel.svg?react'
 
-interface SettlementTableTopAreaProps {
+interface IVatReportTableTopProps {
   currentPage: number
   totalPages: number
   onPageChange: (page: number) => void
-  onDownloadExcel: () => void
-  isDownloadingExcel?: boolean
+  onExcelDownload: () => void
 }
 
-export const SettlementTableTopArea = ({
+const VatReportTableTop = ({
   currentPage,
   totalPages,
   onPageChange,
-  onDownloadExcel,
-  isDownloadingExcel,
-}: SettlementTableTopAreaProps) => {
+  onExcelDownload,
+}: IVatReportTableTopProps) => {
   return (
     <div className="flex w-full items-center justify-between">
       <Button
@@ -25,8 +23,7 @@ export const SettlementTableTopArea = ({
         className="h-30 gap-4 px-10 py-6 text-gray-800"
         leftIcon={<ExcelIcon width={16} height={16} />}
         title="엑셀 다운로드"
-        onClick={onDownloadExcel}
-        disabled={isDownloadingExcel}
+        onClick={onExcelDownload}
       />
 
       <Pagination
@@ -37,3 +34,5 @@ export const SettlementTableTopArea = ({
     </div>
   )
 }
+
+export default VatReportTableTop

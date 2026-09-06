@@ -1,13 +1,37 @@
-import { useState } from 'react'
-
 import { Button } from '@dessert/ui'
-import { format } from 'date-fns'
+import { format, parse } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
+import {
+  DailySettlementFilters,
+  SettlementSummaryInfo,
+} from '@/entity/settlement/settlement.type'
 import { DatePicker } from '@/shared/block/date-picker/date-picker'
 
-export const SettlementOverview = () => {
-  const [dateValue, setDateValue] = useState<DateRange | undefined>(undefined)
+interface SettlementOverviewProps {
+  filters: DailySettlementFilters
+  onChange: (filters: DailySettlementFilters) => void
+  onSearch: () => void
+  summary?: SettlementSummaryInfo
+}
+
+export const SettlementOverview = ({
+  filters,
+  onChange,
+  onSearch,
+  summary,
+}: SettlementOverviewProps) => {
+  const dateValue: DateRange | undefined =
+    filters.startDate || filters.endDate
+      ? {
+          from: filters.startDate
+            ? parse(filters.startDate, 'yyyy-MM-dd', new Date())
+            : undefined,
+          to: filters.endDate
+            ? parse(filters.endDate, 'yyyy-MM-dd', new Date())
+            : undefined,
+        }
+      : undefined
 
   return (
     <div className="rounded-12 border border-gray-100 bg-white p-24">
@@ -17,7 +41,13 @@ export const SettlementOverview = () => {
             label="조회기간"
             value={dateValue}
             onChange={(range) => {
-              setDateValue(range)
+              onChange({
+                ...filters,
+                startDate: range?.from
+                  ? format(range.from, 'yyyy-MM-dd')
+                  : null,
+                endDate: range?.to ? format(range.to, 'yyyy-MM-dd') : null,
+              })
             }}
           />
         </div>
@@ -26,6 +56,7 @@ export const SettlementOverview = () => {
           variant="primary-filled"
           size="md"
           className="h-[38px] min-w-[60px]"
+          onClick={onSearch}
         />
       </div>
 
@@ -37,8 +68,8 @@ export const SettlementOverview = () => {
         <div className="flex items-center gap-16 py-4">
           <span className="typo-title-16-m text-gray-800">정산예정일</span>
           <span className="typo-title-16-m text-primary-500">
-            {dateValue?.from && dateValue?.to
-              ? `${format(dateValue.from, 'yyyy-MM-dd')} ~ ${format(dateValue.to, 'yyyy-MM-dd')}`
+            {summary?.scheduledDateMin && summary?.scheduledDateMax
+              ? `${summary.scheduledDateMin} ~ ${summary.scheduledDateMax}`
               : '-'}
           </span>
         </div>
@@ -46,7 +77,7 @@ export const SettlementOverview = () => {
           <span className="typo-title-16-m text-gray-800">총 정산 금액</span>
           <div className="flex items-baseline gap-2">
             <span className="typo-heading-20-sb text-primary-500">
-              2,000,000
+              {(summary?.totalSettlementAmount ?? 0).toLocaleString()}
             </span>
             <span className="typo-title-16-r text-primary-500">원</span>
           </div>

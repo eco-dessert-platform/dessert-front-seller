@@ -28,6 +28,8 @@ import App from './App'
 import { SellerInfoPage } from './pages/seller-info/seller-info-page'
 import FixedLayout from './shared/block/fixed-layout/fixed-layout'
 import ChargePage from './pages/settlements/charge/charge-page'
+import PaymentHoldPage from './pages/settlements/payment-hold/payment-hold-page'
+import VatreportPage from './pages/settlements/vatreport/vatreport-page'
 
 const router = createBrowserRouter([
   {
@@ -68,6 +70,8 @@ const router = createBrowserRouter([
             element: <SalesAnalyticsPage />,
           },
           { path: ROUTES.SETTLEMENTS.CHARGE, element: <ChargePage /> },
+          { path: ROUTES.SETTLEMENTS.VAT_REPORT, element: <VatreportPage /> },
+          { path: ROUTES.SETTLEMENTS.WITHHELD, element: <PaymentHoldPage /> },
           { path: ROUTES.INFO.CHANGE, element: <SellerInfoPage /> },
         ],
       },

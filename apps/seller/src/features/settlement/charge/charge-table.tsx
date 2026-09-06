@@ -12,7 +12,6 @@ import {
   STATUS_LABELS,
 } from '@/entity/settlement/charge/constants'
 import Table from '@/shared/components/ui/table/table'
-import TableEmpty from '@/shared/components/ui/table/table-empty'
 
 const chargeColumns: ColumnDef<IChargeRow>[] = [
   {
@@ -97,7 +96,7 @@ const ChargeTable = ({ pageResponse, onPageChange }: IChargeTableProps) => {
   }
 
   return (
-    <div className="relative [&_td]:border-r [&_td]:border-gray-300 [&_td:last-child]:border-r-0 [&_th]:border-r [&_th]:border-gray-300 [&_th:last-child]:border-r-0">
+    <div className="[&_td]:border-r [&_td]:border-gray-300 [&_td:last-child]:border-r-0 [&_th]:border-r [&_th]:border-gray-300 [&_th:last-child]:border-r-0">
       <Table
         data={data.content}
         columns={chargeColumns}
@@ -109,11 +108,9 @@ const ChargeTable = ({ pageResponse, onPageChange }: IChargeTableProps) => {
             onPageChange={onPageChange}
           />
         }
+        emptyDesc="조회된 충전금 현황이 없어요"
         scrollHeight={498}
       />
-      {data.content.length === 0 && (
-        <TableEmpty description="조회된 충전금 현황이 없어요" />
-      )}
     </div>
   )
 }

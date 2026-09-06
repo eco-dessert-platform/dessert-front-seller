@@ -1,13 +1,12 @@
 import { useMemo } from 'react'
 
-import { Button, Table } from '@dessert/ui'
+import { Button } from '@dessert/ui'
 import { ColumnDef } from '@tanstack/react-table'
 
-import { getTransactionSettlementMock } from '@/entity/settlement/mock'
-import {
-  SettlementFilters,
-  TransactionSettlement,
-} from '@/entity/settlement/types'
+import { toTransactionSettlement } from '@/entity/settlement/settlement.transformer'
+import { SettlementItemPageResponse } from '@/entity/settlement/settlement.type'
+import { TransactionSettlement } from '@/entity/settlement/types'
+import Table from '@/shared/components/ui/table/table'
 
 import {
   Popover,
@@ -136,36 +135,42 @@ const columns: ColumnDef<TransactionSettlement>[] = [
 ]
 
 interface TransactionSettlementTableProps {
-  filters: SettlementFilters
+  pageResponse?: SettlementItemPageResponse['settlements']
   onPageChange: (page: number) => void
+  onDownloadExcel: () => void
+  isDownloadingExcel?: boolean
 }
 
 export const TransactionSettlementTable = ({
-  filters,
+  pageResponse,
   onPageChange,
+  onDownloadExcel,
+  isDownloadingExcel,
 }: TransactionSettlementTableProps) => {
-  const { data, total } = useMemo(
-    () =>
-      getTransactionSettlementMock(filters.page, filters.size, filters.keyword),
-    [filters.page, filters.size, filters.keyword],
+  const data = useMemo(
+    () => (pageResponse?.content ?? []).map(toTransactionSettlement),
+    [pageResponse],
   )
 
-  const totalPages = Math.max(1, Math.ceil(total / filters.size))
+  const currentPage = (pageResponse?.page ?? 0) + 1
+  const totalPages = pageResponse?.totalPages ?? 1
 
   return (
-    <div className="[&_td]:border-r [&_td]:border-gray-300 [&_td:last-child]:border-r-0 [&_th]:border-r [&_th]:border-gray-300 [&_th:last-child]:border-r-0">
-      <Table
-        data={data}
-        columns={columns}
-        topArea={
-          <SettlementTableTopArea
-            currentPage={filters.page}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-          />
-        }
-        maxHeight="calc(100vh - 400px)"
-      />
-    </div>
+    <Table
+      data={data}
+      columns={columns}
+      fillWidth
+      emptyDesc="조회된 건별 정산내역이 없어요"
+      topArea={
+        <SettlementTableTopArea
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+          onDownloadExcel={onDownloadExcel}
+          isDownloadingExcel={isDownloadingExcel}
+        />
+      }
+      scrollHeight={500}
+    />
   )
 }

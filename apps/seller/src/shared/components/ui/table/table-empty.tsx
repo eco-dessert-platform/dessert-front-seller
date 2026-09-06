@@ -7,7 +7,7 @@ interface TableEmptyProps {
 
 const TableEmpty = ({ description }: TableEmptyProps) => {
   return (
-    <div className="absolute inset-0 z-9 flex items-center justify-center bg-white">
+    <div className="flex h-full w-full items-center justify-center bg-white">
       <div className="flex flex-col items-center gap-2">
         <img src={characterLogo} alt="" className="size-28" />
         <Text as="p" variant="body14-r" color="gray-500">

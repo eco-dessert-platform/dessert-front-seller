@@ -1,17 +1,14 @@
 import { useEffect, useState } from 'react'
 
 import { Button } from '@dessert/ui'
-import { format, parseISO } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
 import { IChargeFilter } from '@/entity/settlement/charge/entities'
+import {
+  dateRangeToFilterDates,
+  stringToDateRange,
+} from '@/shared/utils/formatter'
 import { DatePicker } from '@/widgets/date-picker'
-
-// 1. 날짜 변환 로직들을 헬퍼 함수로 깔끔하게 분리
-const stringToDateRange = (start?: string, end?: string): DateRange => ({
-  from: start ? parseISO(start) : undefined,
-  to: end ? parseISO(end) : undefined,
-})
 
 interface IChargeFilterProps {
   filtersDate?: {
@@ -58,16 +55,7 @@ const ChargeFilter = ({
           variant="primary-filled"
           size="md"
           className="max-h-[42px] min-w-[70px]"
-          onClick={() =>
-            onSearch({
-              startDate: dateValue?.from
-                ? format(dateValue.from, 'yyyy-MM-dd')
-                : undefined,
-              endDate: dateValue?.to
-                ? format(dateValue.to, 'yyyy-MM-dd')
-                : undefined,
-            })
-          }
+          onClick={() => onSearch(dateRangeToFilterDates(dateValue))}
         />
       </div>
       {children}

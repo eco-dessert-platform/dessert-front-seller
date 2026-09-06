@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 
 import { Calendar } from '@dessert/ui'
 import * as Popover from '@radix-ui/react-popover'
@@ -26,6 +26,7 @@ function formatDateRange(range?: DateRange): string {
 
 interface DatePickerProps {
   label: string
+  labelSuffix?: ReactNode
   disabled?: boolean
   placeholder?: string
   /** 확인 버튼을 눌러 확정된 값 (외부에서 관리) */
@@ -36,6 +37,7 @@ interface DatePickerProps {
 
 export function DatePicker({
   label,
+  labelSuffix,
   disabled = false,
   placeholder = '날짜 선택',
   value,
@@ -66,7 +68,10 @@ export function DatePicker({
 
   return (
     <div className="flex w-full flex-col gap-6 bg-white">
-      <label className="typo-body-12-r text-gray-800">{label}</label>
+      <div className="flex items-center gap-4">
+        <label className="typo-body-12-r text-gray-800">{label}</label>
+        {labelSuffix}
+      </div>
 
       <Popover.Root open={isOpen} onOpenChange={handleOpenChange}>
         <Popover.Trigger asChild>
