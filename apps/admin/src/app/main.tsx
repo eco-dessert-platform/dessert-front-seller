@@ -4,8 +4,13 @@ import '@/styles/index.css'
 import ReactDOM from 'react-dom/client'
 import { Navigate, createBrowserRouter } from 'react-router-dom'
 
+import { GuestOnlyRoute, ProtectedRoute } from '@/features/auth'
 import AuthPage from '@/pages/auth/auth-page'
-import { NoticePage } from '@/pages/home-page/notice'
+import {
+  NoticeCreatePage,
+  NoticeEditPage,
+  NoticePage,
+} from '@/pages/home-page/notice'
 import { AllProductPage } from '@/pages/product/all-product'
 import { UploadApprovalPage } from '@/pages/product/upload-approval'
 import { MemberApprovalPage } from '@/pages/store/member-approval'
@@ -18,42 +23,60 @@ import FixedLayout from './fixed-layout'
 
 const router = createBrowserRouter([
   {
-    path: ROUTES.HOME,
-    element: <FixedLayout />,
+    element: <ProtectedRoute />,
     children: [
       {
-        index: true,
-        element: <Navigate to={ROUTES.STORE.MEMBER_APPROVAL} replace />,
-      },
-      {
-        path: ROUTES.STORE.MEMBER_APPROVAL,
-        element: <MemberApprovalPage />,
-      },
-      {
-        path: ROUTES.STORE.NAME_CHANGE_APPROVAL,
-        element: <NameChangeApprovalPage />,
-      },
-      {
-        path: ROUTES.STORE.REGISTRATION,
-        element: <StoreRegistrationPage />,
-      },
-      {
-        path: ROUTES.PRODUCTS.UPLOAD_APPROVAL,
-        element: <UploadApprovalPage />,
-      },
-      {
-        path: ROUTES.PRODUCTS.ALL,
-        element: <AllProductPage />,
-      },
-      {
-        path: ROUTES.HOMEPAGE.NOTICE,
-        element: <NoticePage />,
+        path: ROUTES.HOME,
+        element: <FixedLayout />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to={ROUTES.STORE.MEMBER_APPROVAL} replace />,
+          },
+          {
+            path: ROUTES.STORE.MEMBER_APPROVAL,
+            element: <MemberApprovalPage />,
+          },
+          {
+            path: ROUTES.STORE.NAME_CHANGE_APPROVAL,
+            element: <NameChangeApprovalPage />,
+          },
+          {
+            path: ROUTES.STORE.REGISTRATION,
+            element: <StoreRegistrationPage />,
+          },
+          {
+            path: ROUTES.PRODUCTS.UPLOAD_APPROVAL,
+            element: <UploadApprovalPage />,
+          },
+          {
+            path: ROUTES.PRODUCTS.ALL,
+            element: <AllProductPage />,
+          },
+          {
+            path: ROUTES.HOMEPAGE.NOTICE,
+            element: <NoticePage />,
+          },
+          {
+            path: ROUTES.HOMEPAGE.NOTICE_CREATE,
+            element: <NoticeCreatePage />,
+          },
+          {
+            path: ROUTES.HOMEPAGE.NOTICE_EDIT,
+            element: <NoticeEditPage />,
+          },
+        ],
       },
     ],
   },
   {
-    path: ROUTES.LOGIN,
-    element: <AuthPage />,
+    element: <GuestOnlyRoute />,
+    children: [
+      {
+        path: ROUTES.LOGIN,
+        element: <AuthPage />,
+      },
+    ],
   },
 ])
 

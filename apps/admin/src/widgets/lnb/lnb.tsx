@@ -29,7 +29,7 @@ const MENU_LIST = [
   },
   {
     group: '홈페이지 관리',
-    items: [{ title: '홈페이지 관리', href: ROUTES.HOMEPAGE.NOTICE }],
+    items: [{ title: '공지사항 관리', href: ROUTES.HOMEPAGE.NOTICE }],
   },
 ]
 

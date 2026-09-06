@@ -1,3 +1,5 @@
+import { Fragment } from 'react'
+
 import {
   type Cell,
   ColumnDef,
@@ -90,9 +92,8 @@ function Table<T>({
           </thead>
           <tbody>
             {getRowModel().rows.map((row) => (
-              <>
+              <Fragment key={row.id}>
                 <tr
-                  key={row.id}
                   className={cn(
                     'border-b border-gray-300 last:border-b-0',
                     getRowClassName?.(row.original),
@@ -134,7 +135,7 @@ function Table<T>({
                   })}
                 </tr>
                 {renderSubRow?.(row.original)}
-              </>
+              </Fragment>
             ))}
           </tbody>
         </table>

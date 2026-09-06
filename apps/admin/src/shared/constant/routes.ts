@@ -11,6 +11,10 @@ export const ROUTES = {
   },
   HOMEPAGE: {
     NOTICE: '/homepage/notice',
+    NOTICE_CREATE: '/homepage/notice/register',
+    NOTICE_EDIT: '/homepage/notice/:noticeId/edit',
+    noticeEdit: (noticeId: number | string) =>
+      `/homepage/notice/${noticeId}/edit`,
   },
   LOGIN: '/login',
 } as const

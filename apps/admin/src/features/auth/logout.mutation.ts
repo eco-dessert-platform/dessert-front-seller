@@ -8,6 +8,6 @@ export const useAdminLogoutMutation = () => {
   return useMutation({
     mutationKey: authKeys.all,
     mutationFn: adminLogout,
-    onSuccess: logout,
+    onSettled: logout,
   })
 }
