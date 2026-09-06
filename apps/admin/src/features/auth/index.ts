@@ -1,3 +1,5 @@
+export { GuestOnlyRoute, ProtectedRoute } from './auth-guard.ui'
+export type { RedirectState } from './auth-guard.ui'
 export { LoginFooter } from './login-footer.ui'
 export { AuthLoginImage } from './login-image.ui'
 export { useAdminLoginMutation } from './login.mutation'

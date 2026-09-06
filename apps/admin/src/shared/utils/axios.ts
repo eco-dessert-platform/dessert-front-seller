@@ -48,9 +48,9 @@ export const setupAuthResponseInterceptor = (
           error.config?.unauthorizedPolicy ?? 'redirect'
 
         // 로그인 요청의 401은 무시 (onError에서 처리)
+        // 세션만 정리하면 라우트 가드가 로그인 화면으로 이동시킨다
         if (!isLoginRequest && unauthorizedPolicy === 'redirect') {
           onUnauthorized()
-          window.location.href = '/login'
         }
       }
       return Promise.reject(error)
