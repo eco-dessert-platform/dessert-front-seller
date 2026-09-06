@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Button } from '@dessert/ui'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
-import { FormProvider, Resolver, useForm } from 'react-hook-form'
+import { FormProvider, Resolver, useForm, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 
 import {
@@ -22,6 +22,7 @@ import { mapProductDetailToFormValues } from '@/features/products/edit/map-produ
 import { useProductEditSessionStore } from '@/features/products/edit/product-edit-session.store'
 import { useProductEditStore } from '@/features/products/edit/product-edit.store'
 import { ProductFormModeProvider } from '@/features/products/edit/product-form-mode.context'
+import { useSubmitEditForm } from '@/features/products/edit/use-submit-edit-form.hook'
 
 function EditPage() {
   const { boardId: boardIdParam } = useParams<{ boardId: string }>()
@@ -123,15 +124,50 @@ function EditPageHydrated({
 
   return (
     <FormProvider {...form}>
+      <EditPageContent
+        isPreviewOpen={isPreviewOpen}
+        onOpenPreview={() => setIsPreviewOpen(true)}
+        onClosePreview={() => setIsPreviewOpen(false)}
+      />
+    </FormProvider>
+  )
+}
+
+function EditPageContent({
+  isPreviewOpen,
+  onOpenPreview,
+  onClosePreview,
+}: {
+  isPreviewOpen: boolean
+  onOpenPreview: () => void
+  onClosePreview: () => void
+}) {
+  const { handleSubmit, isPending } = useSubmitEditForm()
+  const {
+    formState: { isDirty },
+  } = useFormContext<CreateProductForm>()
+  const isEditDetailDirty = useProductEditStore(
+    (state) => state.productDetail !== state.initialProductDetail,
+  )
+  const canSubmit = isDirty || isEditDetailDirty
+
+  return (
+    <>
       <ProductBoardFormSections />
-      <CreateFooter onPreview={() => setIsPreviewOpen(true)} />
+      <CreateFooter
+        onPreview={onOpenPreview}
+        onSubmit={handleSubmit}
+        submitLabel="수정하기"
+        isPending={isPending}
+        canSubmit={canSubmit}
+      />
       {isPreviewOpen && (
         <ProductPreviewModal
           isOpen={isPreviewOpen}
-          onClose={() => setIsPreviewOpen(false)}
+          onClose={onClosePreview}
         />
       )}
-    </FormProvider>
+    </>
   )
 }
 

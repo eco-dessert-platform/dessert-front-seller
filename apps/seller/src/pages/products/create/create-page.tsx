@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { FormProvider } from 'react-hook-form'
+import { FormProvider, useFormContext, useWatch } from 'react-hook-form'
 
 import {
+  CreateProductForm,
   ProductBoardFormSections,
+  hasCreateFormInput,
   useCreateFormPersistence,
   useCreateFunnelEntry,
   useCreateProductForm,
+  useProductCreationStore,
+  useSubmitCreateForm,
 } from '@/features/products/create'
 import {
   CreateDraftModal,
@@ -39,7 +43,15 @@ function CreatePageInner({ entryMode }: CreatePageInnerProps) {
   const [isDraftModalOpen, setIsDraftModalOpen] = useState(false)
   const { draft } = useCreateDraftStore()
   const isInitialMount = useRef(true)
-  const { handleRestoreDraft, clearDraft } = useCreateDraft()
+  const { handleRestoreDraft, clearDraft, handleSaveDraft } = useCreateDraft()
+  const { handleSubmit, isPending } = useSubmitCreateForm()
+  const {
+    control,
+    formState: { isDirty },
+  } = useFormContext<CreateProductForm>()
+  const values = useWatch({ control }) as CreateProductForm
+  const productDetail = useProductCreationStore((state) => state.productDetail)
+  const canSubmit = hasCreateFormInput(values, productDetail, isDirty)
 
   useCreateFormPersistence(entryMode)
 
@@ -58,7 +70,14 @@ function CreatePageInner({ entryMode }: CreatePageInnerProps) {
   return (
     <>
       <ProductBoardFormSections />
-      <CreateFooter onPreview={() => setIsPreviewOpen(true)} />
+      <CreateFooter
+        onPreview={() => setIsPreviewOpen(true)}
+        onSubmit={handleSubmit}
+        submitLabel="저장하기"
+        isPending={isPending}
+        canSubmit={canSubmit}
+        onSaveDraft={handleSaveDraft}
+      />
       {isPreviewOpen && (
         <ProductPreviewModal
           isOpen={isPreviewOpen}
