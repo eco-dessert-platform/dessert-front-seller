@@ -6,10 +6,7 @@ import type {
   IPaymentHoldRowResponse,
 } from '@/entity/settlement/payment-hold/entities'
 import { client } from '@/shared/utils/axios'
-import {
-  getFileNameFromContentDisposition,
-  triggerFileDownload,
-} from '@/shared/utils/file-download'
+import { getFileNameFromContentDisposition } from '@/shared/utils/file-download'
 import { AxiosInstance } from 'axios'
 
 interface FieldError {
@@ -67,9 +64,9 @@ class PaymentHoldService {
     }
   }
 
-  async downloadExcel(
+  async getExcelBlob(
     request: Omit<IPaymentHoldRequest, 'page' | 'size'>,
-  ): Promise<void> {
+  ): Promise<{ data: Blob; fileName: string }> {
     const { data, headers } = await this.http.get<Blob>(
       '/api/v1/seller/payment-hold/excel',
       {
@@ -97,7 +94,7 @@ class PaymentHoldService {
       '지급보류내역.xlsx',
     )
 
-    triggerFileDownload(data, fileName)
+    return { data, fileName }
   }
 }
 

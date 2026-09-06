@@ -12,6 +12,7 @@ import type { IPaymentHoldFilter } from '@/entity/settlement/payment-hold/entiti
 import SettlementTitles from '@/features/settlement/common/titles'
 import PaymentHoldFilter from '@/features/settlement/payment-hold/payment-hold-filter'
 import PaymentHoldTable from '@/features/settlement/payment-hold/payment-hold-table'
+import { triggerFileDownload } from '@/shared/utils/file-download'
 
 import Layout from '../layout'
 
@@ -46,7 +47,10 @@ const PaymentHoldPage = () => {
 
   const handleExcelDownload = useCallback(async () => {
     try {
-      await paymentHoldService.downloadExcel(buildPaymentHoldRequest(filters))
+      const { data, fileName } = await paymentHoldService.getExcelBlob(
+        buildPaymentHoldRequest(filters),
+      )
+      triggerFileDownload(data, fileName)
       toast.info('지급 보류 내역 엑셀 파일이 다운로드 되었어요.', undefined, {
         position: 'bottom-right',
       })

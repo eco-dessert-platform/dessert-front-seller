@@ -14,6 +14,7 @@ import type { IVatReportFilter } from '@/entity/settlement/vatreport/entities'
 import SettlementTitles from '@/features/settlement/common/titles'
 import VatReportFilter from '@/features/settlement/vatreport/vatreport-filter'
 import VatReportTable from '@/features/settlement/vatreport/vatreport-table'
+import { triggerFileDownload } from '@/shared/utils/file-download'
 
 import Layout from '../layout'
 
@@ -56,10 +57,11 @@ const Vatreport = () => {
 
   const handleExcelDownload = useCallback(async () => {
     try {
-      await vatService.downloadExcel({
+      const { data, fileName } = await vatService.getExcelBlob({
         startDate: filters.startDate,
         endDate: filters.endDate,
       })
+      triggerFileDownload(data, fileName)
       toast.info('부가세 신고 내역 엑셀 파일이 다운로드 되었어요.', undefined, {
         position: 'bottom-right',
       })

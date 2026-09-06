@@ -4,35 +4,12 @@ import type {
   IVatReportResponse,
 } from '@/entity/settlement/vatreport/entities'
 import { client } from '@/shared/utils/axios'
+import { getFileNameFromContentDisposition } from '@/shared/utils/file-download'
 import { AxiosInstance } from 'axios'
 import { format, parseISO } from 'date-fns'
 
 const VAT_EXCEL_DEFAULT_TYPE = 'MONTHLY'
-
-const getFileNameFromContentDisposition = (contentDisposition?: string) => {
-  if (!contentDisposition) {
-    return '부가세신고내역.xlsx'
-  }
-
-  const match = contentDisposition.match(
-    /filename\*?=(?:UTF-8''|")?([^";\n]+)/i,
-  )
-
-  return match?.[1]
-    ? decodeURIComponent(match[1].replace(/"/g, ''))
-    : '부가세신고내역.xlsx'
-}
-
-const triggerFileDownload = (blob: Blob, fileName: string) => {
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = fileName
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  setTimeout(() => URL.revokeObjectURL(url), 0)
-}
+const VAT_EXCEL_DEFAULT_FILENAME = '부가세신고내역.xlsx'
 
 type VatReportResponse = ApiResponse<IVatReportResponse>
 
@@ -72,7 +49,9 @@ class VatService {
     return data.result
   }
 
-  async downloadExcel(filters: IVatReportFilter = {}): Promise<void> {
+  async getExcelBlob(
+    filters: IVatReportFilter = {},
+  ): Promise<{ data: Blob; fileName: string }> {
     const { data, headers } = await this.http.get<Blob>(
       '/api/v1/seller/vat/excel',
       {
@@ -103,9 +82,10 @@ class VatService {
 
     const fileName = getFileNameFromContentDisposition(
       headers['content-disposition'],
+      VAT_EXCEL_DEFAULT_FILENAME,
     )
 
-    triggerFileDownload(data, fileName)
+    return { data, fileName }
   }
 }
 
