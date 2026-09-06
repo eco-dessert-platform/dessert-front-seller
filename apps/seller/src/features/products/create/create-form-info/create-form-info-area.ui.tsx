@@ -4,7 +4,7 @@ import { Dropdown, Input, Label, Switch } from '@dessert/ui'
 import { Controller } from 'react-hook-form'
 
 import { ProductDiscountType } from '@/entity/products/create/create-info/product-discount-type.constants'
-import { productionTimes } from '@/entity/products/create/create-info/production-time.constants'
+import { PRODUCTION_START_TIME_OPTIONS } from '@/entity/products/create/create-info/production-time.constants'
 
 import { useProductInfoForm } from './use-product-info-form.hook'
 import { InfoTooltip, ProductFinalPrice } from '../create-form'
@@ -104,10 +104,11 @@ export const ProductInfoArea = () => {
         name="productionTime"
         render={({ field }) => (
           <Dropdown
-            options={productionTimes}
+            options={[...PRODUCTION_START_TIME_OPTIONS]}
             value={field.value}
             className="mt-8"
             onSelect={field.onChange}
+            placeholder="상품 제작 시간을 선택해주세요"
           />
         )}
       />

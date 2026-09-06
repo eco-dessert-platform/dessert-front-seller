@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { debounce } from '@/shared/utils/debounce'
+import { toProductionStartTimeFormValue } from '@/entity/products/create/create-info/production-time.constants'
 
 import {
   CreateFormEntryMode,
@@ -34,6 +35,7 @@ export function useCreateFormPersistence(entryMode: CreateFormEntryMode) {
 
     form.reset({
       ...formValues,
+      productionTime: toProductionStartTimeFormValue(formValues.productionTime),
       mainImage: fileData?.mainImage ?? null,
       extraImages: fileData?.extraImages ?? [],
     } as CreateProductForm)

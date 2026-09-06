@@ -1,10 +1,21 @@
 import { z } from 'zod'
 
+import { PRODUCTION_START_TIME_OPTIONS } from '@/entity/products/create/create-info/production-time.constants'
+
+const productionStartTimeValues = PRODUCTION_START_TIME_OPTIONS.map(
+  (option) => option.value,
+) as [string, ...string[]]
+
 export const productSchema = z
   .object({
     productName: z.string(),
     isFresh: z.boolean(),
-    productionTime: z.string().min(1, '상품 제작 시간을 선택해주세요'),
+    productionTime: z
+      .string()
+      .min(1, '상품 제작 시간을 선택해주세요')
+      .refine((value) => productionStartTimeValues.includes(value), {
+        message: '유효한 상품 제작 시간을 선택해주세요',
+      }),
     price: z.union([
       z
         .number({ error: '올바른 가격을 입력해주세요' })

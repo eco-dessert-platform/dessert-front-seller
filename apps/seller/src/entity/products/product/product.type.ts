@@ -2,6 +2,7 @@ export type ProductType = {
   id: string
   sellerName?: string
   productName: string
+  thumbnailUrl?: string
   stockStatus: string
   salePrice: number
   originPrice: number

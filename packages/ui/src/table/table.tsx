@@ -47,12 +47,17 @@ function Table<T>({
   return (
     <div className="overflow-hidden rounded-md border border-gray-300 bg-white">
       {topArea && (
-        <div className="flex items-center justify-between border-b border-gray-200 px-24 py-16">
+        <div className="flex w-full items-center justify-between border-b border-gray-200 px-24 py-16">
           {topArea}
         </div>
       )}
-      <div className="overflow-auto" style={{ maxHeight: maxHeight }}>
-        <table className={cn('border-collapse', tableClassName ?? 'min-w-max')}>
+      <div className="w-full overflow-auto" style={{ maxHeight: maxHeight }}>
+        <table
+          className={cn(
+            'w-full border-collapse',
+            tableClassName ?? 'min-w-max',
+          )}
+        >
           <thead className="sticky top-0 z-10 bg-gray-200">
             {getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="h-40">

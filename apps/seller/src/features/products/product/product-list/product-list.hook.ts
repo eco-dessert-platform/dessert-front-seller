@@ -2,9 +2,13 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { ProductType } from '@/entity/products/product/product.type'
 
+import { useDeleteProductBoardsMutation } from './use-delete-product-boards.mutation'
+
 export const useProductList = ({ data }: { data: ProductType[] }) => {
   const [tableData, setTableData] = useState<ProductType[]>([])
   const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const { mutateAsync: deleteBoards, isPending: isDeleting } =
+    useDeleteProductBoardsMutation()
 
   useEffect(() => {
     setTableData(data)
@@ -47,9 +51,25 @@ export const useProductList = ({ data }: { data: ProductType[] }) => {
     ])
   }
 
-  const handleDelete = () => {
-    const selectedSet = new Set(selectedIds)
-    setTableData((prev) => prev.filter((row) => !selectedSet.has(row.id)))
+  const handleStatusChange = (
+    id: string,
+    status: ProductType['status'],
+  ) => {
+    setTableData((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, status } : item)),
+    )
+  }
+
+  const handleDelete = async () => {
+    if (selectedIds.length === 0 || isDeleting) return
+
+    const boardIds = selectedIds
+      .map((id) => Number(id))
+      .filter((id) => Number.isFinite(id))
+
+    if (boardIds.length === 0) return
+
+    await deleteBoards(boardIds)
     setSelectedIds([])
   }
 
@@ -63,6 +83,8 @@ export const useProductList = ({ data }: { data: ProductType[] }) => {
     toggleAll,
     toggleRow,
     handleCopyRow,
+    handleStatusChange,
     handleDelete,
+    isDeleting,
   }
 }

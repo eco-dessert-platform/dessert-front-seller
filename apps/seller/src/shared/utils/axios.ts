@@ -26,9 +26,14 @@ const clearSessionAndRedirectToAuth = () => {
   }
 }
 
-// 모든 요청에 Bearer Token 추가
+// FormData는 Content-Type을 수동 지정하지 않음.
+// axios 기본 application/json을 제거해야 boundary 포함 multipart가 설정됩니다.
 client.interceptors.request.use(
   (config) => {
+    if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+      config.headers.delete('Content-Type')
+    }
+
     const token = getCookie('accessToken')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`

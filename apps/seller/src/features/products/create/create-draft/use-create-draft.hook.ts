@@ -1,6 +1,8 @@
 import { toast } from '@dessert/ui'
 import { useFormContext } from 'react-hook-form'
 
+import { toProductionStartTimeFormValue } from '@/entity/products/create/create-info/production-time.constants'
+
 import {
   clearCreateFormPersistence,
   CREATE_PRODUCT_DEFAULT_VALUES,
@@ -28,7 +30,10 @@ export const useCreateDraft = () => {
   const handleRestoreDraft = () => {
     if (!draft) return
     const { productDetail: savedDetail, ...formValues } = draft
-    form.reset(formValues as CreateProductForm)
+    form.reset({
+      ...formValues,
+      productionTime: toProductionStartTimeFormValue(formValues.productionTime),
+    } as CreateProductForm)
     setProductDetail(savedDetail)
   }
 

@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useMemo } from 'react'
 
 import { Button, Dropdown, Input } from '@dessert/ui'
 
+import type { ProductBoardFilters } from '@/entity/products/product/product-board.type'
 import {
   BreadOptions,
   ProductFilterMainOption,
@@ -9,47 +10,98 @@ import {
   SnackOptions,
 } from '@/entity/products/product/product-filter-options.mock'
 
-export const FilterCategory = () => {
-  const [main, setMain] = useState<string>('')
-  const [sub, setSub] = useState<string>('')
-  const [searchOpt, setSearchOpt] = useState<string>('all')
-  const [keyword, setKeyword] = useState<string>('')
-  const subOptions =
-    main === 'bread' ? BreadOptions : main === 'snack' ? SnackOptions : []
+type FilterCategoryProps = {
+  filters: ProductBoardFilters
+  mainCategoryValue: string
+  subCategoryValue: string
+  searchOpt: string
+  onMainCategoryChange: (value: string) => void
+  onSubCategoryChange: (value: string) => void
+  onSearchOptChange: (value: string) => void
+  onFiltersChange: (next: ProductBoardFilters) => void
+  onSearch: () => void
+}
+
+export const FilterCategory = ({
+  filters,
+  mainCategoryValue,
+  subCategoryValue,
+  searchOpt,
+  onMainCategoryChange,
+  onSubCategoryChange,
+  onSearchOptChange,
+  onFiltersChange,
+  onSearch,
+}: FilterCategoryProps) => {
+  const subOptions = useMemo(
+    () =>
+      mainCategoryValue === 'bread'
+        ? BreadOptions
+        : mainCategoryValue === 'snack'
+          ? SnackOptions
+          : [],
+    [mainCategoryValue],
+  )
+
+  const handleKeywordChange = (keyword: string) => {
+    onFiltersChange({
+      ...filters,
+      keyword: keyword || undefined,
+    })
+  }
 
   return (
     <>
       <Dropdown
         options={ProductFilterMainOption}
-        value={main}
+        value={mainCategoryValue}
         placeholder="대분류"
         onSelect={(value) => {
-          setMain(value)
-          setSub('')
-          setKeyword('')
+          onMainCategoryChange(value)
+          onSubCategoryChange('')
+          const mainLabel = ProductFilterMainOption.find(
+            (option) => option.value === value,
+          )?.label
+
+          onFiltersChange({
+            ...filters,
+            mainCategory: mainLabel,
+            category: undefined,
+            keyword: undefined,
+          })
         }}
         className="w-0 min-w-[150px] shrink-0"
       />
       <Dropdown
         options={subOptions}
-        value={sub}
+        value={subCategoryValue}
         placeholder="중분류"
-        disabled={!main}
-        onSelect={setSub}
+        disabled={!mainCategoryValue}
+        onSelect={(value) => {
+          onSubCategoryChange(value)
+          const subLabel = subOptions.find(
+            (option) => option.value === value,
+          )?.label
+
+          onFiltersChange({
+            ...filters,
+            category: subLabel,
+          })
+        }}
         className="w-0 min-w-[150px] shrink-0"
       />
       <Dropdown
         options={SearchOptions}
         value={searchOpt}
         className="w-0 min-w-[150px] shrink-0"
-        onSelect={setSearchOpt}
+        onSelect={onSearchOptChange}
         placeholder="전체"
       />
       <Input
         placeholder="1~50자로 검색해 주세요"
-        value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
-        disabled={!main || !sub}
+        value={filters.keyword ?? ''}
+        onChange={(e) => handleKeywordChange(e.target.value)}
+        disabled={!mainCategoryValue || !subCategoryValue}
         className="flex-1"
         maxLength={50}
       />
@@ -57,7 +109,7 @@ export const FilterCategory = () => {
         title="조회"
         size="md"
         className="min-w-[72px]"
-        onClick={() => {}}
+        onClick={onSearch}
       />
     </>
   )
