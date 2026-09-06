@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import {
   Button,
@@ -32,6 +32,8 @@ const ChargeWithdrawModal = ({
 }: ChargeWithdrawModalProps) => {
   const [withdrawAmount, setWithdrawAmount] = useState('')
   const { mutate: requestWithdrawal, isPending } = useWithdrawalMutation()
+  /** state(isPending) 반영 전 더블클릭으로 중복 요청되는 것을 막는 동기 가드 */
+  const isRequestingRef = useRef(false)
 
   const amount = Number(withdrawAmount)
   const isValidAmount =
@@ -41,6 +43,8 @@ const ChargeWithdrawModal = ({
     amount <= chargeBalance
 
   const handleWithdraw = () => {
+    if (isRequestingRef.current) return
+
     if (!accountVerification) {
       toast.error('정산 계좌 정보가 없습니다.', undefined, {
         position: 'bottom-right',
@@ -54,6 +58,8 @@ const ChargeWithdrawModal = ({
       })
       return
     }
+
+    isRequestingRef.current = true
 
     requestWithdrawal(
       {
@@ -76,6 +82,9 @@ const ChargeWithdrawModal = ({
             undefined,
             { position: 'bottom-right' },
           )
+        },
+        onSettled: () => {
+          isRequestingRef.current = false
         },
       },
     )
