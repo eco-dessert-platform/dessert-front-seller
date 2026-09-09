@@ -10,6 +10,7 @@ import {
   getStore,
   requestStoreNameChange,
   updateSellerAccount,
+  updateStore,
 } from './seller-info.api'
 
 export const sellerInfoQueries = {
@@ -18,6 +19,8 @@ export const sellerInfoQueries = {
     queryOptions({
       queryKey: [...sellerInfoQueries.all(), 'store'],
       queryFn: getStore,
+      // 자동 재시도 대신 실패를 바로 노출하고 다시 시도 버튼으로 재요청한다.
+      retry: false,
     }),
   accountVerification: () =>
     queryOptions({
@@ -30,6 +33,19 @@ export const sellerInfoQueries = {
 export function useCheckStoreNameMutation() {
   return useMutation({
     mutationFn: checkStoreName,
+  })
+}
+
+export function useUpdateStoreDetailMutation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: updateStore,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: sellerInfoQueries.store().queryKey,
+      })
+    },
   })
 }
 

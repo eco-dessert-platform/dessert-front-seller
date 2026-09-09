@@ -14,10 +14,7 @@ export const sellerInfoToast = {
     toast.error('중복 확인 중 문제가 발생했어요', '잠시 후 다시 시도해주세요'),
 
   storeNameChangeError: () =>
-    toast.error(
-      '스토어명 변경 신청에 실패했어요',
-      '잠시 후 다시 시도해주세요',
-    ),
+    toast.error('스토어명 변경 신청에 실패했어요', '잠시 후 다시 시도해주세요'),
 
   accountInfoChangeSuccess: () => toast.success('계좌정보 변경을 완료했어요'),
 
@@ -38,4 +35,7 @@ export const sellerInfoToast = {
   saveSuccess: () => toast.success('변경사항이 저장되었어요'),
 
   saveValidationError: () => toast.error('작성되지 않은 항목이 있어요'),
+
+  storeInfoSaveError: () =>
+    toast.error('스토어 정보 수정에 실패했어요', '잠시 후 다시 시도해주세요'),
 }

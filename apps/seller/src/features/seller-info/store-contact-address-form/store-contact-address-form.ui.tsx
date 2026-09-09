@@ -140,12 +140,17 @@ function AddressSection() {
   const {
     register,
     setValue,
+    watch,
     formState: { errors },
   } = useFormContext<StoreDetailFormValues>()
 
   const [postalCode, setPostalCode] = useState('')
   const [isPostalCodeSelected, setIsPostalCodeSelected] = useState(false)
   const openPostcode = useKakaoPostcodePopup()
+
+  // 우편번호를 새로 검색했거나, 이미 등록된 주소가 프리필된 경우 상세주소 편집 허용.
+  const hasAddress = watch('originAddress').trim().length > 0
+  const canEditAddressDetail = isPostalCodeSelected || hasAddress
 
   const handleClickPostalCodeSearch = () => {
     openPostcode({
@@ -204,7 +209,7 @@ function AddressSection() {
             label="출고지 상세주소"
             placeholder="1동 101호"
             required
-            disabled={!isPostalCodeSelected}
+            disabled={!canEditAddressDetail}
           />
           {errors.originAddressDetail && (
             <span className="typo-body-12-r text-error-500">

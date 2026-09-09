@@ -7,12 +7,15 @@ import { cn } from '@/shared/libs/utils'
 interface StoreProfileImagePreviewProps {
   className?: string
   file?: File | null
+  // 수정 화면에서 기존 등록된 프로필 이미지 URL. 새 파일을 고르지 않았을 때만 노출.
+  initialUrl?: string
   onChange: (file: File | null) => void
 }
 
 export function StoreProfileImagePreview({
   className,
   file,
+  initialUrl,
   onChange,
 }: StoreProfileImagePreviewProps) {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -55,6 +58,9 @@ export function StoreProfileImagePreview({
     }
   }, [file])
 
+  // 새로 고른 파일 우선, 없으면 기존 등록된 이미지 URL.
+  const displayUrl = previewUrl || initialUrl || ''
+
   return (
     <div className={cn('flex flex-col gap-8', className)}>
       <input
@@ -65,21 +71,30 @@ export function StoreProfileImagePreview({
         onChange={handleFileChange}
       />
       <div className="relative size-[200px] overflow-hidden rounded-32 border border-gray-100">
-        {previewUrl ? (
+        {displayUrl ? (
           <div className="relative size-full">
-            <img
-              src={previewUrl}
-              alt="스토어 프로필 미리보기"
-              className="size-full object-cover"
-            />
             <button
               type="button"
-              onClick={handleRemove}
-              aria-label="이미지 제거"
-              className="absolute top-12 right-12 flex size-20 cursor-pointer items-center justify-center"
+              onClick={handleUploadAreaClick}
+              aria-label="이미지 변경"
+              className="size-full cursor-pointer"
             >
-              <XIcon className="size-20" />
+              <img
+                src={displayUrl}
+                alt="스토어 프로필 미리보기"
+                className="size-full object-cover"
+              />
             </button>
+            {file && (
+              <button
+                type="button"
+                onClick={handleRemove}
+                aria-label="이미지 제거"
+                className="absolute top-12 right-12 flex size-20 cursor-pointer items-center justify-center"
+              >
+                <XIcon className="size-20" />
+              </button>
+            )}
           </div>
         ) : (
           <button

@@ -1,7 +1,5 @@
-import { useState } from 'react'
-
-import { Controller, useFormContext } from 'react-hook-form'
 import { Textarea } from '@dessert/ui'
+import { Controller, useFormContext } from 'react-hook-form'
 
 import { StoreDetailFormValues } from '@/entity/seller-info'
 
@@ -10,9 +8,17 @@ import { StoreProfileImagePreview } from '../store-profile-image-preview'
 const IMG_NOTICE_SIZE = '권장 크기 1000x1000, 최소 160 이상 (1:1 비율)'
 const IMG_NOTICE_FORMAT = 'jpg,jpeg,png 형식 10MB 이하 파일만 업로드 가능해요'
 
-export function StoreProfileForm() {
-  const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
+interface StoreProfileFormProps {
+  profileImage: File | null
+  onProfileImageChange: (file: File | null) => void
+  initialProfileUrl?: string
+}
 
+export function StoreProfileForm({
+  profileImage,
+  onProfileImageChange,
+  initialProfileUrl,
+}: StoreProfileFormProps) {
   const {
     control,
     formState: { errors },
@@ -23,8 +29,9 @@ export function StoreProfileForm() {
       <h2 className="text-[14px] text-gray-800">스토어 프로필</h2>
       <StoreProfileImagePreview
         className="mt-4"
-        file={profileImageFile}
-        onChange={setProfileImageFile}
+        file={profileImage}
+        initialUrl={initialProfileUrl}
+        onChange={onProfileImageChange}
       />
       <div className="text-[10px] font-normal text-gray-500">
         <p>{IMG_NOTICE_SIZE}</p>

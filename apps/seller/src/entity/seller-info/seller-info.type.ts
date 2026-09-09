@@ -50,9 +50,11 @@ export interface UpdateStoreNameResult {
 }
 
 export interface UpdateStoreDetailRequest {
-  introduce?: string
+  // 스토어명은 이 화면에서 수정 불가(별도 변경 신청 플로우)지만 PUT 명세상 필수라 현재 값을 그대로 전송.
+  storeName: string
+  introduce: string
   phoneNumber: string
-  subPhoneNumber?: string
+  subPhoneNumber: string
   email: string
   originAddress: string
   originAddressDetail: string

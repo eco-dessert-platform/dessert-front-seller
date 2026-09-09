@@ -8,6 +8,8 @@ import type {
   MyStoreSummary,
   SellerAccountUpdateRequest,
   StoreNameCheckResult,
+  UpdateStoreDetailInput,
+  UpdateStoreDetailResult,
   UpdateStoreNameRequest,
   UpdateStoreNameResult,
 } from './seller-info.type'
@@ -54,6 +56,32 @@ export async function requestStoreNameChange(
   }
 
   return data.result
+}
+
+export async function updateStore({
+  request,
+  profileImage,
+}: UpdateStoreDetailInput): Promise<UpdateStoreDetailResult> {
+  const formData = new FormData()
+  formData.append(
+    'request',
+    new Blob([JSON.stringify(request)], { type: 'application/json' }),
+  )
+  if (profileImage) {
+    formData.append('profileImage', profileImage)
+  }
+
+  const { data } = await client.put<
+    ApiResponse<{ store: UpdateStoreDetailResult }>
+  >('/api/v1/seller/stores', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+
+  if (!data.result) {
+    throw new Error(data.message ?? '스토어 정보 수정에 실패했습니다.')
+  }
+
+  return data.result.store
 }
 
 export async function getAccountVerification(): Promise<AccountVerificationDetail | null> {
